@@ -29,19 +29,11 @@ public:
 		}*/
 		cudaMallocGen<P>(&(dev->svm.ROIscores), sizes->ROIscoresVecElems);
 
-<<<<<<< HEAD
 		sizes->svm.nWeights = getNumOfWeights(path);
 		P *auxWeights = mallocGen<P>(sizes->svm.nWeights);
 		readWeightsModelFile(auxWeights, sizes->svm.nWeights, dev->svm.bias, path);
 
 		initDeviceWeightsModel<P>(&(dev->svm.weightsM), auxWeights, sizes->svm.nWeights);
-=======
-		sizes->nWeights = getNumOfWeights(path);
-		P *auxWeights = mallocGen<P>(sizes->nWeights);
-		readWeightsModelFile(auxWeights, sizes->nWeights, dev->svm.bias, path);
-
-		initDeviceWeightsModel<P>(&(dev->svm.weightsM), auxWeights, sizes->nWeights);
->>>>>>> a031d05139a98021189e1a1da3acf0b55f984539
 
 		free(auxWeights);
 	}
@@ -51,19 +43,11 @@ public:
 	{
 		host->svm.ROIscores = mallocGen<P>(sizes->ROIscoresVecElems);
 
-<<<<<<< HEAD
 		sizes->svm.nWeights = getNumOfWeights(path);
 		P *auxWeights = mallocGen<P>(sizes->svm.nWeights);
 		readWeightsModelFile(auxWeights, sizes->svm.nWeights, host->svm.bias, path);
 
 		initHostWeightsModel<P>(host->svm.weightsM, auxWeights, sizes->svm.nWeights);
-=======
-		sizes->nWeights = getNumOfWeights(path);
-		P *auxWeights = mallocGen<P>(sizes->nWeights);
-		readWeightsModelFile(auxWeights, sizes->nWeights, host->svm.bias, path);
-
-		initHostWeightsModel<P>(host->svm.weightsM, auxWeights, sizes->nWeights);
->>>>>>> a031d05139a98021189e1a1da3acf0b55f984539
 
 		free(auxWeights);
 	}

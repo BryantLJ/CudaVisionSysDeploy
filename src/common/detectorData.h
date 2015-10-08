@@ -16,7 +16,6 @@ struct detectorData {
 	// Input data
 	T				*rawImg;
 	T				*rawImgBW;
-<<<<<<< HEAD
 
 	struct PYR {
 		T 				*imgInput;				// Image pyramid
@@ -30,22 +29,6 @@ struct detectorData {
 		P				*sumHistos;				// sum of the histograms
 		P 				*normHistos;			// normalized Histograms
 		uint8_t 		*LBPUmapTable;			// LBP mapping table
-=======
-	T 				*imgInput;
-
-	// LBP data structures
-	struct LBP {
-		// LBP descriptor
-		T 				*imgDescriptor;
-		// LBP histograms pointers
-		C 				*cellHistos;
-		C 				*blockHistos;
-		// Normalized histograms and Scores
-		P				*sumHistos;
-		P 				*normHistos;
-		// LBP mapping table
-		uint8_t 		*LBPUmapTable;
->>>>>>> a031d05139a98021189e1a1da3acf0b55f984539
 	}lbp;
 
 	// HOG data structures
@@ -55,7 +38,6 @@ struct detectorData {
 
 	// SVM data structures
 	struct SVM {
-<<<<<<< HEAD
 		P 				*ROIscores;				// Scores of each ROI
 		P				*weightsM;				// SVM weights model
 		P				bias;					// SVM bias
@@ -66,14 +48,6 @@ struct detectorData {
 
 	}rf;
 
-=======
-		P 				*ROIscores;
-		// SVM weights model
-		P				*weightsM;
-		P				bias;
-	}svm;
-
->>>>>>> a031d05139a98021189e1a1da3acf0b55f984539
 };
 
 
