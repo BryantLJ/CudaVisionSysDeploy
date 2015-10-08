@@ -18,31 +18,35 @@ struct detectorData {
 	// Input data
 	T				*rawImg;
 	T				*rawImgBW;
-	//T 				**imgInput;
 	T 				*imgInput;
-	//T 				**imgDescriptor; //TODO: check if descriptor is equal type as input , HOG
-	T 				*imgDescriptor;
 
-	// LBP histograms pointers
-	//C 				**cellHistos;
-	C 				*cellHistos;
-	//C 				**blockHistos;
-	C 				*blockHistos;
+	// LBP data structures
+	struct LBP {
+		// LBP descriptor
+		T 				*imgDescriptor;
+		// LBP histograms pointers
+		C 				*cellHistos;
+		C 				*blockHistos;
+		// Normalized histograms and Scores
+		P				*sumHistos;
+		P 				*normHistos;
+		// LBP mapping table
+		uint8_t 		*LBPUmapTable;
+	}lbp;
 
-	// Normalized histograms and Scores
-	//P				**sumHistos;
-	P				*sumHistos;
-	//P 				**normHistos;
-	P 				*normHistos;
-	//P 				**ROIscores;
-	P 				*ROIscores;
+	// HOG data structures
+	struct HOG {
 
-	// LBP mapping table
-	uint8_t 		*LBPUmapTable;
+	}hog;
 
-	// SVM weights model
-	P				*weightsM;
-	P				bias;
+	// SVM data structures
+	struct SVM {
+		P 				*ROIscores;
+		// SVM weights model
+		P				*weightsM;
+		P				bias;
+	}svm;
+
 };
 
 

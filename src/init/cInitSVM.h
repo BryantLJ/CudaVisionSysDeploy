@@ -27,13 +27,13 @@ public:
 		for (uint i = 0; i < pyrLevels; i++) {
 			cudaMallocGen<P>(&(dev->ROIscores[i]), sizes->scoresElems[i]);
 		}*/
-		cudaMallocGen<P>(&(dev->ROIscores), sizes->ROIscoresVecElems);
+		cudaMallocGen<P>(&(dev->svm.ROIscores), sizes->ROIscoresVecElems);
 
 		sizes->nWeights = getNumOfWeights(path);
 		P *auxWeights = mallocGen<P>(sizes->nWeights);
-		readWeightsModelFile(auxWeights, sizes->nWeights, dev->bias, path);
+		readWeightsModelFile(auxWeights, sizes->nWeights, dev->svm.bias, path);
 
-		initDeviceWeightsModel<P>(&(dev->weightsM), auxWeights, sizes->nWeights);
+		initDeviceWeightsModel<P>(&(dev->svm.weightsM), auxWeights, sizes->nWeights);
 
 		free(auxWeights);
 	}
@@ -41,13 +41,13 @@ public:
 	template<typename T, typename C, typename P>
 	static void initHostSVM(detectorData<T, C, P> *host, dataSizes *sizes, uint pyrLevels, string &path)
 	{
-		host->ROIscores = mallocGen<P>(sizes->ROIscoresVecElems);
+		host->svm.ROIscores = mallocGen<P>(sizes->ROIscoresVecElems);
 
 		sizes->nWeights = getNumOfWeights(path);
 		P *auxWeights = mallocGen<P>(sizes->nWeights);
-		readWeightsModelFile(auxWeights, sizes->nWeights, host->bias, path);
+		readWeightsModelFile(auxWeights, sizes->nWeights, host->svm.bias, path);
 
-		initHostWeightsModel<P>(host->weightsM, auxWeights, sizes->nWeights);
+		initHostWeightsModel<P>(host->svm.weightsM, auxWeights, sizes->nWeights);
 
 		free(auxWeights);
 	}

@@ -170,7 +170,7 @@ int main()
 			detectorF.classification(&detectData, dSizes, i, &blkconfig);
 
 			copyDtoH<roifeat_t>(getOffset<roifeat_t>(ROIfilter.getHostScoresVector(), dSizes->scoresElems, i),
-								getOffset<roifeat_t>(detectData.ROIscores, dSizes->scoresElems, i),
+								getOffset<roifeat_t>(detectData.svm.ROIscores, dSizes->scoresElems, i),
 								dSizes->scoresElems[i]);
 
 //			for (int k = 0; k < dSizes->yROIs[i]; k++) {
@@ -199,10 +199,12 @@ int main()
 		cInitLBP::zerosCellHistogramArray(&(detectData), dSizes);
 
 
-
-		//end = clock();
-		//elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-
+//		end = clock();
+//		elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+//		stringstream fpsStamp;
+//		fpsStamp << elapsed_secs;
+//		cv::putText(*rawImg, fpsStamp.str(), cv::Point(16, 32), CV_FONT_HERSHEY_SIMPLEX, 1.0f, cv::Scalar(0,255,0), 2, 8, false);
+//		fpsStamp.clear();
 		//cout << "FRAME COMPUTED ---- FPS: " << 1/elapsed_secs << endl;
 		//cout << "height: " << acquisition.getCaptureHeight() << "width: " << acquisition.getCaptureWidth() << endl;
 	}
@@ -211,10 +213,10 @@ int main()
 	time_t endT;
 	time(&endT);
 	double seconds = difftime(endT, start);
-	printf("elapsed seconds: %f\n", seconds);
+	//printf("elapsed seconds: %f\n", seconds);
 	//elapsed_secsApp = double(endApp - beginApp) / CLOCKS_PER_SEC;
-	cout << "COMPUTE TIME: " << elapsed_secsApp << " secs | FPS: " << 340 / elapsed_secsApp << endl;
-
+	//cout << "COMPUTE TIME: " << elapsed_secsApp << " secs | FPS: " << 340 / seconds << endl;
+	cout << "FPS : " << 340 / seconds << endl;
 	cudaErrorCheck();
 	return 0;
 }

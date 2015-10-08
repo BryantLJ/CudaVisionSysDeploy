@@ -1,0 +1,103 @@
+##################################################################################
+#   parameters.ini: Parameters file for the VisionSys
+# 
+#   Authors     : David Vazquez (David.Vazquez@cvc.uab.es)
+#                 David Geronimo (dgeronimo@cvc.uab.es)
+#
+#   Created     : Thu Jul 23 16:17:29 2015
+#
+#   Description : It is the default parameters for the INRIA - HOG
+#                 experiment. This file has been automatically created.
+#
+#   TODO        : Check that all the parameters are correct.
+#                 Change the parameters to fit your experiment.
+#                 Use the bellow separator to divide the comments (Optional).
+#
+##################################################################################
+
+#################################################
+#
+#          SECTION: TASKS
+#
+#################################################
+
+[PATH TO FILES]
+	SVM model path=                           weights_model/L1SQRT/weights/model0-64.dat                    # [String value] SVM weights model path (weights_model/L1SQRT/weights/model0-64.dat)
+	Images path=                              ../videosec/%010d.png                         # [String value] Path to input images from disk (images/test.tif)
+
+[IMAGE ADQUISITION]
+	useDiskImgs=                              false                                                          # [True | False] Use image from disk for detection [TRUE, FALSE] (true)
+	useCamera=                                true                                                         # [True | False] Use camera input image for detection [TRUE, FALSE] (false)
+	usePyramid=                               true                                                          # [True | False] Use pyramid to detect through multiple distances [TRUE, FALSE] (true)
+
+[PYRAMID OPTIONS]
+	useHostReescale=                          false                                                         # [True | False] Reescaling process on Host [TRUE, FALSE] (false)
+	useDeviceReescale=                        true                                                          # [True | False] Reescaling process on Device [TRUE, FALSE] (true)
+	pyramidIntervals=                         4                                                             # [uInt value]   Pyramid Intervals to be computed (4)
+	nMaxScales=                               99                                                          # [uInt value]   Maximum pyramid levels (999)
+	imagePaddingX=                            16                                                            # [uInt value]   Image padding to be added (16)
+	imagePaddingY=                            16                                                            # [uInt value]   Image padding to be added (16)
+	minScale=                                 1.000000000                                                   # [Float value]  Minimum scale ... (1.000000000)
+	minRoiMargin=                             16                                                            # [uInt value]   Minimum Roi margin (16)
+
+[FEATURE EXTRACTION]
+	useLBP=                                   true                                                          # [True | False] Feature Extraction method [TRUE, FALSE] (true)
+	useHOG=                                   false                                                         # [True | False] Feature Extraction method [TRUE, FALSE] (false)
+	useHOGLBP=                                false                                                         # [True | False] Feature Extraction method [TRUE, FALSE] (false)
+	useNorm=                                  true                                                          # [True | False] Use normalization [TRUE, FALSE] (true)
+	normType=                                 L1SQRT                                                        # [String value] Normalization formula to use [L1SQRT, L2SQRT] (L1SQRT)
+
+[CLASSIFICATION]
+	useSVM=                                   true                                                          # [True | False] Use Support Vector Machine [TRUE, FALSE] (true)
+	useRF=                                    false                                                         # [True | False] Use Random Forest [TRUE, FALSE] (false)
+	useNMS=                                   true                                                          # [True | False] Use Non Maximum Suppression [TRUE, FALSE] (true)
+
+[CLASSIFICATION OPTIONS]
+	SVMthr=                                   0.3                                               # [Float value]  threshold to use in the SVM classification (0.300000012)
+
+[FEATURE EXTRACTION OPTIONS]
+	useHostFilter=                            false                                                         # [True | False] Compute filter on HOST [TRUE, FALSE] (false)
+	useDeviceFilter=                          true                                                          # [True | False] Compute filter on DEVICE [TRUE, FALSE] (true)
+
+[LBP -> CUDA BLOCK OPTIONS]
+	LBPblockX=                                16                                                            # [uInt value]   Block X dimension of the LBP kernel (16)
+	LBPblockY=                                16                                                            # [uInt value]   Block Y dimension of the LBP kernel (16)
+	LBPblockZ=                                1                                                             # [uInt value]   Block Z dimension of the LBP kernel (0)
+	cellBlockX=                               16                                                            # [uInt value]   Block X dimension of the cell Histograms kernel (256)
+	cellBlockY=                               16                                                            # [uInt value]   Block Y dimension of the cell Histograms kernel (0)
+	cellBlockZ=                               1                                                             # [uInt value]   Block Z dimension of the cell Histograms kernel (0)
+	blockBlockX=                              256                                                           # [uInt value]   Block X dimension of the block Histograms kernel (256)
+	blockBlockY=                              1                                                             # [uInt value]   Block Y dimension of the block Histograms kernel (0)
+	blockBlockZ=                              1                                                             # [uInt value]   Block Z dimension of the block Histograms kernel (0)
+	normBlockX=                               256                                                           # [uInt value]   Block X dimension of the normalization Histograms kernel (256)
+	normBlockY=                               1                                                             # [uInt value]   Block Y dimension of the normalization Histograms kernel (0)
+	normBlockZ=                               1                                                             # [uInt value]   Block Z dimension of the normalization Histograms kernel (0)
+
+[SVM -> CUDA BLOCK OPTIONS]
+	SVMblockX=                                256                                                           # [uInt value]   Block X dimension of the SVM kernel (256)
+	SVMblockY=                                1                                                             # [uInt value]   Block Y dimension of the SVM kernel (0)
+	SVMblockZ=                                1                                                             # [uInt value]   Block Z dimension of the SVM kernel (0)
+
+[RESIZE -> CUDA BLOCK OPTIONS]
+	resizeBlockX=                             16                                                            # [uInt value]   Block X dimension of the resize kernel (16)
+	resizeBlockY=                             16                                                            # [uInt value]   Block Y dimension of the resize kernel (16)
+	resizeBlockZ=                             1                                                             # [uInt value]   Block Z dimension of the resize kernel (0)
+	paddingBlockX=                            16                                                            # [uInt value]   Block X dimension of the makecopyborder kernel (16)
+	paddingBlockY=                            16                                                            # [uInt value]   Block Y dimension of the makecopyborder kernel (16)
+	paddingBlockZ=                            1                                                             # [uInt value]   Block 0 dimension of the makecopyborder kernel (0)
+
+[CUDA DEVICE PREFERENCE]
+	devPreference=                            MAX_SM                                                        # [String value] Preference of the device to be choosed: options(MAX_SM | MAX_ARCH | MAX_GMEM) (MAX_SM)
+
+[REFINEMENT]
+	DistanceMeasure=                          OverlappingTUD                                                # [String value] Function to measure de distance of two Rois. [xys | OverlappingPascal | OverlappingTUD | overlappingPedro] (OverlappingTUD)
+	MeanType=                                 max                                                           # [String value] How to select the cluster representant. [mean | weightedMean | max] (max)
+	MaxDistance=                              0.900000000                                                   # [Float value]  Max distance to consider two windows as the same cluster i.e. OverlappingPascal = 0.5; xys = 16 (0.500000000)
+
+[Accumulative]
+	minClusterSize=                           1                                                             # [Int value]    Discard clusters with less than these examples inside (1)
+
+[PREPROCESS -> CUDA BLOCK OPTIONS]
+	preBlockX=                                16                                                            # [uInt value]   Block X dimension of preprocess kernel (16)
+	preBlockY=                                16                                                            # [uInt value]   Block Y dimension of preprocess kernel (16)
+	preBlockZ=                                1                                                            # [uInt value]   Block Z dimension of preprocess kernel (16)

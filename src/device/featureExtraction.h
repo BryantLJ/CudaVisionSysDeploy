@@ -38,9 +38,9 @@ void deviceLBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, 
 
 	stencilCompute2D<T, CLIPTH> <<<gridLBP, blkSizes->blockLBP>>>
 							(getOffset(data->imgInput, dsizes->imgPixels, layer),
-							getOffset(data->imgDescriptor, dsizes->imgDescElems, layer),
+							getOffset(data->lbp.imgDescriptor, dsizes->imgDescElems, layer),
 							dsizes->imgRows[layer], dsizes->imgCols[layer],
-							data->LBPUmapTable);
+							data->lbp.LBPUmapTable);
 
 //	if (layer == 1) {
 //		uchar* lbp = (uchar*)malloc(dsizes->imgRows[layer] * dsizes->imgCols[layer]);
@@ -64,8 +64,8 @@ void deviceLBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, 
 //	}
 
 	cellHistograms<T, C, HISTOWIDTH, XCELL, YCELL> <<<gridCell, blkSizes->blockCells>>>
-							(getOffset(data->imgDescriptor, dsizes->imgDescElems, layer),
-							 getOffset(data->cellHistos, dsizes->cellHistosElems, layer),
+							(getOffset(data->lbp.imgDescriptor, dsizes->imgDescElems, layer),
+							 getOffset(data->lbp.cellHistos, dsizes->cellHistosElems, layer),
 							 dsizes->yHists[layer], dsizes->xHists[layer],
 							 dsizes->imgCols[layer]);
 
@@ -80,9 +80,9 @@ void deviceLBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, 
 	cudaErrorCheck();
 
 	mergeHistosSIMDaccum<P, HISTOWIDTH> <<<gridBlock, blkSizes->blockBlock>>>
-							(getOffset(data->cellHistos, dsizes->cellHistosElems, layer),
-							 getOffset(data->blockHistos, dsizes->blockHistosElems, layer),
-							 getOffset(data->sumHistos, dsizes->numBlockHistos, layer),
+							(getOffset(data->lbp.cellHistos, dsizes->cellHistosElems, layer),
+							 getOffset(data->lbp.blockHistos, dsizes->blockHistosElems, layer),
+							 getOffset(data->lbp.sumHistos, dsizes->numBlockHistos, layer),
 							 dsizes->xHists[layer], dsizes->yHists[layer]);
 //	if (layer == 0) {
 //		uchar *block = (uchar*)malloc(dsizes->cellHistosElems[layer]);
@@ -95,9 +95,9 @@ void deviceLBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, 
 	cudaErrorCheck();
 
 	mapNormalization<C, P, HISTOWIDTH> <<<gridNorm, blkSizes->blockNorm>>>
-							(getOffset(data->blockHistos, dsizes->blockHistosElems, layer),
-							 getOffset(data->normHistos, dsizes->normHistosElems, layer),
-							 getOffset(data->sumHistos, dsizes->numBlockHistos, layer),
+							(getOffset(data->lbp.blockHistos, dsizes->blockHistosElems, layer),
+							 getOffset(data->lbp.normHistos, dsizes->normHistosElems, layer),
+							 getOffset(data->lbp.sumHistos, dsizes->numBlockHistos, layer),
 							 dsizes->numBlockHistos[layer]);
 
 //	if (layer == 0) {

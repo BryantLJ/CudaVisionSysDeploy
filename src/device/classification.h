@@ -23,10 +23,10 @@ void deviceSVMclassification(detectorData<T, C, P> *data, dataSizes *dsizes, uin
 
 
 	computeROIwarpReadOnly<P, HISTOWIDTH, XWINBLOCKS, YWINBLOCKS> <<<gridSVM, blkSizes->blockSVM>>>
-								(getOffset<P>(data->normHistos, dsizes->normHistosElems, layer),
-								 getOffset<P>(data->ROIscores, dsizes->scoresElems, layer),
-								 data->weightsM,
-								 data->bias,
+								(getOffset<P>(data->lbp.normHistos, dsizes->normHistosElems, layer),
+								 getOffset<P>(data->svm.ROIscores, dsizes->scoresElems, layer),
+								 data->svm.weightsM,
+								 data->svm.bias,
 								 dsizes->scoresElems[layer],
 								 dsizes->xHists[layer]);
 	cudaErrorCheck();
