@@ -169,9 +169,15 @@ int main()
 
 			detectorF.classification(&detectData, dSizes, i, &blkconfig);
 
+<<<<<<< HEAD
 			copyDtoH<roifeat_t>(getOffset<roifeat_t>(ROIfilter.getHostScoresVector(), dSizes->svm.scoresElems, i),
 								getOffset<roifeat_t>(detectData.svm.ROIscores, dSizes->svm.scoresElems, i),
 								dSizes->svm.scoresElems[i]);
+=======
+			copyDtoH<roifeat_t>(getOffset<roifeat_t>(ROIfilter.getHostScoresVector(), dSizes->scoresElems, i),
+								getOffset<roifeat_t>(detectData.svm.ROIscores, dSizes->scoresElems, i),
+								dSizes->scoresElems[i]);
+>>>>>>> a031d05139a98021189e1a1da3acf0b55f984539
 
 //			for (int k = 0; k < dSizes->yROIs[i]; k++) {
 //				for (int b = 0; b < dSizes->xROIs[i]; b++) {
