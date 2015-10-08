@@ -1,9 +1,12 @@
-/*
- * cudaUtils.h
+
+/******************************************************************************
+ * @FILE	cudaUtils.h
+ * @brief	CUDA device memory management functions and device error checking
  *
- *  Created on: Jul 23, 2015
- *      Author: adas
- */
+ * @author	Víctor Campamny	(vcampmany@cvc.uab.es)
+ * @date	Jul 23, 2015
+ *
+ *****************************************************************************/
 
 #ifndef CUDAUTILS_H_
 #define CUDAUTILS_H_

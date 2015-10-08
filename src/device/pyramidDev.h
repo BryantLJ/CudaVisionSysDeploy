@@ -29,45 +29,45 @@ void launchDevicePyramid(detectorData<T, C, P> *data, dataSizes *dsizes, cudaBlo
 	//cudaMemset(data->imgInput, 0, dsizes->imgDescVecElems); // todo: remove when correct padding borders correct
 
 	//todo: fix loop condition to add one pyr level(no reescaling)
-	for (int i = 0; i < min(dsizes->nScalesDown-dsizes->nScalesToSkipDown, dsizes->intervals); i++) {  //todo: ask index to be used
-		int currentIndex = dsizes->nScalesUp + i;
-		int currentScale = dsizes->nScalesToSkipDown + i;
+	for (int i = 0; i < min(dsizes->pyr.nScalesDown - dsizes->pyr.nScalesToSkipDown, dsizes->pyr.intervals); i++) {  //todo: ask index to be used
+		int currentIndex = dsizes->pyr.nScalesUp + i;
+		int currentScale = dsizes->pyr.nScalesToSkipDown + i;
 
 		// Compute grid dimensions
-		gridDim.x = ceil( (float) dsizes->imgCols[i] / blkconf->blockResize.x);
-		gridDim.y = ceil( (float) dsizes->imgRows[i] / blkconf->blockResize.y);
+		gridDim.x = ceil( (float) dsizes->pyr.imgCols[i] / blkconf->blockResize.x);
+		gridDim.y = ceil( (float) dsizes->pyr.imgRows[i] / blkconf->blockResize.y);
 
 		// Block and grid size for Middle Padding
-		int auxLimitMid = ( (dsizes->imgRows[i] - 2 * dsizes->yBorder) * 2);
+		int auxLimitMid = ( (dsizes->pyr.imgRows[i] - 2 * dsizes->pyr.yBorder) * 2);
 		int dimPadMidGrid = ceil(auxLimitMid / blkconf->blockPadding.x) + 1; //todo: entendre perque +1
 
 		// Block and grid size for Upper and Bottom Padding
-		int dimPadUDGrid = ceil( dsizes->imgCols[i]*2 / blkconf->blockPadding.y ) + 1;
+		int dimPadUDGrid = ceil( dsizes->pyr.imgCols[i]*2 / blkconf->blockPadding.y ) + 1;
 
 		//float offset = 0.5f * (1.0f - 1.0f/dsizes->scaleStepVec[i])-1;
 
 		// Reescale the image keeping the space for the padding
 		cudaResizePadding<<<gridDim, blkconf->blockResize>>> (data->rawImgBW,
-															  getOffset<T>(data->imgInput, dsizes->imgPixels, i),
+															  getOffset<T>(data->pyr.imgInput, dsizes->pyr.imgPixels, i),
 															  dsizes->rawCols,
 															  dsizes->rawRows,
-															  dsizes->imgCols[i],
-															  dsizes->imgRows[i],
-															  dsizes->scaleStepVec[i],
-															  0.5f * (1.0f - 1.0f/dsizes->scaleStepVec[i])-1,
-															  dsizes->xBorder,
-															  dsizes->yBorder);
+															  dsizes->pyr.imgCols[i],
+															  dsizes->pyr.imgRows[i],
+															  dsizes->pyr.scaleStepVec[i],
+															  0.5f * (1.0f - 1.0f/dsizes->pyr.scaleStepVec[i])-1,
+															  dsizes->pyr.xBorder,
+															  dsizes->pyr.yBorder);
 
 		// Add padding left and right
-		cudaExtendMiddle<<<dimPadMidGrid, blkconf->blockPadding>>>	(getOffset<T>(data->imgInput, dsizes->imgPixels, i),
-															 	 	 dsizes->imgCols[i], dsizes->imgRows[i],
-															 	 	 dsizes->xBorder, dsizes->yBorder,
+		cudaExtendMiddle<<<dimPadMidGrid, blkconf->blockPadding>>>	(getOffset<T>(data->pyr.imgInput, dsizes->pyr.imgPixels, i),
+															 	 	 dsizes->pyr.imgCols[i], dsizes->pyr.imgRows[i],
+															 	 	 dsizes->pyr.xBorder, dsizes->pyr.yBorder,
 															 	 	 auxLimitMid);
 
 		// Add padding up and down
-		cudaExtendUpDown<<<dimPadUDGrid, blkconf->blockPadding>>>	(getOffset<T>(data->imgInput, dsizes->imgPixels, i),
-															 	 	 dsizes->imgCols[i], dsizes->imgRows[i],
-															 	 	 dsizes->xBorder, dsizes->yBorder);
+		cudaExtendUpDown<<<dimPadUDGrid, blkconf->blockPadding>>>	(getOffset<T>(data->pyr.imgInput, dsizes->pyr.imgPixels, i),
+															 	 	 dsizes->pyr.imgCols[i], dsizes->pyr.imgRows[i],
+															 	 	 dsizes->pyr.xBorder, dsizes->pyr.yBorder);
 
 		//show resized image
 //		char windowName[256];
@@ -102,38 +102,38 @@ void launchDevicePyramid(detectorData<T, C, P> *data, dataSizes *dsizes, cudaBlo
 //		cv::imshow("difference", dif);
 //		cv::waitKey(0);
 
-		for (int j = currentIndex+dsizes->intervals; j < dsizes->pyramidLayers; j += dsizes->intervals) {
+		for (int j = currentIndex+dsizes->pyr.intervals; j < dsizes->pyr.pyramidLayers; j += dsizes->pyr.intervals) {
 
-			gridDim.x = ceil( (float) dsizes->imgCols[j] / blkconf->blockResize.x);
-			gridDim.y = ceil( (float) dsizes->imgRows[j] / blkconf->blockResize.y);
+			gridDim.x = ceil( (float) dsizes->pyr.imgCols[j] / blkconf->blockResize.x);
+			gridDim.y = ceil( (float) dsizes->pyr.imgRows[j] / blkconf->blockResize.y);
 
-			int auxLimitMid = ( (dsizes->imgRows[j] - 2 * dsizes->yBorder) * 2);
+			int auxLimitMid = ( (dsizes->pyr.imgRows[j] - 2 * dsizes->pyr.yBorder) * 2);
 
 			dimPadMidGrid = ceil(auxLimitMid / blkconf->blockPadding.x) + 1;
-			dimPadUDGrid = ceil( dsizes->imgCols[j]*2  / blkconf->blockPadding.y ) + 1;
+			dimPadUDGrid = ceil( dsizes->pyr.imgCols[j]*2  / blkconf->blockPadding.y ) + 1;
 
 			// Reescale the image keeping the space for the padding
-			cudaResizePrevPadding<<<gridDim, blkconf->blockResize>>>	(getOffset<T>(data->imgInput, dsizes->imgPixels, j-dsizes->intervals),
-																		 getOffset<T>(data->imgInput, dsizes->imgPixels, j),
-																		 dsizes->imgCols[j-dsizes->intervals],
-																		 dsizes->imgRows[j-dsizes->intervals],
-																		 dsizes->imgCols[j],
-																		 dsizes->imgRows[j],
+			cudaResizePrevPadding<<<gridDim, blkconf->blockResize>>>	(getOffset<T>(data->pyr.imgInput, dsizes->pyr.imgPixels, j-dsizes->pyr.intervals),
+																		 getOffset<T>(data->pyr.imgInput, dsizes->pyr.imgPixels, j),
+																		 dsizes->pyr.imgCols[j-dsizes->pyr.intervals],
+																		 dsizes->pyr.imgRows[j-dsizes->pyr.intervals],
+																		 dsizes->pyr.imgCols[j],
+																		 dsizes->pyr.imgRows[j],
 																		 0.5f,
 																		 0.5f * (1.0f - 1.0f/0.5f)-1,
-																		 dsizes->xBorder,
-																		 dsizes->yBorder);
+																		 dsizes->pyr.xBorder,
+																		 dsizes->pyr.yBorder);
 
 			// Add padding left and right
-			cudaExtendMiddle<<<dimPadMidGrid, blkconf->blockPadding>>>	(getOffset<T>(data->imgInput, dsizes->imgPixels, j),
-																		 dsizes->imgCols[j], dsizes->imgRows[j],
-																		 dsizes->xBorder, dsizes->yBorder,
+			cudaExtendMiddle<<<dimPadMidGrid, blkconf->blockPadding>>>	(getOffset<T>(data->pyr.imgInput, dsizes->pyr.imgPixels, j),
+																		 dsizes->pyr.imgCols[j], dsizes->pyr.imgRows[j],
+																		 dsizes->pyr.xBorder, dsizes->pyr.yBorder,
 																		 auxLimitMid);
 
 			// Add padding up and down
-			cudaExtendUpDown<<<dimPadUDGrid, blkconf->blockPadding>>>	(getOffset<T>(data->imgInput, dsizes->imgPixels, j),
-																		 dsizes->imgCols[j], dsizes->imgRows[j],
-																		 dsizes->xBorder, dsizes->yBorder);
+			cudaExtendUpDown<<<dimPadUDGrid, blkconf->blockPadding>>>	(getOffset<T>(data->pyr.imgInput, dsizes->pyr.imgPixels, j),
+																		 dsizes->pyr.imgCols[j], dsizes->pyr.imgRows[j],
+																		 dsizes->pyr.xBorder, dsizes->pyr.yBorder);
 
 			// show resized image
 //			sprintf(windowName, "scaled image:%d", j);

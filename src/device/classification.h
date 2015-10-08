@@ -18,17 +18,17 @@ template<typename T, typename C, typename P>
 __forceinline__
 void deviceSVMclassification(detectorData<T, C, P> *data, dataSizes *dsizes, uint layer, cudaBlockConfig *blkSizes)
 {
-	dim3 gridSVM(	ceil((float)(dsizes->scoresElems[layer] * WARPSIZE) / blkSizes->blockSVM.x),
+	dim3 gridSVM(	ceil((float)(dsizes->svm.scoresElems[layer] * WARPSIZE) / blkSizes->blockSVM.x),
 					1, 1);
 
 
 	computeROIwarpReadOnly<P, HISTOWIDTH, XWINBLOCKS, YWINBLOCKS> <<<gridSVM, blkSizes->blockSVM>>>
-								(getOffset<P>(data->normHistos, dsizes->normHistosElems, layer),
-								 getOffset<P>(data->ROIscores, dsizes->scoresElems, layer),
-								 data->weightsM,
-								 data->bias,
-								 dsizes->scoresElems[layer],
-								 dsizes->xHists[layer]);
+								(getOffset<P>(data->lbp.normHistos, dsizes->lbp.normHistosElems, layer),
+								 getOffset<P>(data->svm.ROIscores, dsizes->svm.scoresElems, layer),
+								 data->svm.weightsM,
+								 data->svm.bias,
+								 dsizes->svm.scoresElems[layer],
+								 dsizes->lbp.xHists[layer]);
 	cudaErrorCheck();
 
 }

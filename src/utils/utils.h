@@ -1,9 +1,11 @@
-/*
- * utils.h
+/******************************************************************************
+ * @FILE	utils.h
+ * @brief	Application utils to manage memory and data structures
  *
- *  Created on: Jul 24, 2015
- *      Author: adas
- */
+ * @author	Víctor Campamny	(vcampmany@cvc.uab.es)
+ * @date	Jul 23, 2015
+ *
+ *****************************************************************************/
 
 #ifndef UTILS_H_
 #define UTILS_H_

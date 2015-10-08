@@ -11,44 +11,49 @@
 #include <inttypes.h>
 #include "../common/operators.h"
 
-// HOST detector data structures
 template<typename T, typename C, typename P>
 struct detectorData {
-
 	// Input data
 	T				*rawImg;
 	T				*rawImgBW;
-	//T 				**imgInput;
-	T 				*imgInput;
-	//T 				**imgDescriptor; //TODO: check if descriptor is equal type as input , HOG
-	T 				*imgDescriptor;
 
-	// LBP histograms pointers
-	//C 				**cellHistos;
-	C 				*cellHistos;
-	//C 				**blockHistos;
-	C 				*blockHistos;
+	struct PYR {
+		T 				*imgInput;				// Image pyramid
+	}pyr;
 
-	// Normalized histograms and Scores
-	//P				**sumHistos;
-	P				*sumHistos;
-	//P 				**normHistos;
-	P 				*normHistos;
-	//P 				**ROIscores;
-	P 				*ROIscores;
+	// LBP data structures
+	struct LBP {
+		T 				*imgDescriptor;			// LBP descriptor
+		C 				*cellHistos;			// LBP cell Histograms
+		C 				*blockHistos;			// LBP block Histograms
+		P				*sumHistos;				// sum of the histograms
+		P 				*normHistos;			// normalized Histograms
+		uint8_t 		*LBPUmapTable;			// LBP mapping table
+	}lbp;
 
-	// LBP mapping table
-	uint8_t 		*LBPUmapTable;
+	// HOG data structures
+	struct HOG {
 
-	// SVM weights model
-	P				*weightsM;
-	P				bias;
+	}hog;
+
+	// SVM data structures
+	struct SVM {
+		P 				*ROIscores;				// Scores of each ROI
+		P				*weightsM;				// SVM weights model
+		P				bias;					// SVM bias
+	}svm;
+
+	// Random Forest data structures
+	struct RF {
+
+	}rf;
+
 };
 
 
 struct dataSizes {
 
-	// Vector sizes
+	// Detector data Vector sizes - size of all the layers per image
 	uint			imgPixelsVecElems;
 	uint			imgDescVecElems;
 	uint			cellHistosVecElems;
@@ -63,57 +68,65 @@ struct dataSizes {
 	uint rawSize;
 	uint rawSizeBW;
 
-	// Input properties
-	uint 	*imgCols;
-	uint 	*imgRows;
-	uint 	*imgPixels;
 
-	// Image descriptor - number of elements
-	uint	*imgDescElems;
+	struct PYR {
+		// Input properties
+		uint 	*imgCols;
+		uint 	*imgRows;
+		uint 	*imgPixels;
+		// pyramd config sizes;
+		uint nScalesUp;
+		uint nScalesDown;
+		uint pyramidLayers;
+		uint nScalesToSkipDown;
+		uint intervals;
+		uint xBorder;
+		uint yBorder;
+		// Resize factors
+		float *scaleStepVec;		// scale step vector
+		float *scalesResizeFactor; 	// Resize vector of all the layers
 
-	// LBP lookup table size
-	uint	lutSize;
+	}pyr;
 
-	// LBP number of cell Histograms
-	uint 	*xHists;
-	uint	*yHists;
 
-	// Cell Histograms - number of elements
-	uint	*cellHistosElems;
+	struct LBP {
+		// Image descriptor - number of elements
+		uint	*imgDescElems;
+		// LBP lookup table size
+		uint	lutSize;
+		// LBP number of cell Histograms
+		uint 	*xHists;
+		uint	*yHists;
+		// Cell Histograms - number of elements
+		uint	*cellHistosElems;
+		// Block Histograms - number of elements;
+		uint	*blockHistosElems;
+		// Normalized Histograms - number of elements
+		uint	*numBlockHistos;
+		uint	*normHistosElems;
+	}lbp;
 
-	// Block Histograms - number of elements;
-	uint	*blockHistosElems;
+	struct HOG {
 
-	// Normalized Histograms - number of elements
-	uint	*numBlockHistos;
-	uint	*normHistosElems;
+	}hog;
 
-	// Number of rois to be computed on an image
-	uint 	*xROIs_d;
-	uint 	*yROIs_d;
+	struct SVM {
+		// Number of rois to be computed on an image
+		uint 	*xROIs_d;
+		uint 	*yROIs_d;
+		// Number of ROIS fitting on an image
+		uint 	*xROIs;
+		uint	*yROIs;
+		// Scores vector - number of elements
+		uint	*scoresElems;
+		// SVM weights model
+		uint	nWeights;
+	}svm;
 
-	// Number of ROIS fitting on an image
-	uint 	*xROIs;
-	uint	*yROIs;
+	struct RF {
 
-	// Scores vector - number of elements
-	uint	*scoresElems;
+	}rf;
 
-	// SVM weights model
-	uint	nWeights;
-
-	// pyramd config sizes;
-	uint nScalesUp;
-	uint nScalesDown;
-	uint pyramidLayers;
-	uint nScalesToSkipDown;
-	uint intervals;
-	uint xBorder;
-	uint yBorder;
-
-	// scale step vector
-	float *scaleStepVec;
-	float *scalesResizeFactor;
 
 };
 

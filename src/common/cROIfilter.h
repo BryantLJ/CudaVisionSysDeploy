@@ -33,11 +33,11 @@ public:
 	{
 		int x, y, h, w, xs, ys;
 		//scaleFactor = 2;
-		for (int i = 0; i < m_szs->yROIs[lvl]; i++)
+		for (int i = 0; i < m_szs->svm.yROIs[lvl]; i++)
 		{
-			for (int j = 0; j < m_szs->xROIs[lvl]; j++)
+			for (int j = 0; j < m_szs->svm.xROIs[lvl]; j++)
 			{
-				if (getOffset(m_auxROIvec, m_szs->scoresElems, lvl)[i*m_szs->xROIs_d[lvl] + j] > m_threshold){
+				if (getOffset(m_auxROIvec, m_szs->svm.scoresElems, lvl)[i*m_szs->svm.xROIs_d[lvl] + j] > m_threshold){
 					// Compute coordinates on the original image
 					xs = j * XCELL;
 					ys = i * YCELL;
@@ -48,7 +48,7 @@ public:
 
 					// Create the detection roi
 					CRoi* roi = new CRoi(xs, ys, XWINDIM, YWINDIM, lvl, scaleFactor, x, y, w, h);
-					roi->set_confidence(m_auxROIvec[i*m_szs->xROIs_d[lvl] + j]);
+					roi->set_confidence(m_auxROIvec[i*m_szs->svm.xROIs_d[lvl] + j]);
 					m_hitRois.push_back(roi);
 				}
 			}

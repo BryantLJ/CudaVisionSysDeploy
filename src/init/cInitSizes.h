@@ -29,17 +29,17 @@ private:
 	///////////////////
 	void initIntervalsScaleVector()
 	{
-		m_dsizes.scaleStepVec = mallocGen<float>(m_dsizes.intervals);
+		m_dsizes.pyr.scaleStepVec = mallocGen<float>(m_dsizes.pyr.intervals);
 		int currentScale;
-		for (uint i = 0; i < m_dsizes.intervals; i++) {
-			currentScale = m_dsizes.nScalesToSkipDown + i;
-			m_dsizes.scaleStepVec[i]= 1.0f / pow(m_intervalScaleStep, currentScale);
+		for (uint i = 0; i < m_dsizes.pyr.intervals; i++) {
+			currentScale = m_dsizes.pyr.nScalesToSkipDown + i;
+			m_dsizes.pyr.scaleStepVec[i]= 1.0f / pow(m_intervalScaleStep, currentScale);
 			//cout << "step " << i << ": " << m_dsizes.scaleStepVec[i] << endl;
 		}
 	}
 
-	inline uint computeImgCols(uint baseDimension, float scaleFactor) { return (uint)floor(baseDimension * scaleFactor) + (m_dsizes.xBorder * 2); }
-	inline uint computeImgRows(uint baseDimension, float scaleFactor) { return (uint)floor(baseDimension * scaleFactor) + (m_dsizes.yBorder * 2); }
+	inline uint computeImgCols(uint baseDimension, float scaleFactor) { return (uint)floor(baseDimension * scaleFactor) + (m_dsizes.pyr.xBorder * 2); }
+	inline uint computeImgRows(uint baseDimension, float scaleFactor) { return (uint)floor(baseDimension * scaleFactor) + (m_dsizes.pyr.yBorder * 2); }
 
 	inline uint computeXdescriptors(uint dim) { return dim / XCELL; }
 	inline uint computeYdescriptors(uint dim) { return dim / YCELL; }
@@ -59,57 +59,57 @@ private:
 
 	void computeSizes()
 	{
-		for (uint i = 0; i < min(m_dsizes.nScalesDown-m_dsizes.nScalesToSkipDown, m_dsizes.intervals); i++) {
-			int currentIndex = m_dsizes.nScalesUp + i;
-			int currentScale = m_dsizes.nScalesToSkipDown + i;
+		for (uint i = 0; i < min(m_dsizes.pyr.nScalesDown-m_dsizes.pyr.nScalesToSkipDown, m_dsizes.pyr.intervals); i++) {
+			int currentIndex = m_dsizes.pyr.nScalesUp + i;
+			int currentScale = m_dsizes.pyr.nScalesToSkipDown + i;
 
-			m_dsizes.imgCols[i] = computeImgCols(m_dsizes.rawCols, m_dsizes.scaleStepVec[i]);
-			m_dsizes.imgRows[i] = computeImgRows(m_dsizes.rawRows, m_dsizes.scaleStepVec[i]);
-			m_dsizes.imgPixels[i] = m_dsizes.imgCols[i] * m_dsizes.imgRows[i];
-			m_dsizes.imgDescElems[i] = m_dsizes.imgPixels[i];
+			m_dsizes.pyr.imgCols[i] = computeImgCols(m_dsizes.rawCols, m_dsizes.pyr.scaleStepVec[i]);
+			m_dsizes.pyr.imgRows[i] = computeImgRows(m_dsizes.rawRows, m_dsizes.pyr.scaleStepVec[i]);
+			m_dsizes.pyr.imgPixels[i] = m_dsizes.pyr.imgCols[i] * m_dsizes.pyr.imgRows[i];
+			m_dsizes.lbp.imgDescElems[i] = m_dsizes.pyr.imgPixels[i];
 
-			m_dsizes.xHists[i] = computeXdescriptors(m_dsizes.imgCols[i]);
-			m_dsizes.yHists[i] = computeYdescriptors(m_dsizes.imgRows[i]);
+			m_dsizes.lbp.xHists[i] = computeXdescriptors(m_dsizes.pyr.imgCols[i]);
+			m_dsizes.lbp.yHists[i] = computeYdescriptors(m_dsizes.pyr.imgRows[i]);
 
-			m_dsizes.cellHistosElems[i] =  computeCellHistosElems	(m_dsizes.yHists[i], m_dsizes.xHists[i]);
-			m_dsizes.blockHistosElems[i] = computeBlockHistosElems	(m_dsizes.yHists[i], m_dsizes.xHists[i]);
+			m_dsizes.lbp.cellHistosElems[i] =  computeCellHistosElems	(m_dsizes.lbp.yHists[i], m_dsizes.lbp.xHists[i]);
+			m_dsizes.lbp.blockHistosElems[i] = computeBlockHistosElems	(m_dsizes.lbp.yHists[i], m_dsizes.lbp.xHists[i]);
 
-			m_dsizes.normHistosElems[i] = m_dsizes.blockHistosElems[i];
-			m_dsizes.numBlockHistos[i] = computeHistoSumElems(m_dsizes.xHists[i], m_dsizes.yHists[i]);
+			m_dsizes.lbp.normHistosElems[i] = m_dsizes.lbp.blockHistosElems[i];
+			m_dsizes.lbp.numBlockHistos[i] = computeHistoSumElems(m_dsizes.lbp.xHists[i], m_dsizes.lbp.yHists[i]);
 
-			m_dsizes.xROIs_d[i] = computeXrois_device(m_dsizes.xHists[i]);
-			m_dsizes.yROIs_d[i] = computeYrois_device(m_dsizes.yHists[i]);
-			m_dsizes.scoresElems[i] = computeTotalrois_device(m_dsizes.xROIs_d[i], m_dsizes.yROIs_d[i]);
+			m_dsizes.svm.xROIs_d[i] = computeXrois_device(m_dsizes.lbp.xHists[i]);
+			m_dsizes.svm.yROIs_d[i] = computeYrois_device(m_dsizes.lbp.yHists[i]);
+			m_dsizes.svm.scoresElems[i] = computeTotalrois_device(m_dsizes.svm.xROIs_d[i], m_dsizes.svm.yROIs_d[i]);
 
-			m_dsizes.xROIs[i] = computeXrois(m_dsizes.imgCols[i]);
-			m_dsizes.yROIs[i] = computeYrois(m_dsizes.imgRows[i]);
+			m_dsizes.svm.xROIs[i] = computeXrois(m_dsizes.pyr.imgCols[i]);
+			m_dsizes.svm.yROIs[i] = computeYrois(m_dsizes.pyr.imgRows[i]);
 
-			m_dsizes.scalesResizeFactor[i] = 1.0f / m_dsizes.scaleStepVec[i];
+			m_dsizes.pyr.scalesResizeFactor[i] = 1.0f / m_dsizes.pyr.scaleStepVec[i];
 
-			for (uint j = currentIndex+m_dsizes.intervals; j < m_dsizes.pyramidLayers; j += m_dsizes.intervals) {
+			for (uint j = currentIndex+m_dsizes.pyr.intervals; j < m_dsizes.pyr.pyramidLayers; j += m_dsizes.pyr.intervals) {
 
-				m_dsizes.imgCols[j] = computeImgCols(m_dsizes.imgCols[j-m_dsizes.intervals]-m_dsizes.xBorder*2, INNER_INTERVAL_SCALEFACTOR);
-				m_dsizes.imgRows[j] = computeImgRows(m_dsizes.imgRows[j-m_dsizes.intervals]-m_dsizes.yBorder*2, INNER_INTERVAL_SCALEFACTOR);
-				m_dsizes.imgPixels[j] = m_dsizes.imgCols[j] * m_dsizes.imgRows[j];
-				m_dsizes.imgDescElems[j] = m_dsizes.imgPixels[j];
+				m_dsizes.pyr.imgCols[j] = computeImgCols(m_dsizes.pyr.imgCols[j-m_dsizes.pyr.intervals]-m_dsizes.pyr.xBorder*2, INNER_INTERVAL_SCALEFACTOR);
+				m_dsizes.pyr.imgRows[j] = computeImgRows(m_dsizes.pyr.imgRows[j-m_dsizes.pyr.intervals]-m_dsizes.pyr.yBorder*2, INNER_INTERVAL_SCALEFACTOR);
+				m_dsizes.pyr.imgPixels[j] = m_dsizes.pyr.imgCols[j] * m_dsizes.pyr.imgRows[j];
+				m_dsizes.lbp.imgDescElems[j] = m_dsizes.pyr.imgPixels[j];
 
-				m_dsizes.xHists[j] = computeXdescriptors(m_dsizes.imgCols[j]);
-				m_dsizes.yHists[j] = computeYdescriptors(m_dsizes.imgRows[j]);
+				m_dsizes.lbp.xHists[j] = computeXdescriptors(m_dsizes.pyr.imgCols[j]);
+				m_dsizes.lbp.yHists[j] = computeYdescriptors(m_dsizes.pyr.imgRows[j]);
 
-				m_dsizes.cellHistosElems[j] = computeCellHistosElems(m_dsizes.imgCols[j], m_dsizes.imgRows[j]);
-				m_dsizes.blockHistosElems[j] = computeBlockHistosElems(m_dsizes.imgCols[j], m_dsizes.imgRows[j]);
+				m_dsizes.lbp.cellHistosElems[j] = computeCellHistosElems(m_dsizes.pyr.imgCols[j], m_dsizes.pyr.imgRows[j]);
+				m_dsizes.lbp.blockHistosElems[j] = computeBlockHistosElems(m_dsizes.pyr.imgCols[j], m_dsizes.pyr.imgRows[j]);
 
-				m_dsizes.normHistosElems[j] = m_dsizes.blockHistosElems[j];
-				m_dsizes.numBlockHistos[j] = computeHistoSumElems(m_dsizes.imgCols[j], m_dsizes.imgRows[j]);
+				m_dsizes.lbp.normHistosElems[j] = m_dsizes.lbp.blockHistosElems[j];
+				m_dsizes.lbp.numBlockHistos[j] = computeHistoSumElems(m_dsizes.pyr.imgCols[j], m_dsizes.pyr.imgRows[j]);
 
-				m_dsizes.xROIs_d[j] = computeXrois_device(m_dsizes.xHists[j]);
-				m_dsizes.yROIs_d[j] = computeYrois_device(m_dsizes.yHists[j]);
-				m_dsizes.scoresElems[j] = computeTotalrois_device(m_dsizes.xROIs_d[j], m_dsizes.yROIs_d[j]);
+				m_dsizes.svm.xROIs_d[j] = computeXrois_device(m_dsizes.lbp.xHists[j]);
+				m_dsizes.svm.yROIs_d[j] = computeYrois_device(m_dsizes.lbp.yHists[j]);
+				m_dsizes.svm.scoresElems[j] = computeTotalrois_device(m_dsizes.svm.xROIs_d[j], m_dsizes.svm.yROIs_d[j]);
 
-				m_dsizes.xROIs[j] = computeXrois(m_dsizes.imgCols[j]);
-				m_dsizes.yROIs[j] = computeYrois(m_dsizes.imgRows[j]);
+				m_dsizes.svm.xROIs[j] = computeXrois(m_dsizes.pyr.imgCols[j]);
+				m_dsizes.svm.yROIs[j] = computeYrois(m_dsizes.pyr.imgRows[j]);
 
-				m_dsizes.scalesResizeFactor[j] = pow(m_intervalScaleStep, j);
+				m_dsizes.pyr.scalesResizeFactor[j] = pow(m_intervalScaleStep, j);
 			}
 		}
 	}
@@ -117,20 +117,20 @@ private:
 	uint sumArray(T *vec)
 	{
 		uint sum = 0;
-		for (uint i = 0; i < m_dsizes.pyramidLayers; i++) {
+		for (uint i = 0; i < m_dsizes.pyr.pyramidLayers; i++) {
 			sum += vec[i];
 		}
 		return sum;
 	}
 	void computeArraySizes()
 	{
-		m_dsizes.imgPixelsVecElems 	= 	sumArray(m_dsizes.imgPixels);
-		m_dsizes.imgDescVecElems 	=	sumArray(m_dsizes.imgDescElems);
-		m_dsizes.cellHistosVecElems = 	sumArray(m_dsizes.cellHistosElems);
-		m_dsizes.blockHistosVecElems= 	sumArray(m_dsizes.blockHistosElems);
-		m_dsizes.normHistosVecElems = 	sumArray(m_dsizes.normHistosElems);
-		m_dsizes.sumHistosVecElems 	= 	sumArray(m_dsizes.numBlockHistos);
-		m_dsizes.ROIscoresVecElems 	= 	sumArray(m_dsizes.scoresElems);
+		m_dsizes.imgPixelsVecElems 	= 	sumArray(m_dsizes.pyr.imgPixels);
+		m_dsizes.imgDescVecElems 	=	sumArray(m_dsizes.lbp.imgDescElems);
+		m_dsizes.cellHistosVecElems = 	sumArray(m_dsizes.lbp.cellHistosElems);
+		m_dsizes.blockHistosVecElems= 	sumArray(m_dsizes.lbp.blockHistosElems);
+		m_dsizes.normHistosVecElems = 	sumArray(m_dsizes.lbp.normHistosElems);
+		m_dsizes.sumHistosVecElems 	= 	sumArray(m_dsizes.lbp.numBlockHistos);
+		m_dsizes.ROIscoresVecElems 	= 	sumArray(m_dsizes.svm.scoresElems);
 	}
 
 public:
@@ -145,21 +145,21 @@ public:
 		m_dsizes.rawSizeBW = cols * rows;
 
 		// Set main intervals of the reescale
-		m_dsizes.intervals = params->pyramidIntervals;
+		m_dsizes.pyr.intervals = params->pyramidIntervals;
 
 		// Compute scale step between main Intervals
 		m_intervalScaleStep = pow(2.0f, 1.0f/m_params->pyramidIntervals);
 		m_roiSize = (float)(YWINDIM - m_params->imagePaddingY*2);
 
 		// Compute pyramid layers
-		m_dsizes.nScalesDown = max(1 + (int)floor(log((float)min(cols, rows)/m_roiSize)/log(m_intervalScaleStep)), 1);
-		m_dsizes.nScalesUp = (m_params->minScale < 1) ? (int)-ceil(log(m_params->minScale)/log(m_intervalScaleStep)) : 0;
-		m_dsizes.nScalesToSkipDown = (m_params->minScale >= 1) ?(int) ceil(log(m_params->minScale)/log(m_intervalScaleStep)) : 0;
+		m_dsizes.pyr.nScalesDown = max(1 + (int)floor(log((float)min(cols, rows)/m_roiSize)/log(m_intervalScaleStep)), 1);
+		m_dsizes.pyr.nScalesUp = (m_params->minScale < 1) ? (int)-ceil(log(m_params->minScale)/log(m_intervalScaleStep)) : 0;
+		m_dsizes.pyr.nScalesToSkipDown = (m_params->minScale >= 1) ?(int) ceil(log(m_params->minScale)/log(m_intervalScaleStep)) : 0;
 		//m_dsizes.pyramidLayers = m_dsizes.nScalesDown + m_dsizes.nScalesUp - m_dsizes.nScalesToSkipDown;	//todo check
-		m_dsizes.pyramidLayers = min(m_dsizes.nScalesDown + m_dsizes.nScalesUp - m_dsizes.nScalesToSkipDown, m_params->nMaxScales);
+		m_dsizes.pyr.pyramidLayers = min(m_dsizes.pyr.nScalesDown + m_dsizes.pyr.nScalesUp - m_dsizes.pyr.nScalesToSkipDown, m_params->nMaxScales);
 		// Set the border padding of the image
-		m_dsizes.xBorder = m_params->imagePaddingX;
-		m_dsizes.yBorder = m_params->imagePaddingY;
+		m_dsizes.pyr.xBorder = m_params->imagePaddingX;
+		m_dsizes.pyr.yBorder = m_params->imagePaddingY;
 
 		// Scale ratio of intervals
 		initIntervalsScaleVector();
@@ -168,34 +168,34 @@ public:
 		allocatePtrs();
 
 		// LBP look up table size
-		m_dsizes.lutSize = LBP_LUTSIZE;
+		m_dsizes.lbp.lutSize = LBP_LUTSIZE;
 
-		cout << "Number of scales: " << m_dsizes.pyramidLayers << endl;
+		cout << "Number of scales: " << m_dsizes.pyr.pyramidLayers << endl;
 	}
 	void allocatePtrs()
 	{
-		m_dsizes.imgCols = 			mallocGen<uint>(m_dsizes.pyramidLayers);
-		m_dsizes.imgRows = 			mallocGen<uint>(m_dsizes.pyramidLayers);
-		m_dsizes.imgPixels = 		mallocGen<uint>(m_dsizes.pyramidLayers);
-		m_dsizes.imgDescElems = 	mallocGen<uint>(m_dsizes.pyramidLayers);
+		m_dsizes.pyr.imgCols = 			mallocGen<uint>(m_dsizes.pyr.pyramidLayers);
+		m_dsizes.pyr.imgRows = 			mallocGen<uint>(m_dsizes.pyr.pyramidLayers);
+		m_dsizes.pyr.imgPixels = 		mallocGen<uint>(m_dsizes.pyr.pyramidLayers);
+		m_dsizes.lbp.imgDescElems = 	mallocGen<uint>(m_dsizes.pyr.pyramidLayers);
 
-		m_dsizes.xHists =			mallocGen<uint>(m_dsizes.pyramidLayers);
-		m_dsizes.yHists =			mallocGen<uint>(m_dsizes.pyramidLayers);
-		m_dsizes.cellHistosElems = 	mallocGen<uint>(m_dsizes.pyramidLayers);
+		m_dsizes.lbp.xHists =			mallocGen<uint>(m_dsizes.pyr.pyramidLayers);
+		m_dsizes.lbp.yHists =			mallocGen<uint>(m_dsizes.pyr.pyramidLayers);
+		m_dsizes.lbp.cellHistosElems = 	mallocGen<uint>(m_dsizes.pyr.pyramidLayers);
 
-		m_dsizes.blockHistosElems = mallocGen<uint>(m_dsizes.pyramidLayers);
-		m_dsizes.numBlockHistos =	mallocGen<uint>(m_dsizes.pyramidLayers);
+		m_dsizes.lbp.blockHistosElems = mallocGen<uint>(m_dsizes.pyr.pyramidLayers);
+		m_dsizes.lbp.numBlockHistos =	mallocGen<uint>(m_dsizes.pyr.pyramidLayers);
 
-		m_dsizes.normHistosElems = 	mallocGen<uint>(m_dsizes.pyramidLayers);
+		m_dsizes.lbp.normHistosElems = 	mallocGen<uint>(m_dsizes.pyr.pyramidLayers);
 
-		m_dsizes.xROIs_d = 			mallocGen<uint>(m_dsizes.pyramidLayers);
-		m_dsizes.yROIs_d =			mallocGen<uint>(m_dsizes.pyramidLayers);
-		m_dsizes.xROIs =			mallocGen<uint>(m_dsizes.pyramidLayers);
-		m_dsizes.yROIs = 			mallocGen<uint>(m_dsizes.pyramidLayers);
+		m_dsizes.svm.xROIs_d = 			mallocGen<uint>(m_dsizes.pyr.pyramidLayers);
+		m_dsizes.svm.yROIs_d =			mallocGen<uint>(m_dsizes.pyr.pyramidLayers);
+		m_dsizes.svm.xROIs =			mallocGen<uint>(m_dsizes.pyr.pyramidLayers);
+		m_dsizes.svm.yROIs = 			mallocGen<uint>(m_dsizes.pyr.pyramidLayers);
 
-		m_dsizes.scoresElems = 		mallocGen<uint>(m_dsizes.pyramidLayers);
+		m_dsizes.svm.scoresElems = 		mallocGen<uint>(m_dsizes.pyr.pyramidLayers);
 
-		m_dsizes.scalesResizeFactor = mallocGen<float>(m_dsizes.pyramidLayers);
+		m_dsizes.pyr.scalesResizeFactor = mallocGen<float>(m_dsizes.pyr.pyramidLayers);
 	}
 
 	void initialize()

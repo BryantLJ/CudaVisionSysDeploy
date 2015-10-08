@@ -56,9 +56,9 @@ int main()
 
 	// Initialize Algorithm Data structures
 	detectorData<input_t, desc_t, roifeat_t> detectData;
-	detectorF.initPyramid(&detectData, dSizes, dSizes->pyramidLayers);
-	detectorF.initFeatures(&detectData, dSizes, dSizes->pyramidLayers);
-	detectorF.initClassifi(&detectData, dSizes, dSizes->pyramidLayers, params->pathToSVMmodel);
+	detectorF.initPyramid(&detectData, dSizes, dSizes->pyr.pyramidLayers);
+	detectorF.initFeatures(&detectData, dSizes, dSizes->pyr.pyramidLayers);
+	detectorF.initClassifi(&detectData, dSizes, dSizes->pyr.pyramidLayers, params->pathToSVMmodel);
 
 	// Initialize ROI filtering object
 	cROIfilter<roifeat_t> ROIfilter(params, dSizes);
@@ -112,7 +112,7 @@ int main()
 
 		//////////////////////////////////////////
 		// Compute the filter for each pyramid layer
-		for (uint i = 0; i < dSizes->pyramidLayers; i++) {
+		for (uint i = 0; i < dSizes->pyr.pyramidLayers; i++) {
 			detectorF.featureExtraction(&detectData, dSizes, i, &blkconfig);
 
 //			cv::Mat inp, lbp;
@@ -169,9 +169,9 @@ int main()
 
 			detectorF.classification(&detectData, dSizes, i, &blkconfig);
 
-			copyDtoH<roifeat_t>(getOffset<roifeat_t>(ROIfilter.getHostScoresVector(), dSizes->scoresElems, i),
-								getOffset<roifeat_t>(detectData.ROIscores, dSizes->scoresElems, i),
-								dSizes->scoresElems[i]);
+			copyDtoH<roifeat_t>(getOffset<roifeat_t>(ROIfilter.getHostScoresVector(), dSizes->svm.scoresElems, i),
+								getOffset<roifeat_t>(detectData.svm.ROIscores, dSizes->svm.scoresElems, i),
+								dSizes->svm.scoresElems[i]);
 
 //			for (int k = 0; k < dSizes->yROIs[i]; k++) {
 //				for (int b = 0; b < dSizes->xROIs[i]; b++) {
@@ -184,7 +184,7 @@ int main()
 //					printf( /*" ite: %d - */"SCORE: %d: %f\n"/*, i*/, u, roisHost[u]);
 //				}
 
-			ROIfilter.roisDecision(i, dSizes->scalesResizeFactor[i], dSizes->xBorder, dSizes->yBorder, params->minRoiMargin);
+			ROIfilter.roisDecision(i, dSizes->pyr.scalesResizeFactor[i], dSizes->pyr.xBorder, dSizes->pyr.yBorder, params->minRoiMargin);
 		}
 		refinement.AccRefinement(ROIfilter.getHitROIs());
 		refinement.drawRois(*(acquisition.getFrame()));
@@ -199,10 +199,12 @@ int main()
 		cInitLBP::zerosCellHistogramArray(&(detectData), dSizes);
 
 
-
-		//end = clock();
-		//elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-
+//		end = clock();
+//		elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+//		stringstream fpsStamp;
+//		fpsStamp << elapsed_secs;
+//		cv::putText(*rawImg, fpsStamp.str(), cv::Point(16, 32), CV_FONT_HERSHEY_SIMPLEX, 1.0f, cv::Scalar(0,255,0), 2, 8, false);
+//		fpsStamp.clear();
 		//cout << "FRAME COMPUTED ---- FPS: " << 1/elapsed_secs << endl;
 		//cout << "height: " << acquisition.getCaptureHeight() << "width: " << acquisition.getCaptureWidth() << endl;
 	}
@@ -211,10 +213,10 @@ int main()
 	time_t endT;
 	time(&endT);
 	double seconds = difftime(endT, start);
-	printf("elapsed seconds: %f\n", seconds);
+	//printf("elapsed seconds: %f\n", seconds);
 	//elapsed_secsApp = double(endApp - beginApp) / CLOCKS_PER_SEC;
-	cout << "COMPUTE TIME: " << elapsed_secsApp << " secs | FPS: " << 340 / elapsed_secsApp << endl;
-
+	//cout << "COMPUTE TIME: " << elapsed_secsApp << " secs | FPS: " << 340 / seconds << endl;
+	cout << "FPS : " << 340 / seconds << endl;
 	cudaErrorCheck();
 	return 0;
 }
