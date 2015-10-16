@@ -21,7 +21,7 @@ T L1sqrtNorm(T histoBin, T histoSum)
 	norm = histoSum + (N_EPSILON * NORMTERM);
 
 	// Compute normalized value
-	return sqrt( (float)histoBin / norm );
+	return sqrtf( (float)histoBin / norm );
 }
 
 

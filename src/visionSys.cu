@@ -193,7 +193,7 @@ int main()
 		acquisition.showFrame();
 
 		// Get a new frame
-		rawImg = acquisition.acquireFrameRGB();
+		//rawImg = acquisition.acquireFrameRGB();
 
 		//todo: call reset function / function pointer
 		cInitLBP::zerosCellHistogramArray(&(detectData), dSizes);

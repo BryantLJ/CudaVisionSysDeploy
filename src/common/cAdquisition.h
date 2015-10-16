@@ -8,6 +8,9 @@
 #ifndef CADQUISITION_H_
 #define CADQUISITION_H_
 
+#include "opencv2/opencv.hpp"
+
+
 
 class cAcquisition {
 private:

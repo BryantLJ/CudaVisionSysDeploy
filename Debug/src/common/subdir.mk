@@ -26,8 +26,8 @@ CPP_DEPS += \
 src/common/%.o: ../src/common/%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: NVCC Compiler'
-	/usr/local/cuda-6.5/bin/nvcc -I/usr/local/include/opencv -G -g -O0 -gencode arch=compute_35,code=sm_35  -odir "src/common" -M -o "$(@:%.o=%.d)" "$<"
-	/usr/local/cuda-6.5/bin/nvcc -I/usr/local/include/opencv -G -g -O0 --compile  -x c++ -o  "$@" "$<"
+	/usr/local/cuda-7.5/bin/nvcc -I/usr/local/include/opencv -G -g -O0 -std=c++11 -gencode arch=compute_52,code=sm_52  -odir "src/common" -M -o "$(@:%.o=%.d)" "$<"
+	/usr/local/cuda-7.5/bin/nvcc -I/usr/local/include/opencv -G -g -O0 -std=c++11 --compile  -x c++ -o  "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
