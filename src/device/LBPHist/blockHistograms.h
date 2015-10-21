@@ -8,7 +8,7 @@
 #ifndef BLOCKHISTOGRAMS_H_
 #define BLOCKHISTOGRAMS_H_
 
-#include "operations/simd_functions.h"
+#include "../Operations/simd_functions.h"
 
 
 /*	Merge the 8x8 histograms into 16x16 histograms with 8x8px overlap - each thread merge four 8x8 histograms

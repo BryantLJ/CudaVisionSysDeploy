@@ -6,10 +6,10 @@
 #include "../common/detectorData.h"
 #include "../utils/cudaUtils.cuh"
 
-#include "LBPcompute.h"
-#include "cellHistograms.h"
-#include "blockHistograms.h"
-#include "normHistograms.h"
+#include "LBPHist/LBPcompute.h"
+#include "LBPHist/cellHistograms.h"
+#include "LBPHist/blockHistograms.h"
+#include "LBPHist/normHistograms.h"
 
 template<typename T, typename C, typename P>
 __forceinline__
@@ -102,9 +102,9 @@ void deviceLBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, 
 
 //	if (layer == 0) {
 //		//cout <<"num of histos: " << dsizes->numBlockHistos[layer] << endl;
-//		float *norm = (float*)malloc(dsizes->blockHistosElems[layer]*sizeof(float));
-//		copyDtoH(norm, getOffset(data->normHistos, dsizes->normHistosElems, layer), dsizes->blockHistosElems[layer]);
-//		for (int u = 0; u < dsizes->blockHistosElems[layer]; u++) {
+//		float *norm = (float*)malloc(dsizes->lbp.blockHistosElems[layer]*sizeof(float));
+//		copyDtoH(norm, getOffset(data->lbp.normHistos, dsizes->lbp.normHistosElems, layer), dsizes->lbp.blockHistosElems[layer]);
+//		for (int u = 0; u < dsizes->lbp.blockHistosElems[layer]; u++) {
 //			printf( "norm feature: %d: %f\n", u, norm[u]);
 //		}
 //	}

@@ -4,6 +4,7 @@
 #include "init/cParameters.h"
 #include "init/cInit.h"
 #include "init/cInitSizes.h"
+
 #include "common/detectorData.h"
 #include "common/constants.h"
 #include "common/cAdquisition.h"
@@ -11,9 +12,11 @@
 #include "common/refinementWrapper.h"
 //#include "common/Camera.h"
 //#include "common/IDSCamera.h"
-#include "utils/cudaUtils.cuh"
 
-#include "device/colorTransformation.h"
+#include "utils/cudaUtils.cuh"
+#include "utils/cudaDataHandler.h"
+
+#include "device/ImageProcessing/colorTransformation.h"
 
 /////////////////////////////////////
 // Type definition for the algorithm
@@ -36,13 +39,6 @@ int main()
 	// Initialize Acquisition handler and read image
 	cAcquisition acquisition(params);
 	cv::Mat *rawImg = acquisition.acquireFrameRGB();
-	//cv::Mat *rawImg = acquisition.acquireFrameGrayScale();
-	//cv::Mat *rawImg = acquisition.readSingleImage(params->pathToImgs);
-//	CCamera* camera;
-//	camera = new CIDSCameraStereo("parameters.ini");
-//	camera->Initialize();
-//	camera->RetrieveFrame();
-
 
 	// Initialize dataSizes structure
 	cInitSizes sizesHandler(params, rawImg->rows, rawImg->cols);
@@ -71,6 +67,9 @@ int main()
 	cudaBlockConfig blkconfig = cudaConf.getBlockConfig();
 	cudaConf.printDeviceInfo();
 
+	// Create Device data manager
+	DeviceDataHandler devDataHandler;
+
 	// Allocate RGB and GRAYSCALE raw images
 	init.allocateRawImage<input_t>(&(detectData.rawImg), dSizes->rawSize);  //TODO: add allocation on host
 	init.allocateRawImage<input_t>(&(detectData.rawImgBW), dSizes->rawSizeBW);
@@ -84,7 +83,6 @@ int main()
 	/////////////////////////
 	// Image processing loop
 	/////////////////////////
-	dim3 gridBW( ceil((float)dSizes->rawCols/blkconfig.blockBW.x), ceil((float)dSizes->rawRows/blkconfig.blockBW.y), 1 );
 
 	while (!rawImg->empty())
 	{
@@ -93,8 +91,8 @@ int main()
 		// Copy each frame to device
 		copyHtoD<input_t>(detectData.rawImg, rawImg->data, dSizes->rawSize);
 
-		//todo:call preprocess function
-		RGB2GrayScale<input_t> <<<gridBW, blkconfig.blockBW>>>(detectData.rawImg, detectData.rawImgBW, dSizes->rawRows, dSizes->rawCols);
+		// Input image preprocessing
+		detectorF.preprocess(&detectData, dSizes, &blkconfig);
 
 //		cv::Mat im(dSizes->rawRows, dSizes->rawCols, CV_8UC1);
 //		copyDtoH(im.data, detectData.rawImgBW, dSizes->rawRows*dSizes->rawCols);
@@ -103,15 +101,9 @@ int main()
 
 		// Compute the pyramid
 		detectorF.pyramid(&detectData, dSizes, &blkconfig);
-		//cInitLBP::zerosCellHistogramArray<input_t, desc_t, roifeat_t>(&detectData, dSizes);
 
-//		uchar *img = (uchar*)malloc(dSizes->imgCols[1] * dSizes->imgRows[1]);
-//		copyDtoH(img, getOffset(detectData.imgInput, dSizes->imgPixels, 1), dSizes->imgCols[1] * dSizes->imgRows[1]);
-//		for (int y = 0; y < dSizes->imgCols[1] * dSizes->imgRows[1]; y++)
-//			printf("%d: image pixel: %d\n", y, img[y]);
 
-		//////////////////////////////////////////
-		// Compute the filter for each pyramid layer
+		// Detection algorithm for each pyramid layer
 		for (uint i = 0; i < dSizes->pyr.pyramidLayers; i++) {
 			detectorF.featureExtraction(&detectData, dSizes, i, &blkconfig);
 
@@ -155,15 +147,21 @@ int main()
 //				printf( "cell feature: %d: %d\n", u, cell[u]);
 //			}
 
+			//devDataHandler.displayDeviceData1D<desc_t>(getOffset<desc_t>(detectData.lbp.blockHistos, dSizes->lbp.blockHistosElems, i),
+			//							   	       dSizes->lbp.blockHistosElems[i]);
+
+			//cudaErrorCheck();
+
+
 //			uchar *block = (uchar*)malloc(dSizes->blockHistosElems[i]);
 //			copyDtoH(block, detectData.blockHistos, dSizes->blockHistosElems[i]);
 //			for (int u = 0; u < dSizes->blockHistosElems[i]; u++) {
 //				printf( "BLOCK feature: %d: %d\n", u, block[u]);
 //			}
 
-//			float *norm = (float*) malloc(dSizes->normHistosElems[i] * sizeof(float));
-//			copyDtoH<float>(norm, detectData.normHistos, dSizes->normHistosElems[i]);
-//			for (int u = 0; u < dSizes->normHistosElems[i]; u++) {
+//			float *norm = (float*) malloc(dSizes->lbp.normHistosElems[i] * sizeof(float));
+//			copyDtoH<float>(norm, getOffset(detectData.lbp.normHistos, dSizes->lbp.normHistosElems, i), dSizes->lbp.normHistosElems[i]);
+//			for (int u = 0; u < dSizes->lbp.normHistosElems[i]; u++) {
 //				printf( "NORM feature: %d: %f\n", u, norm[u]);
 //			}
 
@@ -173,13 +171,12 @@ int main()
 								getOffset<roifeat_t>(detectData.svm.ROIscores, dSizes->svm.scoresElems, i),
 								dSizes->svm.scoresElems[i]);
 
-//			for (int k = 0; k < dSizes->yROIs[i]; k++) {
-//				for (int b = 0; b < dSizes->xROIs[i]; b++) {
-//					cout << "layer: "<< i << ": "<< k*dSizes->xROIs[i] + b << ": "
-//						 << getOffset<roifeat_t>(ROIfilter.getHostScoresVector(), dSizes->scoresElems, i)[k*dSizes->xROIs_d[i] + b] << endl;
+//			for (int k = 0; k < dSizes->svm.yROIs[i]; k++) {
+//				for (int b = 0; b < dSizes->svm.xROIs[i]; b++) {
+//					cout << "layer: "<< i << ": "<< k*dSizes->svm.xROIs[i] + b << ": "
+//						 << getOffset<roifeat_t>(ROIfilter.getHostScoresVector(), dSizes->svm.scoresElems, i)[k*dSizes->svm.xROIs_d[i] + b] << endl;
 //				}
 //			}
-//////
 //				for (int u = 0; u < dSizes->scoresElems[i] ; u++) {
 //					printf( /*" ite: %d - */"SCORE: %d: %f\n"/*, i*/, u, roisHost[u]);
 //				}
@@ -193,7 +190,7 @@ int main()
 		acquisition.showFrame();
 
 		// Get a new frame
-		//rawImg = acquisition.acquireFrameRGB();
+		rawImg = acquisition.acquireFrameRGB();
 
 		//todo: call reset function / function pointer
 		cInitLBP::zerosCellHistogramArray(&(detectData), dSizes);
@@ -217,6 +214,7 @@ int main()
 	//elapsed_secsApp = double(endApp - beginApp) / CLOCKS_PER_SEC;
 	//cout << "COMPUTE TIME: " << elapsed_secsApp << " secs | FPS: " << 340 / seconds << endl;
 	cout << "FPS : " << 340 / seconds << endl;
+	cout << "elapsed secs: " << seconds << endl;
 	cudaErrorCheck();
 	return 0;
 }

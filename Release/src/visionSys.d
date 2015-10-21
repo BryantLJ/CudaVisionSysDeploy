@@ -345,22 +345,24 @@ src/visionSys.o : ../src/visionSys.cu \
     ../src/init/../device/../common/parameters.h \
     ../src/init/../device/../common/detectorData.h \
     ../src/init/../device/../utils/cudaUtils.cuh \
-    ../src/init/../device/LBPcompute.h \
-    ../src/init/../device/../common/operators.h \
-    ../src/init/../device/cellHistograms.h \
-    ../src/init/../device/blockHistograms.h \
-    ../src/init/../device/operations/simd_functions.h \
-    ../src/init/../device/normHistograms.h \
-    ../src/init/../device/../common/constants.h \
+    ../src/init/../device/LBPHist/LBPcompute.h \
+    ../src/init/../device/LBPHist/cellHistograms.h \
+    ../src/init/../device/LBPHist/blockHistograms.h \
+    ../src/init/../device/LBPHist/../Operations/simd_functions.h \
+    ../src/init/../device/LBPHist/normHistograms.h \
+    ../src/init/../device/LBPHist/../../common/operators.h \
+    ../src/init/../device/LBPHist/../../common/constants.h \
     ../src/init/../device/classification.h \
-    ../src/init/../device/SVMclassification.h \
-    ../src/init/../device/operations/warpOps.h \
+    ../src/init/../device/SVM/SVMclassification.h \
+    ../src/init/../device/SVM/../Operations/warpOps.h \
     ../src/init/../device/pyramidDev.h \
     /usr/local/include/opencv2/core/core.hpp \
     /usr/local/include/opencv2/imgproc/imgproc.hpp \
     /usr/local/include/opencv2/highgui/highgui.hpp \
-    ../src/init/../device/resize.h \
+    ../src/init/../device/ImageProcessing/resize.h \
     ../src/init/../device/../utils/utils.h \
+    ../src/init/../device/preprocessing.h \
+    ../src/init/../device/ImageProcessing/colorTransformation.h \
     ../src/init/../host/featureExtractionH.h \
     ../src/init/../host/../common/detectorData.h \
     ../src/init/../host/classificationH.h \
@@ -381,4 +383,5 @@ src/visionSys.o : ../src/visionSys.cu \
     ../src/common/MersenneTwister.h \
     ../src/common/RoiCluster.h \
     ../src/utils/cudaUtils.cuh \
-    ../src/device/colorTransformation.h
+    ../src/utils/cudaDataHandler.h \
+    ../src/device/ImageProcessing/colorTransformation.h

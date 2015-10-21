@@ -8,8 +8,8 @@
 #ifndef NORMHISTOGRAMS_H_
 #define NORMHISTOGRAMS_H_
 
-#include "../common/operators.h"
-#include "../common/constants.h"
+#include "../../common/operators.h"
+#include "../../common/constants.h"
 
 template<typename T>
 __device__ __forceinline__

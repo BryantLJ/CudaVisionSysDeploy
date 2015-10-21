@@ -12,7 +12,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-#include "resize.h"
+#include "ImageProcessing/resize.h"
 #include "../common/detectorData.h"
 #include "../utils/cudaUtils.cuh"
 #include "../utils/utils.h"
@@ -25,10 +25,7 @@ void launchDevicePyramid(detectorData<T, C, P> *data, dataSizes *dsizes, cudaBlo
 {
 	dim3 gridDim;
 
-	//cudaMemset(data->imgInput, 0, dsizes->imgDescVecElems); // todo: remove when correct padding borders correct
-
-	//todo: fix loop condition to add one pyr level(no reescaling)
-	for (int i = 0; i < min(dsizes->pyr.nScalesDown - dsizes->pyr.nScalesToSkipDown, dsizes->pyr.intervals); i++) {  //todo: ask index to be used
+	for (int i = 0; i < dsizes->pyr.nIntervalScales; i++) {  //todo: ask index to be used
 		int currentIndex = dsizes->pyr.nScalesUp + i;
 		int currentScale = dsizes->pyr.nScalesToSkipDown + i;
 

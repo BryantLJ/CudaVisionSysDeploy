@@ -107,7 +107,7 @@
 								<option id="nvcc.compiler.cpp11option.1291194049" name="Enable C++11 support (-std=c++11)" superClass="nvcc.compiler.cpp11option" value="true" valueType="boolean"/>
 								<option id="nvcc.compiler.option.lineinfo.1754497257" name="Generate line-number information for device code (-lineinfo)" superClass="nvcc.compiler.option.lineinfo" value="true" valueType="boolean"/>
 								<option id="nvcc.compiler.option.gprof.177544065" name="Generate gprof information (-pg)" superClass="nvcc.compiler.option.gprof" value="true" valueType="boolean"/>
-								<option id="nvcc.compiler.usefastmath.1581370150" superClass="nvcc.compiler.usefastmath" value="true" valueType="boolean"/>
+								<option id="nvcc.compiler.usefastmath.1581370150" name="Make use of fast math library (-use_fast_math)" superClass="nvcc.compiler.usefastmath" value="true" valueType="boolean"/>
 								<inputType id="nvcc.compiler.input.cu.1516167512" superClass="nvcc.compiler.input.cu"/>
 								<inputType id="nvcc.compiler.input.cpp.2125716165" superClass="nvcc.compiler.input.cpp"/>
 								<inputType id="nvcc.compiler.input.c.1355375879" superClass="nvcc.compiler.input.c"/>

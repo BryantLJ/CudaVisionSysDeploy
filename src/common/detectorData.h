@@ -74,16 +74,20 @@ struct dataSizes {
 		uint 	*imgCols;
 		uint 	*imgRows;
 		uint 	*imgPixels;
+
 		// pyramd config sizes;
 		uint nScalesUp;
 		uint nScalesDown;
 		uint pyramidLayers;
 		uint nScalesToSkipDown;
+		uint nMaxScales;
+		uint nIntervalScales;
 		uint intervals;
 		uint xBorder;
 		uint yBorder;
+
 		// Resize factors
-		float *scaleStepVec;		// scale step vector
+		float *scaleStepVec;		// scale step vector of each interval
 		float *scalesResizeFactor; 	// Resize vector of all the layers
 
 	}pyr;
@@ -173,6 +177,7 @@ struct detectorFunctions {
 	void (*initClassifi)(detectorData<T, C, F>*, dataSizes*, uint, string&);
 
 	// Application functions
+	void (*preprocess)(detectorData<T, C, F>*, dataSizes*, cudaBlockConfig*);
 	void (*pyramid)(detectorData<T, C, F>*, dataSizes*, cudaBlockConfig*);
 	void (*featureExtraction)(detectorData<T, C, F>*, dataSizes*, uint, cudaBlockConfig*);
 	void (*classification)(detectorData<T, C, F>*, dataSizes*, uint, cudaBlockConfig*);

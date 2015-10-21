@@ -8,7 +8,7 @@
 #ifndef SVMCLASSIFICATION_H_
 #define SVMCLASSIFICATION_H_
 
-#include "operations/warpOps.h"
+#include "../Operations/warpOps.h"
 
 // Compile function using read only cache, avaliable on 3.5 compute capability or above
 #if __CUDA_ARCH__ >= 350
@@ -61,7 +61,7 @@ void computeROIwarpReadOnly(const T *features, T *outScores, const T *__restrict
 
 	if (warpId < numWins) {
 		// Compute dot product of a slice of the ROI
-		#pragma unroll  //todo: evaluate the speedup of unroll
+		#pragma unroll
 		for (int i = 0; i < yWinBlocks; i++) {
 			#pragma unroll
 			for (int j = 0; j < xWinBlocks; j++) {

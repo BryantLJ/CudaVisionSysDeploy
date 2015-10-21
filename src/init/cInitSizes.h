@@ -144,19 +144,20 @@ public:
 		m_dsizes.rawSize = cols * rows * 3; //todo changethe 3: number of channels
 		m_dsizes.rawSizeBW = cols * rows;
 
-		// Set main intervals of the reescale
-		m_dsizes.pyr.intervals = params->pyramidIntervals;
-
 		// Compute scale step between main Intervals
 		m_intervalScaleStep = pow(2.0f, 1.0f/m_params->pyramidIntervals);
 		m_roiSize = (float)(YWINDIM - m_params->imagePaddingY*2);
 
+		// Set number of intervals of the pyramid
+		m_dsizes.pyr.intervals = params->pyramidIntervals;
 		// Compute pyramid layers
 		m_dsizes.pyr.nScalesDown = max(1 + (int)floor(log((float)min(cols, rows)/m_roiSize)/log(m_intervalScaleStep)), 1);
 		m_dsizes.pyr.nScalesUp = (m_params->minScale < 1) ? (int)-ceil(log(m_params->minScale)/log(m_intervalScaleStep)) : 0;
 		m_dsizes.pyr.nScalesToSkipDown = (m_params->minScale >= 1) ?(int) ceil(log(m_params->minScale)/log(m_intervalScaleStep)) : 0;
-		//m_dsizes.pyramidLayers = m_dsizes.nScalesDown + m_dsizes.nScalesUp - m_dsizes.nScalesToSkipDown;	//todo check
-		m_dsizes.pyr.pyramidLayers = min(m_dsizes.pyr.nScalesDown + m_dsizes.pyr.nScalesUp - m_dsizes.pyr.nScalesToSkipDown, m_params->nMaxScales);
+		m_dsizes.pyr.nMaxScales = m_params->nMaxScales;
+		m_dsizes.pyr.pyramidLayers = min(m_dsizes.pyr.nScalesDown + m_dsizes.pyr.nScalesUp - m_dsizes.pyr.nScalesToSkipDown, m_dsizes.pyr.nMaxScales);
+		m_dsizes.pyr.nIntervalScales = min(min(m_dsizes.pyr.nScalesDown - m_dsizes.pyr.nScalesToSkipDown, m_dsizes.pyr.intervals), m_dsizes.pyr.nMaxScales);
+
 		// Set the border padding of the image
 		m_dsizes.pyr.xBorder = m_params->imagePaddingX;
 		m_dsizes.pyr.yBorder = m_params->imagePaddingY;

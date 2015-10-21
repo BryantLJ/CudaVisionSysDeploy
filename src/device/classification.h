@@ -11,7 +11,7 @@
 #include "../common/parameters.h"
 #include "../common/detectorData.h"
 #include "../utils/cudaUtils.cuh"
-#include "SVMclassification.h"
+#include "SVM/SVMclassification.h"
 
 
 template<typename T, typename C, typename P>

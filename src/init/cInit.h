@@ -30,6 +30,7 @@
 #include "../device/featureExtraction.h"
 #include "../device/classification.h"
 #include "../device/pyramidDev.h"
+#include "../device/preprocessing.h"
 
 // Host detector include
 #include "../host/featureExtractionH.h"
@@ -54,7 +55,7 @@ private:
 	ExecType			m_pyramidCompute;
 
 	bool				m_doReescaling;
-	uint				m_reescalingLevels;
+	//uint				m_reescalingLevels;
 
 public:
 	cInit(parameters *params)
@@ -175,10 +176,12 @@ public:
 		// Initialize data structures for image resizing
 		if (m_doReescaling) {
 			if (m_pyramidCompute == DEVICE) {
+				detectorFuncs.preprocess = &imgPreprocessing;
 				detectorFuncs.initPyramid = &cInitPyramid::initDevicePyramid;
 				detectorFuncs.pyramid = &launchDevicePyramid;
 			}
 			else if (m_pyramidCompute == HOST) {
+				// todo: add preprocessing host
 				detectorFuncs.initPyramid = &cInitPyramid::initHostPyramid;
 				detectorFuncs.pyramid = &launchHostPyramid;
 			}
