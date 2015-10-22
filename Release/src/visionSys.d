@@ -349,6 +349,7 @@ src/visionSys.o : ../src/visionSys.cu \
     ../src/init/../device/LBPHist/cellHistograms.h \
     ../src/init/../device/LBPHist/blockHistograms.h \
     ../src/init/../device/LBPHist/../Operations/simd_functions.h \
+    ../src/init/../device/LBPHist/../Operations/warpOps.h \
     ../src/init/../device/LBPHist/normHistograms.h \
     ../src/init/../device/LBPHist/../../common/operators.h \
     ../src/init/../device/LBPHist/../../common/constants.h \

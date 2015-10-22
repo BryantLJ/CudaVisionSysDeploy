@@ -59,7 +59,7 @@ private:
 
 	void computeSizes()
 	{
-		for (uint i = 0; i < min(m_dsizes.pyr.nScalesDown-m_dsizes.pyr.nScalesToSkipDown, m_dsizes.pyr.intervals); i++) {
+		for (uint i = 0; i < m_dsizes.pyr.nIntervalScales; i++) {
 			int currentIndex = m_dsizes.pyr.nScalesUp + i;
 			int currentScale = m_dsizes.pyr.nScalesToSkipDown + i;
 

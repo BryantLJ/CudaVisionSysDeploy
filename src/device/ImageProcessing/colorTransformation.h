@@ -9,6 +9,21 @@
 #define COLORTRANSFORMATION_H_
 
 
+
+
+template<typename T, typename T1>
+__global__
+void gammaCorrectionGPU(T *image, T1 *sqrtLUT, int rows, int cols)
+{
+	int idx = blockIdx.x * blockDim.x + threadIdx.x;
+	int idy = blockIdx.y * blockDim.y + threadIdx.y;
+
+	if (idx < cols && idy < rows) {
+		image[idy*cols + idx] = sqrtLUT[image[idy*cols + idx]];
+	}
+}
+
+
 template<typename T>
 __global__
 void RGB2GrayScale(T *RGBimage, T *grayScaleImage, uint rows, uint cols)

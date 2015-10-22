@@ -15,13 +15,11 @@ template<typename T>
 __device__ __forceinline__
 T L1sqrtNorm(T histoBin, T histoSum)
 {
-	T norm;
-
 	// Compute normalization term
-	norm = histoSum + (N_EPSILON * NORMTERM);
+	T norm = histoSum + (N_EPSILON * NORMTERM);
 
 	// Compute normalized value
-	return sqrtf( (float)histoBin / norm );
+	return sqrt( (float)histoBin / norm );
 }
 
 
@@ -34,15 +32,15 @@ T L1sqrtNorm(T histoBin, T histoSum)
  *		outputDescs: array where normalized descriptors are stored
  *		nDescs: number of histograms fitting in an image
  */
-template<typename T, typename F/*, typename Op*/, uint HistoWidth>
+template<typename T, typename F/*, typename Op*/, int HistoWidth>
 __global__
-void mapNormalization(T* inHistos, F* outHistos, const F *__restrict__ histoAcc/*, Op NormF*/, const uint nDescs)  //TODO: fix op
+void mapNormalization(T* inHistos, F* outHistos, const F *__restrict__ histoAcc/*, Op NormF*/, const int nDescs)  //TODO: fix op
 {
-	uint idx = blockIdx.x * blockDim.x + threadIdx.x;
+	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 
 	if (idx < nDescs * HistoWidth) {
 		// Apply normalization
-		outHistos[idx] = L1sqrtNorm<F>(inHistos[idx], histoAcc[idx/HistoWidth]); //NormF(inHistos[idx], norm);
+		outHistos[idx] = L1sqrtNorm<F>(inHistos[idx], 256.0f /*histoAcc[idx/HistoWidth]*/); //NormF(inHistos[idx], norm);
 	}
 }
 

@@ -22,7 +22,7 @@
 // Type definition for the algorithm
 /////////////////////////////////////
 typedef uchar 	input_t;
-typedef uchar 	desc_t;
+typedef int 	desc_t;
 typedef float	roifeat_t;
 
 int main()
@@ -101,7 +101,6 @@ int main()
 
 		// Compute the pyramid
 		detectorF.pyramid(&detectData, dSizes, &blkconfig);
-
 
 		// Detection algorithm for each pyramid layer
 		for (uint i = 0; i < dSizes->pyr.pyramidLayers; i++) {

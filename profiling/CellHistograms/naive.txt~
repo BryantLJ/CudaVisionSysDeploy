@@ -1,0 +1,4 @@
+- Memory acces not coalesced
+- Per imatges petites i mitjanes es satura la L2
+- Per imatges grans les dades no caben a cache L2 i va a buscar les dades a Global mem
+- Per imatges petites mitjanes (900x400px) la occupancy es molt baixa 10%, mentre que amb imatges de (1280x853px) aconsegueix una occupancy de 96%
