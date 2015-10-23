@@ -12,8 +12,71 @@
 #include "../utils/utils.h"
 #include "fileInOut/cFileHandle.h"
 
+////////////////////////////////////////////////
+// Define CLASSIFICATION configuration constants
+////////////////////////////////////////////////
+#define XWINDIM				64
+#define YWINDIM				128
+#define XWINBLOCKS			((XWINDIM/XCELL) - 1) // 7
+#define YWINBLOCKS			((YWINDIM/YCELL) - 1) // 15
+#define FILE_OFFSET_LINES	3
+////////////////////////////////////////////////
+
+
 class cInitSVM {
 private:
+
+	static inline uint computeXrois_device(uint colDescs)
+		{ return colDescs; }
+	static inline uint computeYrois_device(uint rowDescs)
+		{ return (rowDescs-1) - (YWINBLOCKS-1); }
+
+	static inline uint computeXrois(uint cols)
+		{ return (cols/XCELL-1) - (XWINBLOCKS-1); }
+	static inline uint computeYrois(uint rows)
+		{ return (rows/YCELL-1) - (YWINBLOCKS-1); }
+
+	static inline uint computeTotalrois_device(uint xrois, uint yrois)
+		{ return (xrois * yrois) - (XWINBLOCKS - 1); }
+
+	static void computeSVMsizes(dataSizes *szs)
+	{
+		for (int i = 0; i < szs->pyr.nIntervalScales; i++) {
+			int currentIndex = szs->pyr.nScalesUp + i;
+
+			szs->svm.xROIs_d[i] = computeXrois_device(szs->lbp.xHists[i]);
+			szs->svm.yROIs_d[i] = computeYrois_device(szs->lbp.yHists[i]);
+			szs->svm.scoresElems[i] = computeTotalrois_device(szs->svm.xROIs_d[i], szs->svm.yROIs_d[i]);
+
+			szs->svm.xROIs[i] = computeXrois(szs->pyr.imgCols[i]);
+			szs->svm.yROIs[i] = computeYrois(szs->pyr.imgRows[i]);
+
+			for (int j = currentIndex+szs->pyr.intervals; j < szs->pyr.pyramidLayers; j += szs->pyr.intervals) {
+
+				szs->svm.xROIs_d[j] = computeXrois_device(szs->lbp.xHists[j]);
+				szs->svm.yROIs_d[j] = computeYrois_device(szs->lbp.yHists[j]);
+				szs->svm.scoresElems[j] = computeTotalrois_device(szs->svm.xROIs_d[j], szs->svm.yROIs_d[j]);
+
+				szs->svm.xROIs[j] = computeXrois(szs->pyr.imgCols[j]);
+				szs->svm.yROIs[j] = computeYrois(szs->pyr.imgRows[j]);
+			}
+		}
+	}
+
+	static void computeSVMvectorSize(dataSizes *szs)
+	{
+		szs->svm.ROIscoresVecElems 	= 	sumArray(szs->svm.scoresElems, szs->pyr.pyramidLayers);
+	}
+
+	static void allocateSVMSizesVector(dataSizes *szs)
+	{
+		szs->svm.xROIs_d = 			mallocGen<uint>(szs->pyr.pyramidLayers);
+		szs->svm.yROIs_d =			mallocGen<uint>(szs->pyr.pyramidLayers);
+		szs->svm.xROIs =			mallocGen<uint>(szs->pyr.pyramidLayers);
+		szs->svm.yROIs = 			mallocGen<uint>(szs->pyr.pyramidLayers);
+		szs->svm.scoresElems = 		mallocGen<uint>(szs->pyr.pyramidLayers);
+	}
+
 public:
 	cInitSVM();
 	template<typename T, typename C, typename P>
@@ -21,18 +84,24 @@ public:
 	{
 		cout << "Init device SVM" << endl;
 
-		/*cudaMallocGen<P>(dev->ROIscores, pyrLevels);
+		// Allocate size vector for SVM classification
+		allocateSVMSizesVector(sizes);
 
-		// Allocate for each layer of the pyramid
-		for (uint i = 0; i < pyrLevels; i++) {
-			cudaMallocGen<P>(&(dev->ROIscores[i]), sizes->scoresElems[i]);
-		}*/
+		// Compute SVM classification sizes
+		computeSVMsizes(sizes);
+
+		// Compute SVM elements through all the pyramid
+		computeSVMvectorSize(sizes);
+
+		// Allocate SVM scores structure
 		cudaMallocGen<P>(&(dev->svm.ROIscores), sizes->svm.ROIscoresVecElems);
 
+		// Allocate and read the weight model
 		sizes->svm.nWeights = getNumOfWeights(path);
 		P *auxWeights = mallocGen<P>(sizes->svm.nWeights);
 		readWeightsModelFile(auxWeights, sizes->svm.nWeights, dev->svm.bias, path);
 
+		// Copy SVM model to device
 		initDeviceWeightsModel<P>(&(dev->svm.weightsM), auxWeights, sizes->svm.nWeights);
 
 		free(auxWeights);

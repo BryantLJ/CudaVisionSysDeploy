@@ -25,7 +25,6 @@ struct detectorData {
 		T 				*imgDescriptor;			// LBP descriptor
 		C 				*cellHistos;			// LBP cell Histograms
 		C 				*blockHistos;			// LBP block Histograms
-		P				*sumHistos;				// sum of the histograms
 		P 				*normHistos;			// normalized Histograms
 		uint8_t 		*LBPUmapTable;			// LBP mapping table
 	}lbp;
@@ -38,7 +37,6 @@ struct detectorData {
 		P				*gOrientation;			// Gradient Orientation matrix
 		P				*HOGdescriptor;			// HOG descriptor of the image
 		P				*gaussianMask;			// Precomputed gaussian mask for HOG block
-
 
 	}hog;
 
@@ -73,7 +71,7 @@ struct dataSizes {
 		uint 		*imgPixels;				// Image pixels of each pyramid layer
 		uint		imgPixelsVecElems;		// Pixels of all the image pyramid
 
-		// pyramid configuration sizes;
+		// pyramid configuration sizes
 		uint 		nScalesUp;				// Number of pyramid upsamples
 		uint 		nScalesDown;			// Number of pyramid downsamples
 		uint 		pyramidLayers;			// Total number of pyramid layers
@@ -85,6 +83,7 @@ struct dataSizes {
 		uint 		yBorder;				// Padding on the Y axis
 
 		// Resize factors
+		float 		intervalScaleStep;		// Compute resampling scale step between Intervals
 		float 		*scaleStepVec;			// scale step vector of each interval
 		float 		*scalesResizeFactor; 	// Resize vector of all the layers
 
@@ -103,16 +102,28 @@ struct dataSizes {
 
 		uint		*blockHistosElems;			// Block Histograms - number of elements for each pyramid layer
 		uint		blockHistosVecElems;		// Elements of the block descriptor through all the pyramid
+		uint		*numBlockHistos;			// Number of block histograms for each pyramid layer
 		uint		normHistosVecElems;			// Elements of the normalized descriptor through all the pyramid
 
-		uint		*numBlockHistos;			// todo: delete
-		uint			sumHistosVecElems;		// todo: delete
+		//uint		sumHistosVecElems;
 
 		uint		*normHistosElems;			// Normalized Histograms - number of elements
 	}lbp;
 
 	struct HOG {
-		//uint		*
+		uint		*matCols;					// Cols of the gradient matrix
+		uint		*matRows;					// Rows of the gradient matrix
+		uint		sqrtLUTsz;					// Range of the square root look up table
+
+		uint		*xCellHists;				// Cell histograms on X axis
+		uint		*yCellHists;				// Cell histograms on Y axis
+		uint		*numCellHists;				// Number of cell histograms computed on device
+		uint		*xBlockHists;				// Block histograms on X axis
+		uint		*yBlockHists;				// Block histograms on Y axis
+		uint		*numblockHist;				// Number of block histograms computed on device
+
+		uint		xGaussMask;					// X dimension of gaussian mask
+		uint		yGaussMask;					// Y dimension of gaussian mask
 
 	}hog;
 

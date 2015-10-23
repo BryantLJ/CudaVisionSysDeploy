@@ -104,7 +104,6 @@ void deviceLBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, 
 	mergeHistogramsSum<C, P, HISTOWIDTH> <<<gridBlock2, blkSizes->blockBlock>>>
 							(getOffset(data->lbp.cellHistos, dsizes->lbp.cellHistosElems, layer),
 							getOffset(data->lbp.blockHistos, dsizes->lbp.blockHistosElems, layer),
-							getOffset(data->lbp.sumHistos, dsizes->lbp.numBlockHistos, layer),
 							dsizes->lbp.xHists[layer],
 							dsizes->lbp.yHists[layer]);
 
@@ -129,7 +128,6 @@ void deviceLBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, 
 	mapNormalization<C, P, HISTOWIDTH> <<<gridNorm, blkSizes->blockNorm>>>
 							(getOffset(data->lbp.blockHistos, dsizes->lbp.blockHistosElems, layer),
 							 getOffset(data->lbp.normHistos, dsizes->lbp.normHistosElems, layer),
-							 getOffset(data->lbp.sumHistos, dsizes->lbp.numBlockHistos, layer),
 							 dsizes->lbp.numBlockHistos[layer]);
 
 //	if (layer == 0) {

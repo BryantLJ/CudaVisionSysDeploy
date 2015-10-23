@@ -13,6 +13,13 @@
 
 #include <iostream>
 
+/////////////////////////
+// Define CUDA constants
+/////////////////////////
+#define WARPSIZE	32
+/////////////////////////
+
+
 void getErrorDescription(cudaError_t err) {
 	if (err > 0) {
 		std::cout << "error code: " << err << " description: " << cudaGetErrorString(err) << std::endl;

@@ -15,27 +15,22 @@
 
 template<typename T, typename T1, int HistoWidth>
 __global__
-void mergeHistogramsSum(T *cellHistograms, T *blockHistograms, T1 *__restrict__ histogramsSum, const int xDescs, const int yDescs)
+void mergeHistogramsSum(T *cellHistograms, T *blockHistograms, const int xDescs, const int yDescs)
 {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
-	int idBlock = idx / HistoWidth;
 	int warpId = idx / WARPSIZE;
 	int warpLane = idx % WARPSIZE;
 	T *pCell = &(cellHistograms[warpId * HistoWidth]);
 	T *pBlock = &(blockHistograms[warpId * HistoWidth]);
-	T sumHisto = 0;
-	T binSum;
 
 	if (idx < xDescs*yDescs*HistoWidth) {
 
 		for (int i = 0; i < HistoWidth; i += WARPSIZE) {
-			binSum = pCell[warpLane + i] +
+			pBlock[warpLane + i] = pCell[warpLane + i] +
 					 pCell[warpLane + HistoWidth + i] +
 			         pCell[warpLane + (xDescs*HistoWidth) + i] +
 			         pCell[warpLane + (xDescs*HistoWidth) + HistoWidth + i];
 
-			//sumHisto += binSum;
-			pBlock[warpLane + i] = binSum;
 		}
 //		warpReductionSum<T1>(sumHisto);
 //		if (warpLane == 0) {

@@ -9,7 +9,14 @@
 #define NORMHISTOGRAMS_H_
 
 #include "../../common/operators.h"
-#include "../../common/constants.h"
+
+/////////////////////////////////
+// Define Normalization constants
+/////////////////////////////////
+#define NORMTERM			59 		// Normalization term - real size of the histogram
+#define N_EPSILON			0.01f
+#define HISTOSUM			256.0f
+/////////////////////////////////
 
 template<typename T>
 __device__ __forceinline__
@@ -34,13 +41,13 @@ T L1sqrtNorm(T histoBin, T histoSum)
  */
 template<typename T, typename F/*, typename Op*/, int HistoWidth>
 __global__
-void mapNormalization(T* inHistos, F* outHistos, const F *__restrict__ histoAcc/*, Op NormF*/, const int nDescs)  //TODO: fix op
+void mapNormalization(T* inHistos, F* outHistos/*, Op NormF*/, const int nDescs)  //TODO: fix op
 {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 
 	if (idx < nDescs * HistoWidth) {
 		// Apply normalization
-		outHistos[idx] = L1sqrtNorm<F>(inHistos[idx], 256.0f /*histoAcc[idx/HistoWidth]*/); //NormF(inHistos[idx], norm);
+		outHistos[idx] = L1sqrtNorm<F>(inHistos[idx], HISTOSUM);
 	}
 }
 

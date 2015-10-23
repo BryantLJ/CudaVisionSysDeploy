@@ -13,6 +13,16 @@
 #include "../common/detectorData.h"
 
 template<typename T>
+int sumArray(T *vec, int size)
+{
+	int sum = 0;
+	for (int i = 0; i < size; i++) {
+		sum += vec[i];
+	}
+	return sum;
+}
+
+template<typename T>
 __forceinline__
 uint preIndexSumArray(T *vec, uint n)
 {

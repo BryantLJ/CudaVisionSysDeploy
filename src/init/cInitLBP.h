@@ -13,9 +13,89 @@
 #include "../utils/utils.h"
 #include "cMapTable.h"
 
+/////////////////////////////////////
+// Define LBP constants
+/////////////////////////////////////
+#define XCELL 			8
+#define YCELL 			8
+#define XBLOCK 			16
+#define YBLOCK 			16
+#define HISTOWIDTH		64
+#define CLIPTH			4
+#define LBP_LUTSIZE		256
+/////////////////////////////////////
+
 class cInitLBP {
 private:
 	uint8_t *m_lut;
+
+	static inline uint computeXdescriptors(uint dim)
+		{ return dim / XCELL; }
+	static inline uint computeYdescriptors(uint dim)
+		{ return dim / YCELL; }
+
+	static inline uint computeCellHistosElems(uint rowDescs, uint colDescs)
+		{ return rowDescs * colDescs * HISTOWIDTH; }
+	static inline uint computeBlockHistosElems(uint rowDescs, uint colDescs)
+		{ return (((rowDescs-1) * colDescs)-1) * HISTOWIDTH; }
+
+	static inline uint computeHistoSumElems(uint rowDescs, uint colDescs)
+		{ return ((rowDescs-1) * colDescs) - 1; }
+
+	static void computeLBPsizes(dataSizes *szs)
+	{
+		for (int i = 0; i < szs->pyr.nIntervalScales; i++) {
+			int currentIndex = szs->pyr.nScalesUp + i;
+			szs->lbp.imgDescElems[i] = szs->pyr.imgPixels[i];
+
+			szs->lbp.xHists[i] = computeXdescriptors(szs->pyr.imgCols[i]);
+			szs->lbp.yHists[i] = computeYdescriptors(szs->pyr.imgRows[i]);
+
+			szs->lbp.cellHistosElems[i] =  computeCellHistosElems	(szs->lbp.yHists[i], szs->lbp.xHists[i]);
+			szs->lbp.blockHistosElems[i] = computeBlockHistosElems	(szs->lbp.yHists[i], szs->lbp.xHists[i]);
+
+			szs->lbp.normHistosElems[i] = szs->lbp.blockHistosElems[i];
+			szs->lbp.numBlockHistos[i] = computeHistoSumElems(szs->lbp.xHists[i], szs->lbp.yHists[i]);
+
+			for (int j = currentIndex+szs->pyr.intervals; j < szs->pyr.pyramidLayers; j += szs->pyr.intervals) {
+				szs->lbp.imgDescElems[j] = szs->pyr.imgPixels[j];
+
+				szs->lbp.xHists[j] = computeXdescriptors(szs->pyr.imgCols[j]);
+				szs->lbp.yHists[j] = computeYdescriptors(szs->pyr.imgRows[j]);
+
+				szs->lbp.cellHistosElems[j] = computeCellHistosElems(szs->pyr.imgCols[j], szs->pyr.imgRows[j]);
+				szs->lbp.blockHistosElems[j] = computeBlockHistosElems(szs->pyr.imgCols[j], szs->pyr.imgRows[j]);
+
+				szs->lbp.normHistosElems[j] = szs->lbp.blockHistosElems[j];
+				szs->lbp.numBlockHistos[j] = computeHistoSumElems(szs->pyr.imgCols[j], szs->pyr.imgRows[j]);
+
+			}
+		}
+	}
+
+	static void computeLBPVectorSize(dataSizes *szs)
+	{
+		szs->lbp.imgDescVecElems 	=	sumArray(szs->lbp.imgDescElems, szs->pyr.pyramidLayers);
+		szs->lbp.cellHistosVecElems = 	sumArray(szs->lbp.cellHistosElems, szs->pyr.pyramidLayers);
+		szs->lbp.blockHistosVecElems= 	sumArray(szs->lbp.blockHistosElems, szs->pyr.pyramidLayers);
+		szs->lbp.normHistosVecElems = 	sumArray(szs->lbp.normHistosElems, szs->pyr.pyramidLayers);
+		//szs->lbp.sumHistosVecElems 	= 	sumArray(szs->lbp.numBlockHistos, szs->pyr.pyramidLayers);
+	}
+
+	static void allocateLBPSizesVector(dataSizes *szs)
+	{
+		szs->lbp.imgDescElems = 	mallocGen<uint>(szs->pyr.pyramidLayers);
+
+		szs->lbp.xHists =			mallocGen<uint>(szs->pyr.pyramidLayers);
+		szs->lbp.yHists =			mallocGen<uint>(szs->pyr.pyramidLayers);
+		szs->lbp.cellHistosElems = 	mallocGen<uint>(szs->pyr.pyramidLayers);
+
+		szs->lbp.blockHistosElems = mallocGen<uint>(szs->pyr.pyramidLayers);
+		szs->lbp.numBlockHistos =	mallocGen<uint>(szs->pyr.pyramidLayers);
+
+		szs->lbp.normHistosElems = 	mallocGen<uint>(szs->pyr.pyramidLayers);
+	}
+
 public:
 	cInitLBP();
 	template<typename T, typename C, typename P>
@@ -23,19 +103,25 @@ public:
 	{
 		cout << "initializing LBP" << endl;
 
+		// LBP look up table size
+		sizes->lbp.lutSize = LBP_LUTSIZE;
+
+		// Allocate size vector for LBP descriptor
+		allocateLBPSizesVector(sizes);
+
+		// Compute LBP descriptor sizes
+		computeLBPsizes(sizes);
+
+		// Compute LBP elements through all the pyramid
+		computeLBPVectorSize(sizes);
+
+		// Allocate LBP data structures
 		cudaMallocGen<T>(&(dev->lbp.imgDescriptor), sizes->lbp.imgDescVecElems);
 
 		cudaMallocGen<C>(&(dev->lbp.cellHistos), sizes->lbp.cellHistosVecElems);
 		cudaSafe(cudaMemset(dev->lbp.cellHistos, 0, sizes->lbp.cellHistosVecElems * sizeof(C)));
 
-//		uchar *cell = (uchar*)malloc(sizes->cellHistosElems[0]);
-//		copyDtoH(cell, dev->cellHistos, sizes->cellHistosElems[0]);
-//		for (int u = 0; u < sizes->cellHistosElems[0]; u++) {
-//			printf( "cell feature: %d: %d\n", u, cell[u]);
-//		}
-
 		cudaMallocGen<C>(&(dev->lbp.blockHistos), sizes->lbp.blockHistosVecElems);
-		cudaMallocGen<P>(&(dev->lbp.sumHistos), sizes->lbp.sumHistosVecElems);
 		cudaMallocGen<P>(&(dev->lbp.normHistos), sizes->lbp.normHistosVecElems);
 
 		// Generate LBP mapping table
@@ -52,7 +138,6 @@ public:
 		memset(host->lbp.cellHistos, 0, sizes->lbp.cellHistosVecElems * sizeof(C));
 
 		host->lbp.blockHistos = mallocGen<C>(sizes->lbp.blockHistosVecElems);
-		host->lbp.sumHistos = mallocGen<P>(sizes->lbp.sumHistosVecElems);
 		host->lbp.normHistos = mallocGen<P>(sizes->lbp.normHistosVecElems);
 
 		// Generate LBP mapping table

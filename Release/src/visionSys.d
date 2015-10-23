@@ -218,7 +218,6 @@ src/visionSys.o : ../src/visionSys.cu \
     /usr/include/x86_64-linux-gnu/bits/unistd.h \
     /usr/include/c++/4.8/ctime \
     ../src/init/../common/parameters.h \
-    ../src/init/../common/constants.h \
     ../src/init/fileInOut/IniFileIO.h \
     ../src/init/fileInOut/Utils.h \
     /usr/include/c++/4.8/algorithm \
@@ -352,7 +351,6 @@ src/visionSys.o : ../src/visionSys.cu \
     ../src/init/../device/LBPHist/../Operations/warpOps.h \
     ../src/init/../device/LBPHist/normHistograms.h \
     ../src/init/../device/LBPHist/../../common/operators.h \
-    ../src/init/../device/LBPHist/../../common/constants.h \
     ../src/init/../device/classification.h \
     ../src/init/../device/SVM/SVMclassification.h \
     ../src/init/../device/SVM/../Operations/warpOps.h \
@@ -371,7 +369,6 @@ src/visionSys.o : ../src/visionSys.cu \
     ../src/init/../host/pyramidHost.h \
     ../src/init/cInitSizes.h \
     ../src/common/detectorData.h \
-    ../src/common/constants.h \
     ../src/common/cAdquisition.h \
     ../src/common/cROIfilter.h \
     ../src/common/Roi.h \

@@ -10,7 +10,6 @@
 
 // Includes
 #include <string>
-#include "constants.h"
 
 using  namespace std;
 
@@ -27,9 +26,9 @@ struct LBPconfig {
 	const uint YBlock;
 	const uint clipTh;
 	LBPconfig() :
-		XCell(XCELL), YCell(YCELL),
-		XBlock(XBLOCK), YBlock(YBLOCK),
-		clipTh(CLIPTH) { }
+		XCell(8), YCell(8),
+		XBlock(16), YBlock(16),
+		clipTh(4) { }
 };
 
 ////////////////////////

@@ -6,7 +6,6 @@
 #include "init/cInitSizes.h"
 
 #include "common/detectorData.h"
-#include "common/constants.h"
 #include "common/cAdquisition.h"
 #include "common/cROIfilter.h"
 #include "common/refinementWrapper.h"
@@ -42,7 +41,7 @@ int main()
 
 	// Initialize dataSizes structure
 	cInitSizes sizesHandler(params, rawImg->rows, rawImg->cols);
-	sizesHandler.initialize();
+	//sizesHandler.initialize();
 	dataSizes *dSizes = sizesHandler.getDsizes();
 
 	// Initialize Algorithm Handler and pointers to functions to initialize algorithm
@@ -167,12 +166,12 @@ int main()
 								getOffset<roifeat_t>(detectData.svm.ROIscores, dSizes->svm.scoresElems, i),
 								dSizes->svm.scoresElems[i]);
 
-//			for (int k = 0; k < dSizes->svm.yROIs[i]; k++) {
-//				for (int b = 0; b < dSizes->svm.xROIs[i]; b++) {
-//					cout << "layer: "<< i << ": "<< k*dSizes->svm.xROIs[i] + b << ": "
-//						 << getOffset<roifeat_t>(ROIfilter.getHostScoresVector(), dSizes->svm.scoresElems, i)[k*dSizes->svm.xROIs_d[i] + b] << endl;
-//				}
-//			}
+			for (int k = 0; k < dSizes->svm.yROIs[i]; k++) {
+				for (int b = 0; b < dSizes->svm.xROIs[i]; b++) {
+					cout << "layer: "<< i << ": "<< k*dSizes->svm.xROIs[i] + b << ": "
+						 << getOffset<roifeat_t>(ROIfilter.getHostScoresVector(), dSizes->svm.scoresElems, i)[k*dSizes->svm.xROIs_d[i] + b] << endl;
+				}
+			}
 //				for (int u = 0; u < dSizes->scoresElems[i] ; u++) {
 //					printf( " ite: %d -"SCORE: %d: %f\n", i, u, roisHost[u]);
 //				}

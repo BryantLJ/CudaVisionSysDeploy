@@ -217,7 +217,6 @@ src/cParameters.o : ../src/init/cParameters.cu \
     /usr/include/x86_64-linux-gnu/bits/unistd.h \
     /usr/include/c++/4.8/ctime \
     ../src/init/../common/parameters.h \
-    ../src/init/../common/constants.h \
     ../src/init/fileInOut/IniFileIO.h \
     ../src/init/fileInOut/Utils.h \
     /usr/include/c++/4.8/algorithm \
