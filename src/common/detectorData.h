@@ -13,9 +13,8 @@
 
 template<typename T, typename C, typename P>
 struct detectorData {
-	// Input data
-	T				*rawImg;
-	T				*rawImgBW;
+	T				*rawImg;					// Raw input image
+	T				*rawImgBW;					// Raw grayscale image
 
 	struct PYR {
 		T 				*imgInput;				// Image pyramid
@@ -33,6 +32,13 @@ struct detectorData {
 
 	// HOG data structures
 	struct HOG {
+		P				*gammaCorrection;		// Gamma corrected image
+		P				*sqrtLUT;				// Look up table with precomputed sqrt() 0 to 255
+		P				*gMagnitude;			// Gradient Magnitude matrix
+		P				*gOrientation;			// Gradient Orientation matrix
+		P				*HOGdescriptor;			// HOG descriptor of the image
+		P				*gaussianMask;			// Precomputed gaussian mask for HOG block
+
 
 	}hog;
 
@@ -53,78 +59,72 @@ struct detectorData {
 
 struct dataSizes {
 
-	// Detector data Vector sizes - size of all the layers per image
-	uint			imgPixelsVecElems;
-	uint			imgDescVecElems;
-	uint			cellHistosVecElems;
-	uint			blockHistosVecElems;
-	uint			sumHistosVecElems;
-	uint			normHistosVecElems;
-	uint			ROIscoresVecElems;
-
 	// Raw image properties
-	uint rawRows;
-	uint rawCols;
-	uint rawSize;
-	uint rawSizeBW;
+	uint 			rawRows;				// Raw input image rows
+	uint 			rawCols;				// Raw input image cols
+	uint 			rawSize;				// Raw input image size in bytes
+	uint 			rawSizeBW;				// Raw grayscale input image size in bytes
 
 
 	struct PYR {
 		// Input properties
-		uint 	*imgCols;
-		uint 	*imgRows;
-		uint 	*imgPixels;
+		uint 		*imgCols;				// Image columns of each pyramid image
+		uint 		*imgRows;				// Image rows of each pyramid image
+		uint 		*imgPixels;				// Image pixels of each pyramid layer
+		uint		imgPixelsVecElems;		// Pixels of all the image pyramid
 
-		// pyramd config sizes;
-		uint nScalesUp;
-		uint nScalesDown;
-		uint pyramidLayers;
-		uint nScalesToSkipDown;
-		uint nMaxScales;
-		uint nIntervalScales;
-		uint intervals;
-		uint xBorder;
-		uint yBorder;
+		// pyramid configuration sizes;
+		uint 		nScalesUp;				// Number of pyramid upsamples
+		uint 		nScalesDown;			// Number of pyramid downsamples
+		uint 		pyramidLayers;			// Total number of pyramid layers
+		uint 		nScalesToSkipDown;		// Number of layers to skip down
+		uint 		nMaxScales;				// Maximum number of scales
+		uint 		nIntervalScales;
+		uint 		intervals;				// Intervals of the pyramid
+		uint 		xBorder;				// Padding on the X axis
+		uint 		yBorder;				// Padding on the Y axis
 
 		// Resize factors
-		float *scaleStepVec;		// scale step vector of each interval
-		float *scalesResizeFactor; 	// Resize vector of all the layers
+		float 		*scaleStepVec;			// scale step vector of each interval
+		float 		*scalesResizeFactor; 	// Resize vector of all the layers
 
 	}pyr;
 
 
 	struct LBP {
-		// Image descriptor - number of elements
-		uint	*imgDescElems;
-		// LBP lookup table size
-		uint	lutSize;
-		// LBP number of cell Histograms
-		uint 	*xHists;
-		uint	*yHists;
-		// Cell Histograms - number of elements
-		uint	*cellHistosElems;
-		// Block Histograms - number of elements;
-		uint	*blockHistosElems;
-		// Normalized Histograms - number of elements
-		uint	*numBlockHistos;
-		uint	*normHistosElems;
+		uint		*imgDescElems;				// Image descriptor - number of elements for each pyramid layer
+		uint		imgDescVecElems;			// Elements of the LBP descriptor through all the pyramid
+		uint		lutSize;					// LBP lookup table size
+
+		uint 		*xHists;					// Number of LBP cell histograms on X axis
+		uint		*yHists;					// Number of LBP cell histograms on Y axis
+		uint		*cellHistosElems;			// Cell Histograms - number of elements for each pyramid layer
+		uint		cellHistosVecElems;			// Elements of the cell descriptor through all the pyramid
+
+		uint		*blockHistosElems;			// Block Histograms - number of elements for each pyramid layer
+		uint		blockHistosVecElems;		// Elements of the block descriptor through all the pyramid
+		uint		normHistosVecElems;			// Elements of the normalized descriptor through all the pyramid
+
+		uint		*numBlockHistos;			// todo: delete
+		uint			sumHistosVecElems;		// todo: delete
+
+		uint		*normHistosElems;			// Normalized Histograms - number of elements
 	}lbp;
 
 	struct HOG {
+		//uint		*
 
 	}hog;
 
 	struct SVM {
-		// Number of rois to be computed on an image
-		uint 	*xROIs_d;
-		uint 	*yROIs_d;
-		// Number of ROIS fitting on an image
-		uint 	*xROIs;
-		uint	*yROIs;
-		// Scores vector - number of elements
-		uint	*scoresElems;
-		// SVM weights model
-		uint	nWeights;
+		uint 		*xROIs_d;					// Number of Windows on X axis computed on device
+		uint 		*yROIs_d;					// Number of Windows on Y axis computed on device
+		uint 		*xROIs;						// Number of fitting windows on X axis
+		uint		*yROIs;						// Number of fitting windows on Y axis
+
+		uint		*scoresElems;				// SVM scores for each window
+		uint		ROIscoresVecElems;			// Elements of the SVM scores through all the pyramid layers
+		uint		nWeights;					// SVM weights model
 	}svm;
 
 	struct RF {
@@ -141,7 +141,7 @@ struct cudaBlockConfig {
 	dim3 blockBW;
 	dim3 gridBW;
 
-	// Resize block config
+	// Resize block configuration
 	dim3 blockResize;
 	dim3 blockPadding;
 

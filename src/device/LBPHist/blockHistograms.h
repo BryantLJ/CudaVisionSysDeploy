@@ -11,7 +11,7 @@
 #include "../Operations/simd_functions.h"
 #include "../Operations/warpOps.h"
 
-
+//todo: remove histogram sum
 
 template<typename T, typename T1, int HistoWidth>
 __global__
@@ -84,13 +84,13 @@ void mergeHistosSIMDaccum(uint8_t *inCellHistos, uint8_t *outBlockHistos, F *__r
 			*((uint*)(outDescPtr+i)) = a = vaddus4(a, b);
 
 			// Accumulation of the histogram values
-			sum += (float)(a & 0xFF);
-			sum += (float)((a >> 8) & 0xFF);
-			sum += (float)((a >> 16) & 0xFF);
-			sum += (float)((a >> 24) & 0xFF);
+//			sum += (float)(a & 0xFF);
+//			sum += (float)((a >> 8) & 0xFF);
+//			sum += (float)((a >> 16) & 0xFF);
+//			sum += (float)((a >> 24) & 0xFF);
 		}
 		// Save histogram accumulation to Global Memory
-		histoAcc[idx] = sum;
+		//histoAcc[idx] = sum;
 	}
 }
 

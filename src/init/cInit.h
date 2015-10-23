@@ -187,7 +187,7 @@ public:
 			}
 		}
 		else {
-			// todo: add code for no reescaling - add function pointer
+
 		}
 
 		return detectorFuncs;

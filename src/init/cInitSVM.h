@@ -27,7 +27,7 @@ public:
 		for (uint i = 0; i < pyrLevels; i++) {
 			cudaMallocGen<P>(&(dev->ROIscores[i]), sizes->scoresElems[i]);
 		}*/
-		cudaMallocGen<P>(&(dev->svm.ROIscores), sizes->ROIscoresVecElems);
+		cudaMallocGen<P>(&(dev->svm.ROIscores), sizes->svm.ROIscoresVecElems);
 
 		sizes->svm.nWeights = getNumOfWeights(path);
 		P *auxWeights = mallocGen<P>(sizes->svm.nWeights);
@@ -41,7 +41,7 @@ public:
 	template<typename T, typename C, typename P>
 	static void initHostSVM(detectorData<T, C, P> *host, dataSizes *sizes, uint pyrLevels, string &path)
 	{
-		host->svm.ROIscores = mallocGen<P>(sizes->ROIscoresVecElems);
+		host->svm.ROIscores = mallocGen<P>(sizes->svm.ROIscoresVecElems);
 
 		sizes->svm.nWeights = getNumOfWeights(path);
 		P *auxWeights = mallocGen<P>(sizes->svm.nWeights);

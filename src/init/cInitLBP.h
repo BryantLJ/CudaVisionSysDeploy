@@ -23,10 +23,10 @@ public:
 	{
 		cout << "initializing LBP" << endl;
 
-		cudaMallocGen<T>(&(dev->lbp.imgDescriptor), sizes->imgDescVecElems);
+		cudaMallocGen<T>(&(dev->lbp.imgDescriptor), sizes->lbp.imgDescVecElems);
 
-		cudaMallocGen<C>(&(dev->lbp.cellHistos), sizes->cellHistosVecElems);
-		cudaSafe(cudaMemset(dev->lbp.cellHistos, 0, sizes->cellHistosVecElems * sizeof(C)));
+		cudaMallocGen<C>(&(dev->lbp.cellHistos), sizes->lbp.cellHistosVecElems);
+		cudaSafe(cudaMemset(dev->lbp.cellHistos, 0, sizes->lbp.cellHistosVecElems * sizeof(C)));
 
 //		uchar *cell = (uchar*)malloc(sizes->cellHistosElems[0]);
 //		copyDtoH(cell, dev->cellHistos, sizes->cellHistosElems[0]);
@@ -34,9 +34,9 @@ public:
 //			printf( "cell feature: %d: %d\n", u, cell[u]);
 //		}
 
-		cudaMallocGen<C>(&(dev->lbp.blockHistos), sizes->blockHistosVecElems);
-		cudaMallocGen<P>(&(dev->lbp.sumHistos), sizes->sumHistosVecElems);
-		cudaMallocGen<P>(&(dev->lbp.normHistos), sizes->normHistosVecElems);
+		cudaMallocGen<C>(&(dev->lbp.blockHistos), sizes->lbp.blockHistosVecElems);
+		cudaMallocGen<P>(&(dev->lbp.sumHistos), sizes->lbp.sumHistosVecElems);
+		cudaMallocGen<P>(&(dev->lbp.normHistos), sizes->lbp.normHistosVecElems);
 
 		// Generate LBP mapping table
 		cMapTable::generateDeviceLut(&(dev->lbp.LBPUmapTable), LBP_LUTSIZE);
@@ -46,14 +46,14 @@ public:
 	static void initHostLBP(detectorData<T, C, P> *host, dataSizes *sizes, uint pyrLevels)
 	{
 		// Allocate memory for descriptors
-		host->lbp.imgDescriptor = mallocGen<T>(sizes->imgDescVecElems);
+		host->lbp.imgDescriptor = mallocGen<T>(sizes->lbp.imgDescVecElems);
 
-		host->lbp.cellHistos = mallocGen<C>(sizes->cellHistosVecElems);
-		memset(host->lbp.cellHistos, 0, sizes->cellHistosVecElems * sizeof(C));
+		host->lbp.cellHistos = mallocGen<C>(sizes->lbp.cellHistosVecElems);
+		memset(host->lbp.cellHistos, 0, sizes->lbp.cellHistosVecElems * sizeof(C));
 
-		host->lbp.blockHistos = mallocGen<C>(sizes->blockHistosVecElems);
-		host->lbp.sumHistos = mallocGen<P>(sizes->sumHistosVecElems);
-		host->lbp.normHistos = mallocGen<P>(sizes->normHistosVecElems);
+		host->lbp.blockHistos = mallocGen<C>(sizes->lbp.blockHistosVecElems);
+		host->lbp.sumHistos = mallocGen<P>(sizes->lbp.sumHistosVecElems);
+		host->lbp.normHistos = mallocGen<P>(sizes->lbp.normHistosVecElems);
 
 		// Generate LBP mapping table
 		cMapTable::generateHostLUT(&(host->lbp.LBPUmapTable), LBP_LUTSIZE);
@@ -63,7 +63,7 @@ public:
 	__forceinline__
 	static void zerosCellHistogramArray(detectorData<T, C, P> *dev, dataSizes *sizes)
 	{
-		cudaMemset(dev->lbp.cellHistos, 0, sizes->cellHistosVecElems * sizeof(C));
+		cudaMemset(dev->lbp.cellHistos, 0, sizes->lbp.cellHistosVecElems * sizeof(C));
 		//todo evaluate asyncronous menmset or no memset(use registers)
 	}
 

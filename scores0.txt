@@ -701,5 +701,3 @@ layer: 0: 699: -1.52788
 layer: 0: 700: -1.52621
 layer: 0: 701: -1.32797
 layer: 0: 702: -0.964253
-FPS : inf
-elapsed secs: 0

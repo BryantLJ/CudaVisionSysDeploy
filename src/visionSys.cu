@@ -149,9 +149,6 @@ int main()
 			//devDataHandler.displayDeviceData1D<desc_t>(getOffset<desc_t>(detectData.lbp.blockHistos, dSizes->lbp.blockHistosElems, i),
 			//							   	       dSizes->lbp.blockHistosElems[i]);
 
-			//cudaErrorCheck();
-
-
 //			uchar *block = (uchar*)malloc(dSizes->blockHistosElems[i]);
 //			copyDtoH(block, detectData.blockHistos, dSizes->blockHistosElems[i]);
 //			for (int u = 0; u < dSizes->blockHistosElems[i]; u++) {
@@ -177,7 +174,7 @@ int main()
 //				}
 //			}
 //				for (int u = 0; u < dSizes->scoresElems[i] ; u++) {
-//					printf( /*" ite: %d - */"SCORE: %d: %f\n"/*, i*/, u, roisHost[u]);
+//					printf( " ite: %d -"SCORE: %d: %f\n", i, u, roisHost[u]);
 //				}
 
 			ROIfilter.roisDecision(i, dSizes->pyr.scalesResizeFactor[i], dSizes->pyr.xBorder, dSizes->pyr.yBorder, params->minRoiMargin);
@@ -194,15 +191,14 @@ int main()
 		//todo: call reset function / function pointer
 		cInitLBP::zerosCellHistogramArray(&(detectData), dSizes);
 
-
 //		end = clock();
 //		elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
 //		stringstream fpsStamp;
 //		fpsStamp << elapsed_secs;
 //		cv::putText(*rawImg, fpsStamp.str(), cv::Point(16, 32), CV_FONT_HERSHEY_SIMPLEX, 1.0f, cv::Scalar(0,255,0), 2, 8, false);
 //		fpsStamp.clear();
-		//cout << "FRAME COMPUTED ---- FPS: " << 1/elapsed_secs << endl;
-		//cout << "height: " << acquisition.getCaptureHeight() << "width: " << acquisition.getCaptureWidth() << endl;
+//		cout << "FRAME COMPUTED ---- FPS: " << 1/elapsed_secs << endl;
+//		cout << "height: " << acquisition.getCaptureHeight() << "width: " << acquisition.getCaptureWidth() << endl;
 	}
 
 	//endApp = clock();

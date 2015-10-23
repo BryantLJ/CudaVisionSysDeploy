@@ -34,7 +34,6 @@ private:
 		for (uint i = 0; i < m_dsizes.pyr.intervals; i++) {
 			currentScale = m_dsizes.pyr.nScalesToSkipDown + i;
 			m_dsizes.pyr.scaleStepVec[i]= 1.0f / pow(m_intervalScaleStep, currentScale);
-			//cout << "step " << i << ": " << m_dsizes.scaleStepVec[i] << endl;
 		}
 	}
 
@@ -124,13 +123,13 @@ private:
 	}
 	void computeArraySizes()
 	{
-		m_dsizes.imgPixelsVecElems 	= 	sumArray(m_dsizes.pyr.imgPixels);
-		m_dsizes.imgDescVecElems 	=	sumArray(m_dsizes.lbp.imgDescElems);
-		m_dsizes.cellHistosVecElems = 	sumArray(m_dsizes.lbp.cellHistosElems);
-		m_dsizes.blockHistosVecElems= 	sumArray(m_dsizes.lbp.blockHistosElems);
-		m_dsizes.normHistosVecElems = 	sumArray(m_dsizes.lbp.normHistosElems);
-		m_dsizes.sumHistosVecElems 	= 	sumArray(m_dsizes.lbp.numBlockHistos);
-		m_dsizes.ROIscoresVecElems 	= 	sumArray(m_dsizes.svm.scoresElems);
+		m_dsizes.pyr.imgPixelsVecElems 	= 	sumArray(m_dsizes.pyr.imgPixels);
+		m_dsizes.lbp.imgDescVecElems 	=	sumArray(m_dsizes.lbp.imgDescElems);
+		m_dsizes.lbp.cellHistosVecElems = 	sumArray(m_dsizes.lbp.cellHistosElems);
+		m_dsizes.lbp.blockHistosVecElems= 	sumArray(m_dsizes.lbp.blockHistosElems);
+		m_dsizes.lbp.normHistosVecElems = 	sumArray(m_dsizes.lbp.normHistosElems);
+		m_dsizes.lbp.sumHistosVecElems 	= 	sumArray(m_dsizes.lbp.numBlockHistos);
+		m_dsizes.svm.ROIscoresVecElems 	= 	sumArray(m_dsizes.svm.scoresElems);
 	}
 
 public:

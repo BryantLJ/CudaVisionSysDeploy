@@ -26,7 +26,7 @@ public:
 	{
 		m_szs = sizes;
 		m_threshold = params->SVMthr;
-		m_auxROIvec = mallocGen<F>(sizes->ROIscoresVecElems);
+		m_auxROIvec = mallocGen<F>(sizes->svm.ROIscoresVecElems);
 	}
 
 	void roisDecision(int lvl, float scaleFactor,const int marginScalesX, const int marginScalesY ,const int minRoiMargin)

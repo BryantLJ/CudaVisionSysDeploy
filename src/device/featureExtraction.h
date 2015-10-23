@@ -132,18 +132,18 @@ void deviceLBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, 
 							 getOffset(data->lbp.sumHistos, dsizes->lbp.numBlockHistos, layer),
 							 dsizes->lbp.numBlockHistos[layer]);
 
-	if (layer == 0) {
-		P *sum = (P*)malloc(dsizes->lbp.numBlockHistos[layer]*sizeof(P));
-		P *norm = (P*)malloc(dsizes->lbp.blockHistosElems[layer]*sizeof(P));
-		copyDtoH(norm, getOffset(data->lbp.normHistos, dsizes->lbp.normHistosElems, layer), dsizes->lbp.normHistosElems[layer]);
-		copyDtoH(sum, getOffset(data->lbp.sumHistos, dsizes->lbp.numBlockHistos, layer), dsizes->lbp.numBlockHistos[layer]);
+//	if (layer == 0) {
+//		P *sum = (P*)malloc(dsizes->lbp.numBlockHistos[layer]*sizeof(P));
+//		P *norm = (P*)malloc(dsizes->lbp.blockHistosElems[layer]*sizeof(P));
+//		copyDtoH(norm, getOffset(data->lbp.normHistos, dsizes->lbp.normHistosElems, layer), dsizes->lbp.normHistosElems[layer]);
+//		copyDtoH(sum, getOffset(data->lbp.sumHistos, dsizes->lbp.numBlockHistos, layer), dsizes->lbp.numBlockHistos[layer]);
 //		for (int u = 0; u < dsizes->lbp.numBlockHistos[layer]; u++) {
 //			printf( "sum histogram: %d: %f\n", u, sum[u]);
 //		}
 //		for (int u = 0; u < dsizes->lbp.blockHistosElems[layer]; u++) {
 //			printf( "norm feature: %d: %f\n", u, norm[u]);
 //		}
-	}
+//	}
 
 
 }
