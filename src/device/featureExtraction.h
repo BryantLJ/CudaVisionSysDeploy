@@ -6,10 +6,15 @@
 #include "../common/detectorData.h"
 #include "../utils/cudaUtils.cuh"
 
+#include "ImageProcessing/colorTransformation.h"
+
 #include "LBPHist/LBPcompute.h"
 #include "LBPHist/cellHistograms.h"
 #include "LBPHist/blockHistograms.h"
 #include "LBPHist/normHistograms.h"
+
+#include "HOG/gradient.h"
+#include "HOG/HOGdescriptor.cuh"
 
 template<typename T, typename C, typename P>
 __forceinline__
@@ -152,6 +157,33 @@ __forceinline__
 void deviceHOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint layer, cudaBlockConfig *blkSizes)
 {
 	cout << "HOG FEATURE EXTRACTION ---------------------------------------------" <<	endl;
+
+
+	gammaCorrection<T, P> <<<1, 16>>>
+			(getOffset(data->pyr.imgInput, dsizes->pyr.imgPixels, layer),
+			 getOffset(data->hog.gammaCorrection, dsizes->hog.matPixels, layer),
+			 data->hog.sqrtLUT,
+			 dsizes->hog.matRows[layer],
+			 dsizes->hog.matCols[layer]);
+
+	imageGradient<P, P, P> <<<1, 16>>>
+			(getOffset(data->hog.gammaCorrection, dsizes->hog.matPixels, layer),
+			 getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
+			 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
+			 dsizes->hog.matRows[layer],
+			 dsizes->hog.matCols[layer]);
+
+	computeHOGdescriptor<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<1, 16>>>
+			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
+			 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
+			 getOffset(data->hog.HOGdescriptor, dsizes->hog.blockDescElems, layer),
+			 data->hog.gaussianMask,
+			 dsizes->hog.xBlockHists[layer],
+			 dsizes->hog.yBlockHists[layer],
+			 dsizes->hog.matCols[layer],
+			 dsizes->hog.numblockHist[layer]);
+
+
 
 }
 

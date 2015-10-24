@@ -13,13 +13,14 @@
 
 template<typename T, typename T1>
 __global__
-void gammaCorrectionGPU(T *image, T1 *sqrtLUT, int rows, int cols)
+void gammaCorrection(T *image, T1 *imageOut, const T1 *__restrict__ sqrtLUT, int rows, int cols)
 {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	int idy = blockIdx.y * blockDim.y + threadIdx.y;
+	int id = idy*cols + idx;
 
 	if (idx < cols && idy < rows) {
-		image[idy*cols + idx] = sqrtLUT[image[idy*cols + idx]];
+		imageOut[id] = __ldg( &(sqrtLUT[image[id]]) );
 	}
 }
 

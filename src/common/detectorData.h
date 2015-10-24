@@ -104,7 +104,6 @@ struct dataSizes {
 		uint		blockHistosVecElems;		// Elements of the block descriptor through all the pyramid
 		uint		*numBlockHistos;			// Number of block histograms for each pyramid layer
 		uint		normHistosVecElems;			// Elements of the normalized descriptor through all the pyramid
-
 		//uint		sumHistosVecElems;
 
 		uint		*normHistosElems;			// Normalized Histograms - number of elements
@@ -113,14 +112,21 @@ struct dataSizes {
 	struct HOG {
 		uint		*matCols;					// Cols of the gradient matrix
 		uint		*matRows;					// Rows of the gradient matrix
+		uint		*matPixels;					// number of pixels for each pyramid layer
+		uint		matPixVecElems;				// Elements of the matrix vector through all the pyramid
 		uint		sqrtLUTsz;					// Range of the square root look up table
 
 		uint		*xCellHists;				// Cell histograms on X axis
 		uint		*yCellHists;				// Cell histograms on Y axis
 		uint		*numCellHists;				// Number of cell histograms computed on device
+		uint		*cellDescElems;				// Elements of the cell descriptor for each pyramid layer
+		uint		cellHistsVecElems;			// Elements of cell descriptors array through all the pyramid layers
+
 		uint		*xBlockHists;				// Block histograms on X axis
 		uint		*yBlockHists;				// Block histograms on Y axis
 		uint		*numblockHist;				// Number of block histograms computed on device
+		uint		*blockDescElems;			// Elements of the block descriptor for each pyramid layer
+		uint		blockHistsVecElems;			// Elements of block descriptors through all pyramid layers
 
 		uint		xGaussMask;					// X dimension of gaussian mask
 		uint		yGaussMask;					// Y dimension of gaussian mask
