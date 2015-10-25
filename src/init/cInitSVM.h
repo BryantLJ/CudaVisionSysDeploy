@@ -44,8 +44,10 @@ private:
 		for (int i = 0; i < szs->pyr.nIntervalScales; i++) {
 			int currentIndex = szs->pyr.nScalesUp + i;
 
-			szs->svm.xROIs_d[i] = computeXrois_device(szs->lbp.xHists[i]);
-			szs->svm.yROIs_d[i] = computeYrois_device(szs->lbp.yHists[i]);
+			//szs->svm.xROIs_d[i] = computeXrois_device(szs->lbp.xHists[i]);
+			szs->svm.xROIs_d[i] = computeXrois_device(szs->hog.xBlockHists[i]);
+			//szs->svm.yROIs_d[i] = computeYrois_device(szs->lbp.yHists[i]);
+			szs->svm.yROIs_d[i] = computeYrois_device(szs->hog.yBlockHists[i]);
 			szs->svm.scoresElems[i] = computeTotalrois_device(szs->svm.xROIs_d[i], szs->svm.yROIs_d[i]);
 
 			szs->svm.xROIs[i] = computeXrois(szs->pyr.imgCols[i]);
@@ -53,8 +55,10 @@ private:
 
 			for (int j = currentIndex+szs->pyr.intervals; j < szs->pyr.pyramidLayers; j += szs->pyr.intervals) {
 
-				szs->svm.xROIs_d[j] = computeXrois_device(szs->lbp.xHists[j]);
-				szs->svm.yROIs_d[j] = computeYrois_device(szs->lbp.yHists[j]);
+				//szs->svm.xROIs_d[j] = computeXrois_device(szs->lbp.xHists[j]);
+				szs->svm.xROIs_d[j] = computeXrois_device(szs->hog.xBlockHists[j]);
+				//szs->svm.yROIs_d[j] = computeYrois_device(szs->lbp.yHists[j]);
+				szs->svm.yROIs_d[j] = computeYrois_device(szs->hog.yBlockHists[j]);
 				szs->svm.scoresElems[j] = computeTotalrois_device(szs->svm.xROIs_d[j], szs->svm.yROIs_d[j]);
 
 				szs->svm.xROIs[j] = computeXrois(szs->pyr.imgCols[j]);

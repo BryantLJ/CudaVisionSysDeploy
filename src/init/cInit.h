@@ -88,9 +88,6 @@ public:
 		if (m_params->useSVM) m_classifType = SVM;
 		else if (m_params->useRF) m_classifType = RF;
 
-//		cout << "Algorithms:" << endl;
-//		cout << "\t Feature Extraction: " << m_featExtraction << endl;
-//		cout << "\t Classification: "	<< m_classifType << endl;
 	}
 
 	template<typename T, typename C, typename F>

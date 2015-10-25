@@ -156,7 +156,7 @@ template<typename T, typename C, typename P>
 __forceinline__
 void deviceHOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint layer, cudaBlockConfig *blkSizes)
 {
-	cout << "HOG FEATURE EXTRACTION ---------------------------------------------" <<	endl;
+	cout << "HOG FEATURE EXTRACTION" <<	endl;
 
 
 	gammaCorrection<T, P> <<<1, 16>>>
@@ -166,12 +166,16 @@ void deviceHOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, 
 			 dsizes->hog.matRows[layer],
 			 dsizes->hog.matCols[layer]);
 
+	cudaErrorCheck(__LINE__, __FILE__);
+
 	imageGradient<P, P, P> <<<1, 16>>>
 			(getOffset(data->hog.gammaCorrection, dsizes->hog.matPixels, layer),
 			 getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
 			 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
 			 dsizes->hog.matRows[layer],
 			 dsizes->hog.matCols[layer]);
+
+	cudaErrorCheck(__LINE__, __FILE__);
 
 	computeHOGdescriptor<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<1, 16>>>
 			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
@@ -183,7 +187,8 @@ void deviceHOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, 
 			 dsizes->hog.matCols[layer],
 			 dsizes->hog.numblockHist[layer]);
 
-
+	cudaErrorCheck(__LINE__, __FILE__);
+	//cout << "reched" << endl;
 
 }
 

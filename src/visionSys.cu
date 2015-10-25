@@ -82,7 +82,6 @@ int main()
 	/////////////////////////
 	// Image processing loop
 	/////////////////////////
-
 	while (!rawImg->empty())
 	{
 		//begin = clock();

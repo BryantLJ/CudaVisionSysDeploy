@@ -25,7 +25,7 @@ struct detectorData {
 		T 				*imgDescriptor;			// LBP descriptor
 		C 				*cellHistos;			// LBP cell Histograms
 		C 				*blockHistos;			// LBP block Histograms
-		P 				*normHistos;			// normalized Histograms
+		//P 				*normHistos;			// normalized Histograms
 		uint8_t 		*LBPUmapTable;			// LBP mapping table
 	}lbp;
 
@@ -42,6 +42,7 @@ struct detectorData {
 
 	// SVM data structures
 	struct SVM {
+		P				*features;				// Input features for the classification
 		P 				*ROIscores;				// Scores of each ROI
 		P				*weightsM;				// SVM weights model
 		P				bias;					// SVM bias
@@ -134,6 +135,9 @@ struct dataSizes {
 	}hog;
 
 	struct SVM {
+		uint		*numBlockFeatures;			// NUmber of blocks in each pyramid layer
+		uint		blockFeaturesVecElems;		// Number of block through all the pyramid layers
+
 		uint 		*xROIs_d;					// Number of Windows on X axis computed on device
 		uint 		*yROIs_d;					// Number of Windows on Y axis computed on device
 		uint 		*xROIs;						// Number of fitting windows on X axis

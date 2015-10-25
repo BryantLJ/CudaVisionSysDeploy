@@ -31,6 +31,13 @@ void cudaErrorCheck() {
 		std::cout << "error code: " << err << " description: " << cudaGetErrorString(err) << std::endl;
 	}
 }
+
+void cudaErrorCheck(int line, string file) {
+	cudaError_t err = cudaGetLastError();
+	if (err > 0) {
+		std::cout << "error code: " << err << " description: " << cudaGetErrorString(err) << " at line: " << line << " file: "<< file << std::endl;
+	}
+}
 __forceinline__
 cudaError_t cudaSafe(cudaError_t err)
 {

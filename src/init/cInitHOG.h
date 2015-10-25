@@ -175,13 +175,14 @@ public:
 		PrecomputeGaussian(h_gaussMask, sizes->hog.xGaussMask);
 		cudaMallocGen(&(dev->hog.gaussianMask), sizes->hog.xGaussMask * sizes->hog.yGaussMask);
 		copyHtoD(dev->hog.gaussianMask, h_gaussMask, sizes->hog.xGaussMask * sizes->hog.yGaussMask);
+		free(h_gaussMask);
 
 		// Create Square Root table
 		P *h_sqrtLUT = mallocGen<P>(SQRT_LUT);
 		PrecomputeSqrtLUT(h_sqrtLUT, SQRT_LUT);
 		cudaMallocGen(&(dev->hog.sqrtLUT), SQRT_LUT);
 		copyHtoD(dev->hog.sqrtLUT, h_sqrtLUT, SQRT_LUT);
-
+		free(h_sqrtLUT);
 
 	}
 

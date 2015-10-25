@@ -29,7 +29,7 @@ void deviceSVMclassification(detectorData<T, C, P> *data, dataSizes *dsizes, uin
 								 data->svm.bias,
 								 dsizes->svm.scoresElems[layer],
 								 dsizes->lbp.xHists[layer]);
-	cudaErrorCheck();
+	cudaErrorCheck(__LINE__, __FILE__);
 
 }
 
