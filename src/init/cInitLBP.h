@@ -54,7 +54,7 @@ private:
 			szs->lbp.cellHistosElems[i] =  computeCellHistosElems	(szs->lbp.yHists[i], szs->lbp.xHists[i]);
 			szs->lbp.blockHistosElems[i] = computeBlockHistosElems	(szs->lbp.yHists[i], szs->lbp.xHists[i]);
 
-			szs->lbp.normHistosElems[i] = szs->lbp.blockHistosElems[i];
+			szs->features.numFeaturesElems[i] = szs->lbp.blockHistosElems[i];
 			szs->lbp.numBlockHistos[i] = computeHistoSumElems(szs->lbp.xHists[i], szs->lbp.yHists[i]);
 
 			for (int j = currentIndex+szs->pyr.intervals; j < szs->pyr.pyramidLayers; j += szs->pyr.intervals) {
@@ -66,7 +66,7 @@ private:
 				szs->lbp.cellHistosElems[j] = computeCellHistosElems(szs->pyr.imgCols[j], szs->pyr.imgRows[j]);
 				szs->lbp.blockHistosElems[j] = computeBlockHistosElems(szs->pyr.imgCols[j], szs->pyr.imgRows[j]);
 
-				szs->lbp.normHistosElems[j] = szs->lbp.blockHistosElems[j];
+				szs->features.numFeaturesElems[j] = szs->lbp.blockHistosElems[j];
 				szs->lbp.numBlockHistos[j] = computeHistoSumElems(szs->pyr.imgCols[j], szs->pyr.imgRows[j]);
 
 			}
@@ -75,10 +75,10 @@ private:
 
 	static void computeLBPVectorSize(dataSizes *szs)
 	{
-		szs->lbp.imgDescVecElems 	=	sumArray(szs->lbp.imgDescElems, szs->pyr.pyramidLayers);
-		szs->lbp.cellHistosVecElems = 	sumArray(szs->lbp.cellHistosElems, szs->pyr.pyramidLayers);
-		szs->lbp.blockHistosVecElems= 	sumArray(szs->lbp.blockHistosElems, szs->pyr.pyramidLayers);
-		szs->lbp.normHistosVecElems = 	sumArray(szs->lbp.normHistosElems, szs->pyr.pyramidLayers);
+		szs->lbp.imgDescVecElems 	=		sumArray(szs->lbp.imgDescElems, szs->pyr.pyramidLayers);
+		szs->lbp.cellHistosVecElems = 		sumArray(szs->lbp.cellHistosElems, szs->pyr.pyramidLayers);
+		szs->lbp.blockHistosVecElems= 		sumArray(szs->lbp.blockHistosElems, szs->pyr.pyramidLayers);
+		szs->features.featuresVecElems = 	sumArray(szs->features.numFeaturesElems, szs->pyr.pyramidLayers);
 		//szs->lbp.sumHistosVecElems 	= 	sumArray(szs->lbp.numBlockHistos, szs->pyr.pyramidLayers);
 	}
 
@@ -93,7 +93,7 @@ private:
 		szs->lbp.blockHistosElems = mallocGen<uint>(szs->pyr.pyramidLayers);
 		szs->lbp.numBlockHistos =	mallocGen<uint>(szs->pyr.pyramidLayers);
 
-		szs->lbp.normHistosElems = 	mallocGen<uint>(szs->pyr.pyramidLayers);
+		szs->features.numFeaturesElems = mallocGen<uint>(szs->pyr.pyramidLayers);
 	}
 
 public:
@@ -122,7 +122,7 @@ public:
 		cudaSafe(cudaMemset(dev->lbp.cellHistos, 0, sizes->lbp.cellHistosVecElems * sizeof(C)));
 
 		cudaMallocGen<C>(&(dev->lbp.blockHistos), sizes->lbp.blockHistosVecElems);
-		cudaMallocGen<P>(&(dev->lbp.normHistos), sizes->lbp.normHistosVecElems);
+		cudaMallocGen<P>(&(dev->features.featuresVec), sizes->features.featuresVecElems);
 
 		// Generate LBP mapping table
 		cMapTable::generateDeviceLut(&(dev->lbp.LBPUmapTable), LBP_LUTSIZE);
@@ -138,7 +138,7 @@ public:
 		memset(host->lbp.cellHistos, 0, sizes->lbp.cellHistosVecElems * sizeof(C));
 
 		host->lbp.blockHistos = mallocGen<C>(sizes->lbp.blockHistosVecElems);
-		host->lbp.normHistos = mallocGen<P>(sizes->lbp.normHistosVecElems);
+		host->features.featuresVec = mallocGen<P>(sizes->features.featuresVecElems);
 
 		// Generate LBP mapping table
 		cMapTable::generateHostLUT(&(host->lbp.LBPUmapTable), LBP_LUTSIZE);

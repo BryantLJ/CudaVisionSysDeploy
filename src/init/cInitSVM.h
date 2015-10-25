@@ -46,7 +46,7 @@ private:
 
 			//szs->svm.xROIs_d[i] = computeXrois_device(szs->lbp.xHists[i]);
 			szs->svm.xROIs_d[i] = computeXrois_device(szs->hog.xBlockHists[i]);
-			//szs->svm.yROIs_d[i] = computeYrois_device(szs->lbp.yHists[i]);
+			//szs->svm.yROIs_d[i] = computeYrois_device(szs->lbp.yHists[i]);	//todo: solve issue
 			szs->svm.yROIs_d[i] = computeYrois_device(szs->hog.yBlockHists[i]);
 			szs->svm.scoresElems[i] = computeTotalrois_device(szs->svm.xROIs_d[i], szs->svm.yROIs_d[i]);
 

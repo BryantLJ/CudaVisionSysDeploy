@@ -59,7 +59,6 @@ void cParameters::readParameters()
 	iniFileReader.ReadSection("PREPROCESS -> CUDA BLOCK OPTIONS", "preBlockY", 	m_params.preBlockY,	16,	"Block Y dimension of preprocess kernel");
 	iniFileReader.ReadSection("PREPROCESS -> CUDA BLOCK OPTIONS", "preBlockZ", 	m_params.preBlockZ,	1,	"Block Z dimension of preprocess kernel");
 
-
 	// RESIZE: CUDA THREADS BLOCK OPTIONS
 	iniFileReader.ReadSection("RESIZE -> CUDA BLOCK OPTIONS", "resizeBlockX", 	m_params.resizeBlockX,	16,	"Block X dimension of the resize kernel");
 	iniFileReader.ReadSection("RESIZE -> CUDA BLOCK OPTIONS", "resizeBlockY", 	m_params.resizeBlockY,	16,	"Block Y dimension of the resize kernel");
@@ -90,6 +89,19 @@ void cParameters::readParameters()
 	iniFileReader.ReadSection("SVM -> CUDA BLOCK OPTIONS", "SVMblockX", 	m_params.SVMblockX,	256,	"Block X dimension of the SVM kernel");
 	iniFileReader.ReadSection("SVM -> CUDA BLOCK OPTIONS", "SVMblockY", 	m_params.SVMblockY,	1,		"Block Y dimension of the SVM kernel");
 	iniFileReader.ReadSection("SVM -> CUDA BLOCK OPTIONS", "SVMblockZ", 	m_params.SVMblockZ,	1,		"Block Z dimension of the SVM kernel");
+
+	// HOG: CUDA THREAD OF BLOCK OPTIONS
+	iniFileReader.ReadSection("HOG -> CUDA BLOCK OPTIONS", "gammaBlockX", 	m_params.gammaBlockX,	16,	"Block X dimension of the gamma correction kernel");
+	iniFileReader.ReadSection("HOG -> CUDA BLOCK OPTIONS", "gammaBlockY", 	m_params.gammaBlockY,	16,	"Block X dimension of the gamma correction kernel");
+	iniFileReader.ReadSection("HOG -> CUDA BLOCK OPTIONS", "gammaBlockZ", 	m_params.gammaBlockZ,	1,		"Block X dimension of the gamma correction kernel");
+
+	iniFileReader.ReadSection("HOG -> CUDA BLOCK OPTIONS", "gradientBlockX", 	m_params.gradientBlockX,	16,	"Block X dimension of the gradient kernel");
+	iniFileReader.ReadSection("HOG -> CUDA BLOCK OPTIONS", "gradientBlockY", 	m_params.gradientBlockY,	16,	"Block X dimension of the gradient kernel kernel");
+	iniFileReader.ReadSection("HOG -> CUDA BLOCK OPTIONS", "gradientBlockZ", 	m_params.gradientBlockZ,	1,		"Block X dimension of the gradient kernel");
+
+	iniFileReader.ReadSection("HOG -> CUDA BLOCK OPTIONS", "hogBlockX", 	m_params.hogBlockX,	256,"Block X dimension of the HOG kernel");
+	iniFileReader.ReadSection("HOG -> CUDA BLOCK OPTIONS", "hogBlockY", 	m_params.hogBlockY,	1,	"Block X dimension of the HOG kernel");
+	iniFileReader.ReadSection("HOG -> CUDA BLOCK OPTIONS", "hogBlockZ", 	m_params.hogBlockZ,	1,	"Block X dimension of the HOG kernel");
 
 
 	iniFileReader.Finish();

@@ -164,7 +164,8 @@ int main()
 			copyDtoH<roifeat_t>(getOffset<roifeat_t>(ROIfilter.getHostScoresVector(), dSizes->svm.scoresElems, i),
 								getOffset<roifeat_t>(detectData.svm.ROIscores, dSizes->svm.scoresElems, i),
 								dSizes->svm.scoresElems[i]);
-//
+			cout << "after copy" << endl;
+
 //			for (int k = 0; k < dSizes->svm.yROIs[i]; k++) {
 //				for (int b = 0; b < dSizes->svm.xROIs[i]; b++) {
 //					cout << "layer: "<< i << ": "<< k*dSizes->svm.xROIs[i] + b << ": "
@@ -187,7 +188,7 @@ int main()
 		rawImg = acquisition.acquireFrameRGB();
 
 		//todo: call reset function / function pointer
-		cInitLBP::zerosCellHistogramArray(&(detectData), dSizes);
+		//cInitLBP::zerosCellHistogramArray(&(detectData), dSizes);
 
 //		end = clock();
 //		elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;

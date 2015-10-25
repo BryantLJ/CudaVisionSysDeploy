@@ -28,35 +28,48 @@ private:
 		m_blockDims.blockBW.z = m_params->preBlockZ;
 
 		// RESIZE
-		m_blockDims.blockResize.x = m_params->resizeBlockX;
-		m_blockDims.blockResize.y = m_params->resizeBlockY;
-		m_blockDims.blockResize.z = m_params->resizeBlockZ;
+		m_blockDims.pyr.blockResize.x = m_params->resizeBlockX;
+		m_blockDims.pyr.blockResize.y = m_params->resizeBlockY;
+		m_blockDims.pyr.blockResize.z = m_params->resizeBlockZ;
 
-		m_blockDims.blockPadding.x = m_params->paddingBlockX;
-		m_blockDims.blockPadding.y = m_params->paddingBlockY;
-		m_blockDims.blockPadding.z = m_params->paddingBlockZ;
+		m_blockDims.pyr.blockPadding.x = m_params->paddingBlockX;
+		m_blockDims.pyr.blockPadding.y = m_params->paddingBlockY;
+		m_blockDims.pyr.blockPadding.z = m_params->paddingBlockZ;
 
 		// LBP
-		m_blockDims.blockLBP.x = m_params->LBPblockX;
-		m_blockDims.blockLBP.y = m_params->LBPblockY;
-		m_blockDims.blockLBP.z = m_params->LBPblockZ;
+		m_blockDims.lbp.blockLBP.x = m_params->LBPblockX;
+		m_blockDims.lbp.blockLBP.y = m_params->LBPblockY;
+		m_blockDims.lbp.blockLBP.z = m_params->LBPblockZ;
 
-		m_blockDims.blockCells.x = m_params->cellBlockX;
-		m_blockDims.blockCells.y = m_params->cellBlockY;
-		m_blockDims.blockCells.z = m_params->cellBlockZ;
+		m_blockDims.lbp.blockCells.x = m_params->cellBlockX;
+		m_blockDims.lbp.blockCells.y = m_params->cellBlockY;
+		m_blockDims.lbp.blockCells.z = m_params->cellBlockZ;
 
-		m_blockDims.blockBlock.x = m_params->blockBlockX;
-		m_blockDims.blockBlock.y = m_params->blockBlockY;
-		m_blockDims.blockBlock.z = m_params->blockBlockZ;
+		m_blockDims.lbp.blockBlock.x = m_params->blockBlockX;
+		m_blockDims.lbp.blockBlock.y = m_params->blockBlockY;
+		m_blockDims.lbp.blockBlock.z = m_params->blockBlockZ;
 
-		m_blockDims.blockNorm.x = m_params->normBlockX;
-		m_blockDims.blockNorm.y = m_params->normBlockY;
-		m_blockDims.blockNorm.z = m_params->normBlockZ;
+		m_blockDims.lbp.blockNorm.x = m_params->normBlockX;
+		m_blockDims.lbp.blockNorm.y = m_params->normBlockY;
+		m_blockDims.lbp.blockNorm.z = m_params->normBlockZ;
+
+		// HOG
+		m_blockDims.hog.blockGamma.x = m_params->gammaBlockX;
+		m_blockDims.hog.blockGamma.y = m_params->gammaBlockY;
+		m_blockDims.hog.blockGamma.z = m_params->gammaBlockZ;
+
+		m_blockDims.hog.blockGradient.x = m_params->gradientBlockX;
+		m_blockDims.hog.blockGradient.y = m_params->gradientBlockY;
+		m_blockDims.hog.blockGradient.z = m_params->gradientBlockZ;
+
+		m_blockDims.hog.blockHOG.x = m_params->hogBlockX;
+		m_blockDims.hog.blockHOG.y = m_params->hogBlockY;
+		m_blockDims.hog.blockHOG.z = m_params->hogBlockZ;
 
 		// SVM
-		m_blockDims.blockSVM.x = m_params->SVMblockX;
-		m_blockDims.blockSVM.y = m_params->SVMblockY;
-		m_blockDims.blockSVM.z = m_params->SVMblockZ;
+		m_blockDims.svm.blockSVM.x = m_params->SVMblockX;
+		m_blockDims.svm.blockSVM.y = m_params->SVMblockY;
+		m_blockDims.svm.blockSVM.z = m_params->SVMblockZ;
 	}
 
 	void chooseDevice()

@@ -29,15 +29,16 @@ public:
 		m_auxROIvec = mallocGen<F>(sizes->svm.ROIscoresVecElems);
 	}
 
+	__forceinline__
 	void roisDecision(int lvl, float scaleFactor,const int marginScalesX, const int marginScalesY ,const int minRoiMargin)
 	{
 		int x, y, h, w, xs, ys;
-		//scaleFactor = 2;
+
 		for (int i = 0; i < m_szs->svm.yROIs[lvl]; i++)
 		{
 			for (int j = 0; j < m_szs->svm.xROIs[lvl]; j++)
 			{
-				if (getOffset(m_auxROIvec, m_szs->svm.scoresElems, lvl)[i*m_szs->svm.xROIs_d[lvl] + j] > m_threshold){
+				if (getOffset(m_auxROIvec, m_szs->svm.scoresElems, lvl)[i*m_szs->svm.xROIs_d[lvl] + j] > m_threshold) {
 					// Compute coordinates on the original image
 					xs = j * XCELL;
 					ys = i * YCELL;

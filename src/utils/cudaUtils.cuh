@@ -35,7 +35,7 @@ void cudaErrorCheck() {
 void cudaErrorCheck(int line, string file) {
 	cudaError_t err = cudaGetLastError();
 	if (err > 0) {
-		std::cout << "error code: " << err << " description: " << cudaGetErrorString(err) << " at line: " << line << " file: "<< file << std::endl;
+		std::cout << "error code: " << err << " description: " << cudaGetErrorString(err) << " -- ERROR at line: " << line << " file: "<< file << std::endl;
 	}
 }
 __forceinline__

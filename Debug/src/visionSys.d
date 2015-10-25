@@ -209,7 +209,6 @@ src/visionSys.o : ../src/visionSys.cu \
     /usr/include/getopt.h \
     /usr/include/c++/4.8/ctime \
     ../src/init/../common/parameters.h \
-    ../src/init/../common/constants.h \
     ../src/init/fileInOut/IniFileIO.h \
     ../src/init/fileInOut/Utils.h \
     /usr/include/c++/4.8/algorithm \
@@ -336,6 +335,7 @@ src/visionSys.o : ../src/visionSys.cu \
     ../src/init/../device/../common/parameters.h \
     ../src/init/../device/../common/detectorData.h \
     ../src/init/../device/../utils/cudaUtils.cuh \
+    ../src/init/../device/ImageProcessing/colorTransformation.h \
     ../src/init/../device/LBPHist/LBPcompute.h \
     ../src/init/../device/LBPHist/cellHistograms.h \
     ../src/init/../device/LBPHist/blockHistograms.h \
@@ -343,7 +343,9 @@ src/visionSys.o : ../src/visionSys.cu \
     ../src/init/../device/LBPHist/../Operations/warpOps.h \
     ../src/init/../device/LBPHist/normHistograms.h \
     ../src/init/../device/LBPHist/../../common/operators.h \
-    ../src/init/../device/LBPHist/../../common/constants.h \
+    ../src/init/../device/HOG/gradient.h \
+    ../src/init/../device/HOG/HOGdescriptor.cuh \
+    ../src/init/../device/HOG/addToHistogram.cuh \
     ../src/init/../device/classification.h \
     ../src/init/../device/SVM/SVMclassification.h \
     ../src/init/../device/SVM/../Operations/warpOps.h \
@@ -354,7 +356,6 @@ src/visionSys.o : ../src/visionSys.cu \
     ../src/init/../device/ImageProcessing/resize.h \
     ../src/init/../device/../utils/utils.h \
     ../src/init/../device/preprocessing.h \
-    ../src/init/../device/ImageProcessing/colorTransformation.h \
     ../src/init/../host/featureExtractionH.h \
     ../src/init/../host/../common/detectorData.h \
     ../src/init/../host/classificationH.h \
@@ -362,7 +363,6 @@ src/visionSys.o : ../src/visionSys.cu \
     ../src/init/../host/pyramidHost.h \
     ../src/init/cInitSizes.h \
     ../src/common/detectorData.h \
-    ../src/common/constants.h \
     ../src/common/cAdquisition.h \
     ../src/common/cROIfilter.h \
     ../src/common/Roi.h \

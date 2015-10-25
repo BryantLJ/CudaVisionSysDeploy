@@ -120,6 +120,19 @@ struct parameters {
 	uint normBlockY;
 	uint normBlockZ;
 
+	// HOG CUDA block dimensions
+	uint gammaBlockX;
+	uint gammaBlockY;
+	uint gammaBlockZ;
+
+	uint gradientBlockX;
+	uint gradientBlockY;
+	uint gradientBlockZ;
+
+	uint hogBlockX;
+	uint hogBlockY;
+	uint hogBlockZ;
+
 	// Support Vector Machine CUDA blocks dimensions
 	uint SVMblockX;
 	uint SVMblockY;

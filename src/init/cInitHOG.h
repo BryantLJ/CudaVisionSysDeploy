@@ -76,13 +76,7 @@ private:
 	{
 		for (int i = 0; i < szs->pyr.nIntervalScales; i++) {
 			int currentIndex = szs->pyr.nScalesUp + i;		// todo: when adding upscales use currentIndex
-//			int xBlocks = image.cols/8 - 1;
-//				int yBlocks = image.rows/8 - 1;
-//				int histoWidth = 9;
-//				int numCellsBlock = 4;
-//				int xBlockSize = 16;
-//				int yBlockSize = 16;
-//				int blockHistoSize = numCellsBlock * histoWidth;
+
 			szs->hog.matCols[i] = szs->pyr.imgCols[i];
 			szs->hog.matRows[i] = szs->pyr.imgRows[i];
 			szs->hog.matPixels[i] = szs->hog.matCols[i] * szs->hog.matRows[i];
@@ -94,6 +88,8 @@ private:
 			szs->hog.yBlockHists[i] = computeYblockDescriptors(szs->pyr.imgRows[i]);
 			szs->hog.numblockHist[i] = computeTotalBlockDescriptors(szs->hog.xBlockHists[i], szs->hog.yBlockHists[i]);
 			szs->hog.blockDescElems[i] = szs->hog.numblockHist[i] * HOG_HISTOWIDTH;
+
+			szs->features.numFeaturesElems[i] = szs->hog.blockDescElems[i];
 
 			for (int j = currentIndex+szs->pyr.intervals; j < szs->pyr.pyramidLayers; j += szs->pyr.intervals) {
 
@@ -109,6 +105,8 @@ private:
 				szs->hog.numblockHist[j] = computeTotalBlockDescriptors(szs->hog.xBlockHists[j], szs->hog.yBlockHists[j]);
 				szs->hog.blockDescElems[j] = szs->hog.numblockHist[j] * HOG_HISTOWIDTH;
 
+				szs->features.numFeaturesElems[j] = szs->hog.blockDescElems[j];
+
 			}
 		}
 	}
@@ -121,6 +119,8 @@ private:
 		szs->hog.matPixVecElems = sumArray(szs->hog.matPixels, szs->pyr.pyramidLayers);
 		//szs->hog.cellHistsVecElems = sumArray(szs->hog.cellDescElems, szs->pyr.pyramidLayers)
 		szs->hog.blockHistsVecElems = sumArray(szs->hog.blockDescElems, szs->pyr.pyramidLayers);
+		szs->features.featuresVecElems = 	sumArray(szs->features.numFeaturesElems, szs->pyr.pyramidLayers);
+
 	}
 
 	/*	Allocates memory to store the size of the data structures for each pyramid layer
@@ -141,6 +141,9 @@ private:
 		szs->hog.yBlockHists = 		mallocGen<uint>(szs->pyr.pyramidLayers);
 		szs->hog.numblockHist = 	mallocGen<uint>(szs->pyr.pyramidLayers);
 		szs->hog.blockDescElems = 	mallocGen<uint>(szs->pyr.pyramidLayers);
+
+		szs->features.numFeaturesElems = mallocGen<uint>(szs->pyr.pyramidLayers);
+
 	}
 
 public:
@@ -168,7 +171,10 @@ public:
 		cudaMallocGen(&(dev->hog.gMagnitude), sizes->hog.matPixVecElems);
 		cudaMallocGen(&(dev->hog.gOrientation), sizes->hog.matPixVecElems);
 		cudaMallocGen(&(dev->hog.HOGdescriptor), sizes->hog.blockHistsVecElems);
+		cudaMallocGen(&(dev->features.featuresVec), sizes->features.featuresVecElems);
 		cudaSafe(cudaMemset(dev->hog.HOGdescriptor, 0, sizes->hog.blockHistsVecElems * sizeof(P)));
+		cudaSafe(cudaMemset(dev->features.featuresVec, 0, sizes->features.featuresVecElems * sizeof(P)));
+
 
 		// Create gaussian mask
 		P *h_gaussMask = mallocGen<P>(sizes->hog.xGaussMask * sizes->hog.yGaussMask);

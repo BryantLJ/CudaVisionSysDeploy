@@ -40,9 +40,12 @@ struct detectorData {
 
 	}hog;
 
+	struct FEATURES {
+		P				*featuresVec;			// Input features for the classificator
+	}features;
+
 	// SVM data structures
 	struct SVM {
-		P				*features;				// Input features for the classification
 		P 				*ROIscores;				// Scores of each ROI
 		P				*weightsM;				// SVM weights model
 		P				bias;					// SVM bias
@@ -104,10 +107,9 @@ struct dataSizes {
 		uint		*blockHistosElems;			// Block Histograms - number of elements for each pyramid layer
 		uint		blockHistosVecElems;		// Elements of the block descriptor through all the pyramid
 		uint		*numBlockHistos;			// Number of block histograms for each pyramid layer
-		uint		normHistosVecElems;			// Elements of the normalized descriptor through all the pyramid
-		//uint		sumHistosVecElems;
+		//uint		normHistosVecElems;			// Elements of the normalized descriptor through all the pyramid
 
-		uint		*normHistosElems;			// Normalized Histograms - number of elements
+		//uint		*normHistosElems;			// Normalized Histograms - number of elements
 	}lbp;
 
 	struct HOG {
@@ -134,10 +136,12 @@ struct dataSizes {
 
 	}hog;
 
-	struct SVM {
-		uint		*numBlockFeatures;			// NUmber of blocks in each pyramid layer
-		uint		blockFeaturesVecElems;		// Number of block through all the pyramid layers
+	struct FEATURES {
+		uint		*numFeaturesElems;			// NUmber of blocks in each pyramid layer
+		uint		featuresVecElems;			// Number of block through all the pyramid layers
+	}features;
 
+	struct SVM {
 		uint 		*xROIs_d;					// Number of Windows on X axis computed on device
 		uint 		*yROIs_d;					// Number of Windows on Y axis computed on device
 		uint 		*xROIs;						// Number of fitting windows on X axis
@@ -159,33 +163,47 @@ struct dataSizes {
 struct cudaBlockConfig {
 
 	// Preprocess block dimension
-	dim3 blockBW;
-	dim3 gridBW;
+	dim3 			blockBW;
+	dim3 			gridBW;
 
 	// Resize block configuration
-	dim3 blockResize;
-	dim3 blockPadding;
+	struct PYR {
+		dim3 		blockResize;
+		dim3 		blockPadding;
+	}pyr;
 
 	// LBP block configuration
-	dim3 blockLBP;
-	dim3 gridLBP;
+	struct LBP {
+		dim3 		blockLBP;
+		dim3 		gridLBP;
 
-	dim3 blockCells;
-	dim3 gridCell;
+		dim3 		blockCells;
+		dim3 		gridCell;
 
-	dim3 blockBlock;
-	dim3 gridBlock;
+		dim3 		blockBlock;
+		dim3 		gridBlock;
 
-	dim3 blockNorm;
-	dim3 gridNorm;
-
-	// SVM block configuration
-	dim3 blockSVM;
-	dim3 gridSVM;
+		dim3 		blockNorm;
+		dim3 		gridNorm;
+	}lbp;
 
 	// HOG block configuration
+	struct HOG {
+		dim3 		blockGamma;
+		dim3 		blockGradient;
+		dim3 		blockHOG;
+	}hog;
+
+	// SVM block configuration
+	struct SVM {
+		dim3 		blockSVM;
+		dim3 		gridSVM;
+	}svm;
 
 	// RF block configuration
+	struct RF {
+
+	}rf;
 
 };
 
