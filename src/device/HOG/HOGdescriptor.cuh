@@ -37,6 +37,7 @@ void computeHOGdescriptor(T *gMagnitude, T1 *gOrientation, T3 *HOGdesc, T3 *gaus
 			}
 		}
 		normalizeL1Sqrt<T3>(pDesc);
+		//normalizeL2Hys(pDesc);
 	}
 }
 

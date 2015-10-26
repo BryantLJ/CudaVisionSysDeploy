@@ -27,8 +27,17 @@ void deviceSVMclassification(detectorData<T, C, P> *data, dataSizes *dsizes, uin
 								 data->svm.weightsM,
 								 data->svm.bias,
 								 dsizes->svm.scoresElems[layer],
-								 dsizes->lbp.xHists[layer]);
+								 dsizes->hog.xBlockHists[layer]); // dsizes->lbp.kHists[layer]
 	cudaErrorCheck(__LINE__, __FILE__);
+
+//	P *outscores = (P*) malloc(dsizes->svm.scoresElems[layer] * sizeof(P));
+//	cudaMemcpy(outscores,
+//			   getOffset<P>(data->svm.ROIscores, dsizes->svm.scoresElems, layer),
+//			   dsizes->svm.scoresElems[layer] * sizeof(P),
+//			   cudaMemcpyDeviceToHost);
+//	for (int i = 0; i < dsizes->svm.scoresElems[layer]; ++i) {
+//		cout << "score: " << i << ": " << outscores[i] << endl;
+//	}
 }
 
 

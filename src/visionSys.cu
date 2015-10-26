@@ -167,14 +167,13 @@ int main()
 			copyDtoH<roifeat_t>(getOffset<roifeat_t>(ROIfilter.getHostScoresVector(), dSizes->svm.scoresElems, i),
 								getOffset<roifeat_t>(detectData.svm.ROIscores, dSizes->svm.scoresElems, i),
 								dSizes->svm.scoresElems[i]);
-			cudaErrorCheck(__LINE__, __FILE__);
 
-//			for (int k = 0; k < dSizes->svm.yROIs[i]; k++) {
-//				for (int b = 0; b < dSizes->svm.xROIs[i]; b++) {
-//					cout << "layer: "<< i << ": "<< k*dSizes->svm.xROIs[i] + b << ": "
-//						 << getOffset<roifeat_t>(ROIfilter.getHostScoresVector(), dSizes->svm.scoresElems, i)[k*dSizes->svm.xROIs_d[i] + b] << endl;
-//				}
-//			}
+			for (int k = 0; k < dSizes->svm.yROIs[i]; k++) {
+				for (int b = 0; b < dSizes->svm.xROIs[i]; b++) {
+					cout << "layer: "<< i << ": "<< k*dSizes->svm.xROIs[i] + b << ": "
+						 << getOffset<roifeat_t>(ROIfilter.getHostScoresVector(), dSizes->svm.scoresElems, i)[k*dSizes->svm.xROIs_d[i] + b] << endl;
+				}
+			}
 //				for (int u = 0; u < dSizes->scoresElems[i] ; u++) {
 //					printf( " ite: %d -"SCORE: %d: %f\n", i, u, roisHost[u]);
 //				}
@@ -190,8 +189,8 @@ int main()
 		// Get a new frame
 		rawImg = acquisition.acquireFrameRGB();
 
-		//todo: call reset function / function pointer
-		//cInitLBP::zerosCellHistogramArray(&(detectData), dSizes);
+		// Reset features vector
+		detectorF.resetFeatures(&detectData, dSizes);
 
 //		end = clock();
 //		elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;

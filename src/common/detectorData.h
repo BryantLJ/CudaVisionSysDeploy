@@ -220,6 +220,7 @@ struct detectorFunctions {
 	void (*pyramid)(detectorData<T, C, F>*, dataSizes*, cudaBlockConfig*);
 	void (*featureExtraction)(detectorData<T, C, F>*, dataSizes*, uint, cudaBlockConfig*);
 	void (*classification)(detectorData<T, C, F>*, dataSizes*, uint, cudaBlockConfig*);
+	void (*resetFeatures)(detectorData<T, C, F>*, dataSizes*);
 
 	// LBP Detector functions
 	void (*LBP)(const T*, T*, const uint, const uint cols, const uint8_t *__restrict__, lbp<T>);

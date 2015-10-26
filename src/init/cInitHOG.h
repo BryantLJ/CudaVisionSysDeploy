@@ -203,6 +203,15 @@ public:
 		cout << "Init host HOG" << endl;
 
 	}
+
+	template<typename T, typename C, typename P>
+	__forceinline__
+	static void zerosHOGfeatures(detectorData<T, C, P> *dev, dataSizes *sizes)
+	{
+		//cout << "reset hog feaures" << endl;
+		cudaMemset(dev->features.featuresVec, 0, sizes->features.featuresVecElems * sizeof(P));
+		//todo evaluate asyncronous menmset or no memset(use registers)
+	}
 };
 
 

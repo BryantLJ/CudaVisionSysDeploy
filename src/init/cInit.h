@@ -104,14 +104,17 @@ public:
 
 			case LBP:		detectorFuncs.initFeatures = &cInitLBP::initDeviceLBP;
 							detectorFuncs.featureExtraction = &deviceLBPfeatureExtraction;
+							detectorFuncs.resetFeatures = &cInitLBP::zerosCellHistogramArray;
 							break;
 
 			case HOG: 		detectorFuncs.initFeatures = &cInitHOG::initDeviceHOG;
 							detectorFuncs.featureExtraction = &deviceHOGfeatureExtraction;
+							detectorFuncs.resetFeatures = &cInitHOG::zerosHOGfeatures;
 							break;
 
 			case HOGLBP:	detectorFuncs.initFeatures = &cInitHOGLBP::initDeviceHOGLBP;
 							detectorFuncs.featureExtraction = &deviceHOGLBPfeatureExtraction;
+							// add hoglbp reset function
 							break;
 
 			default:		cerr << "No feature extraction algorithm chosen on DEVICE" << endl;
