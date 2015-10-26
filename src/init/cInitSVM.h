@@ -26,10 +26,10 @@
 class cInitSVM {
 private:
 
-	static inline uint computeXrois_device(uint colDescs)
-		{ return colDescs; }
-	static inline uint computeYrois_device(uint rowDescs)
-		{ return (rowDescs-1) - (YWINBLOCKS-1); }
+	static inline uint computeXrois_device(uint cols)
+		{ return cols / XCELL; }
+	static inline uint computeYrois_device(uint rows)
+		{ return ((rows/XCELL)-1) - (YWINBLOCKS-1); }
 
 	static inline uint computeXrois(uint cols)
 		{ return (cols/XCELL-1) - (XWINBLOCKS-1); }
@@ -44,10 +44,8 @@ private:
 		for (int i = 0; i < szs->pyr.nIntervalScales; i++) {
 			int currentIndex = szs->pyr.nScalesUp + i;
 
-			//szs->svm.xROIs_d[i] = computeXrois_device(szs->lbp.xHists[i]);
-			szs->svm.xROIs_d[i] = computeXrois_device(szs->hog.xBlockHists[i]);
-			//szs->svm.yROIs_d[i] = computeYrois_device(szs->lbp.yHists[i]);	//todo: solve issue
-			szs->svm.yROIs_d[i] = computeYrois_device(szs->hog.yBlockHists[i]);
+			szs->svm.xROIs_d[i] = computeXrois_device(szs->pyr.imgCols[i]);
+			szs->svm.yROIs_d[i] = computeYrois_device(szs->pyr.imgRows[i]);
 			szs->svm.scoresElems[i] = computeTotalrois_device(szs->svm.xROIs_d[i], szs->svm.yROIs_d[i]);
 
 			szs->svm.xROIs[i] = computeXrois(szs->pyr.imgCols[i]);
@@ -55,10 +53,8 @@ private:
 
 			for (int j = currentIndex+szs->pyr.intervals; j < szs->pyr.pyramidLayers; j += szs->pyr.intervals) {
 
-				//szs->svm.xROIs_d[j] = computeXrois_device(szs->lbp.xHists[j]);
-				szs->svm.xROIs_d[j] = computeXrois_device(szs->hog.xBlockHists[j]);
-				//szs->svm.yROIs_d[j] = computeYrois_device(szs->lbp.yHists[j]);
-				szs->svm.yROIs_d[j] = computeYrois_device(szs->hog.yBlockHists[j]);
+				szs->svm.xROIs_d[j] = computeXrois_device(szs->pyr.imgCols[j]);
+				szs->svm.yROIs_d[j] = computeYrois_device(szs->pyr.imgRows[j]);
 				szs->svm.scoresElems[j] = computeTotalrois_device(szs->svm.xROIs_d[j], szs->svm.yROIs_d[j]);
 
 				szs->svm.xROIs[j] = computeXrois(szs->pyr.imgCols[j]);

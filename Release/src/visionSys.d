@@ -344,6 +344,7 @@ src/visionSys.o : ../src/visionSys.cu \
     ../src/init/../device/../common/parameters.h \
     ../src/init/../device/../common/detectorData.h \
     ../src/init/../device/../utils/cudaUtils.cuh \
+    ../src/init/../device/../utils/cudaDataHandler.h \
     ../src/init/../device/ImageProcessing/colorTransformation.h \
     ../src/init/../device/LBPHist/LBPcompute.h \
     ../src/init/../device/LBPHist/cellHistograms.h \
@@ -355,6 +356,7 @@ src/visionSys.o : ../src/visionSys.cu \
     ../src/init/../device/HOG/gradient.h \
     ../src/init/../device/HOG/HOGdescriptor.cuh \
     ../src/init/../device/HOG/addToHistogram.cuh \
+    ../src/init/../device/HOG/normalizeDescriptor.cuh \
     ../src/init/../device/classification.h \
     ../src/init/../device/SVM/SVMclassification.h \
     ../src/init/../device/SVM/../Operations/warpOps.h \

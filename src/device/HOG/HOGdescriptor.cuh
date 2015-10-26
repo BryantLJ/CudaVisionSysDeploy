@@ -9,6 +9,7 @@
 #define HOGDESCRIPTOR_CUH_
 
 #include "addToHistogram.cuh"
+#include "normalizeDescriptor.cuh"
 
 //todo: get rid of useless templates
 template<typename T, typename T1, typename T3, int XCellSize, int YCellSize, int XBLOCKSize, int YBLOCKSize, int HISTOWITDH>
@@ -32,9 +33,10 @@ void computeHOGdescriptor(T *gMagnitude, T1 *gOrientation, T3 *HOGdesc, T3 *gaus
 								pOri[i*cols + j],
 								pDesc,
 								j+0.5f,
-								i+0.5f); //todo: ????
+								i+0.5f);
 			}
 		}
+		normalizeL1Sqrt<T3>(pDesc);
 	}
 }
 

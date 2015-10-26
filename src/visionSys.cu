@@ -15,6 +15,8 @@
 #include "utils/cudaUtils.cuh"
 #include "utils/cudaDataHandler.h"
 
+//#include "cuda_fp16.h"
+
 #include "device/ImageProcessing/colorTransformation.h"
 
 /////////////////////////////////////
@@ -23,6 +25,7 @@
 typedef uchar 	input_t;
 typedef int 	desc_t;
 typedef float	roifeat_t;
+
 
 int main()
 {
@@ -164,7 +167,7 @@ int main()
 			copyDtoH<roifeat_t>(getOffset<roifeat_t>(ROIfilter.getHostScoresVector(), dSizes->svm.scoresElems, i),
 								getOffset<roifeat_t>(detectData.svm.ROIscores, dSizes->svm.scoresElems, i),
 								dSizes->svm.scoresElems[i]);
-			cout << "after copy" << endl;
+			cudaErrorCheck(__LINE__, __FILE__);
 
 //			for (int k = 0; k < dSizes->svm.yROIs[i]; k++) {
 //				for (int b = 0; b < dSizes->svm.xROIs[i]; b++) {

@@ -112,5 +112,45 @@ public:
 };
 
 
+template<typename T>
+void generateWindows(T *descriptor, int imgCols, int imgRows, int histoSize)
+{
+	cout << "cols: " << imgCols << endl;
+	cout << "rows: " << imgRows << endl;
+
+	int xCell = 8;
+	int xDescs = imgCols / xCell /*- 1*/;
+	int xWinBlocks = 7;
+	int yWinBlocks = 15;
+	const int nWindowsX = (imgCols/xCell-1) - (xWinBlocks-1);	// windows on X dimesion
+	const int nWindowsY = (imgRows/xCell-1) - (yWinBlocks-1);	// windows on Y dimension
+	T *blockPtr, *winPtr;
+	int rowSz = xDescs * histoSize;
+
+	std::cout.precision(8);
+	std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to fixed
+
+	// For each window
+	for (int i = 0; i < nWindowsY; i++) {
+		for (int j = 0; j < nWindowsX; j++) {
+			// For each block of the window
+			winPtr = &(descriptor[(i*rowSz) + (j*histoSize)]);
+			cout << "-1 , ";
+			for (int z = 0; z < yWinBlocks; z++){
+				for (int y = 0; y < xWinBlocks; y++){
+					// For each bean of the histogram
+					blockPtr = &(winPtr[z*rowSz + y*histoSize]);
+					for (int a = 0; a < histoSize; a++){
+						cout <<  blockPtr[a] << ", ";;
+					}
+				}
+			}
+			cout << endl;
+		}
+	}
+}
+
+
+
 
 #endif /* DEVICEDATAHANDLER_H_ */

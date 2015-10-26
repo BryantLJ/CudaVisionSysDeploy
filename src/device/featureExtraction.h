@@ -5,6 +5,7 @@
 #include "../common/parameters.h"
 #include "../common/detectorData.h"
 #include "../utils/cudaUtils.cuh"
+#include "../utils/cudaDataHandler.h"
 
 #include "ImageProcessing/colorTransformation.h"
 
@@ -156,8 +157,6 @@ template<typename T, typename C, typename P>
 __forceinline__
 void deviceHOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint layer, cudaBlockConfig *blkSizes)
 {
-	cout << "HOG FEATURE EXTRACTION" <<	endl;
-
 	dim3 gridGamma (ceil((float)dsizes->pyr.imgCols[layer] / blkSizes->hog.blockGamma.x),
 					ceil((float)dsizes->pyr.imgRows[layer] / blkSizes->hog.blockGamma.y),
 					1);
@@ -170,17 +169,17 @@ void deviceHOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, 
 				  1, 1 );
 
 
-//	gammaCorrection<T, P> <<<gridGamma, blkSizes->hog.blockGamma>>>
-//			(getOffset(data->pyr.imgInput, dsizes->pyr.imgPixels, layer),
-//			 getOffset(data->hog.gammaCorrection, dsizes->hog.matPixels, layer),
-//			 data->hog.sqrtLUT,
-//			 dsizes->hog.matRows[layer],
-//			 dsizes->hog.matCols[layer]);
+	gammaCorrection<T, P> <<<gridGamma, blkSizes->hog.blockGamma>>>
+			(getOffset(data->pyr.imgInput, dsizes->pyr.imgPixels, layer),
+			 getOffset(data->hog.gammaCorrection, dsizes->hog.matPixels, layer),
+			 data->hog.sqrtLUT,
+			 dsizes->hog.matRows[layer],
+			 dsizes->hog.matCols[layer]);
 
 	cudaErrorCheck(__LINE__, __FILE__);
 
-	imageGradient<T, P, P> <<<gridGradient, blkSizes->hog.blockGradient>>>
-			(getOffset(data->pyr.imgInput, dsizes->hog.matPixels, layer),
+	imageGradient<P, P, P> <<<gridGradient, blkSizes->hog.blockGradient>>>
+			(getOffset(data->hog.gammaCorrection, dsizes->hog.matPixels, layer),
 			 getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
 			 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
 			 dsizes->hog.matRows[layer],
@@ -200,28 +199,26 @@ void deviceHOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, 
 
 	cudaErrorCheck(__LINE__, __FILE__);
 
-	P *outHOGdev = (P*) malloc(dsizes->hog.numblockHist[layer] * HOG_HISTOWIDTH * sizeof(P));
+	P *outHOGdev = (P*) malloc(dsizes->hog.blockDescElems[layer] * sizeof(P));
 	cudaMemcpy(outHOGdev,
 			   getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
-			   dsizes->hog.numblockHist[layer] * HOG_HISTOWIDTH * sizeof(P),
+			   dsizes->hog.blockDescElems[layer] * sizeof(P),
 			   cudaMemcpyDeviceToHost);
-	cout << "xdescs: " <<  dsizes->hog.xBlockHists[layer] << endl;
-	cout << "ydescs " << dsizes->hog.yBlockHists[layer] << endl;
-	cout << "cols " << dsizes->pyr.imgCols[layer]<< endl;
-	cout << "rows" << dsizes->pyr.imgRows[layer] << endl;
 
-	for (int i = 0; i < dsizes->hog.yBlockHists[layer]; i++) {
-		for (int j = 0; j < dsizes->hog.xBlockHists[layer]; j++) {
-			P *descDev = &(outHOGdev[i*dsizes->hog.xBlockHists[layer]*HOG_HISTOWIDTH + j*HOG_HISTOWIDTH]);
-			for (int k = 0; k < HOG_HISTOWIDTH; k++) {
-				//if (descDev[k] != 0)
-				{
-				cout 	<< "histo bin: " << i*dsizes->hog.xBlockHists[layer]*HOG_HISTOWIDTH + j*HOG_HISTOWIDTH + k
-							<< " - Device: " << descDev[k] << endl;
-				}
-			}
-		}
-	}
+	//generateWindows(outHOGdev, dsizes->pyr.imgCols[layer], dsizes->pyr.imgRows[layer], HOG_HISTOWIDTH);
+
+//	for (int i = 0; i < dsizes->hog.yBlockHists[layer]; i++) {
+//		for (int j = 0; j < dsizes->hog.xBlockHists[layer]; j++) {
+//			P *descDev = &(outHOGdev[i*dsizes->hog.xBlockHists[layer]*HOG_HISTOWIDTH + j*HOG_HISTOWIDTH]);
+//			for (int k = 0; k < HOG_HISTOWIDTH; k++) {
+//				//if (descDev[k] != 0)
+//				{
+//				cout 	<< "histo bin: " << i*dsizes->hog.xBlockHists[layer]*HOG_HISTOWIDTH + j*HOG_HISTOWIDTH + k
+//							<< " - Device: " << descDev[k] << endl;
+//				}
+//			}
+//		}
+//	}
 
 }
 

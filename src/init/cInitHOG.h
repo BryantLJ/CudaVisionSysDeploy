@@ -67,7 +67,7 @@ private:
 		{	return rows / Y_HOGCELL;	}
 
 	static inline uint computeTotalBlockDescriptors(uint xDescs, uint yDescs)
-		{	return ((yDescs-1) * xDescs) - 1 * HOG_HISTOWIDTH;	}
+		{	return ((yDescs-1) * xDescs) - 1;	}
 
 	/* Computes the sizes of the data structures for each pyramid layer
 	 *
@@ -168,8 +168,13 @@ public:
 
 		// Allocate data structures
 		cudaMallocGen(&(dev->hog.gammaCorrection), sizes->hog.matPixVecElems);
+
 		cudaMallocGen(&(dev->hog.gMagnitude), sizes->hog.matPixVecElems);
+		cudaSafe(cudaMemset(dev->hog.gMagnitude, 0, sizes->hog.matPixVecElems * sizeof(P)));
+
 		cudaMallocGen(&(dev->hog.gOrientation), sizes->hog.matPixVecElems);
+		cudaSafe(cudaMemset(dev->hog.gOrientation, 0, sizes->hog.matPixVecElems * sizeof(P)));
+
 		cudaMallocGen(&(dev->hog.HOGdescriptor), sizes->hog.blockHistsVecElems);
 		cudaMallocGen(&(dev->features.featuresVec), sizes->features.featuresVecElems);
 		cudaSafe(cudaMemset(dev->hog.HOGdescriptor, 0, sizes->hog.blockHistsVecElems * sizeof(P)));
