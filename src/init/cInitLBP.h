@@ -39,7 +39,7 @@ private:
 	static inline uint computeBlockHistosElems(uint rowDescs, uint colDescs)
 		{ return (((rowDescs-1) * colDescs)-1) * HISTOWIDTH; }
 
-	static inline uint computeHistoSumElems(uint rowDescs, uint colDescs)
+	static inline uint computeNumBlockHistos(uint rowDescs, uint colDescs)
 		{ return ((rowDescs-1) * colDescs) - 1; }
 
 	static void computeLBPsizes(dataSizes *szs)
@@ -50,12 +50,14 @@ private:
 
 			szs->lbp.xHists[i] = computeXdescriptors(szs->pyr.imgCols[i]);
 			szs->lbp.yHists[i] = computeYdescriptors(szs->pyr.imgRows[i]);
-
-			szs->lbp.cellHistosElems[i] =  computeCellHistosElems	(szs->lbp.yHists[i], szs->lbp.xHists[i]);
-			szs->lbp.blockHistosElems[i] = computeBlockHistosElems	(szs->lbp.yHists[i], szs->lbp.xHists[i]);
+			szs->lbp.cellHistosElems[i] =  computeCellHistosElems(szs->lbp.yHists[i], szs->lbp.xHists[i]);
+			szs->lbp.blockHistosElems[i] = computeBlockHistosElems(szs->lbp.yHists[i], szs->lbp.xHists[i]);
+			szs->lbp.numBlockHistos[i] = computeNumBlockHistos(szs->lbp.xHists[i], szs->lbp.yHists[i]);
 
 			szs->features.numFeaturesElems[i] = szs->lbp.blockHistosElems[i];
-			szs->lbp.numBlockHistos[i] = computeHistoSumElems(szs->lbp.xHists[i], szs->lbp.yHists[i]);
+			szs->features.xBlockFeatures[i] = szs->lbp.xHists[i];
+			szs->features.yBlockFeatures[i] = szs->lbp.yHists[i];
+			szs->features.nBlockFeatures[i] = szs->lbp.numBlockHistos[i];
 
 			for (int j = currentIndex+szs->pyr.intervals; j < szs->pyr.pyramidLayers; j += szs->pyr.intervals) {
 				szs->lbp.imgDescElems[j] = szs->pyr.imgPixels[j];
@@ -63,12 +65,14 @@ private:
 				szs->lbp.xHists[j] = computeXdescriptors(szs->pyr.imgCols[j]);
 				szs->lbp.yHists[j] = computeYdescriptors(szs->pyr.imgRows[j]);
 
-				szs->lbp.cellHistosElems[j] = computeCellHistosElems(szs->pyr.imgCols[j], szs->pyr.imgRows[j]);
-				szs->lbp.blockHistosElems[j] = computeBlockHistosElems(szs->pyr.imgCols[j], szs->pyr.imgRows[j]);
+				szs->lbp.cellHistosElems[j] = computeCellHistosElems(szs->lbp.yHists[j], szs->lbp.xHists[j]);//szs->pyr.imgCols[j], szs->pyr.imgRows[j]);
+				szs->lbp.blockHistosElems[j] = computeBlockHistosElems(szs->lbp.yHists[j], szs->lbp.xHists[j]);//szs->pyr.imgCols[j], szs->pyr.imgRows[j]);
+				szs->lbp.numBlockHistos[j] = computeNumBlockHistos(szs->lbp.yHists[j], szs->lbp.xHists[j]);
 
 				szs->features.numFeaturesElems[j] = szs->lbp.blockHistosElems[j];
-				szs->lbp.numBlockHistos[j] = computeHistoSumElems(szs->pyr.imgCols[j], szs->pyr.imgRows[j]);
-
+				szs->features.xBlockFeatures[j] = szs->lbp.xHists[j];
+				szs->features.yBlockFeatures[j] = szs->lbp.yHists[j];
+				szs->features.nBlockFeatures[j] = szs->lbp.numBlockHistos[j];
 			}
 		}
 	}
@@ -93,7 +97,10 @@ private:
 		szs->lbp.blockHistosElems = mallocGen<uint>(szs->pyr.pyramidLayers);
 		szs->lbp.numBlockHistos =	mallocGen<uint>(szs->pyr.pyramidLayers);
 
-		szs->features.numFeaturesElems = mallocGen<uint>(szs->pyr.pyramidLayers);
+		szs->features.xBlockFeatures = 		mallocGen<uint>(szs->pyr.pyramidLayers);
+		szs->features.yBlockFeatures = 		mallocGen<uint>(szs->pyr.pyramidLayers);
+		szs->features.nBlockFeatures = 		mallocGen<uint>(szs->pyr.pyramidLayers);
+		szs->features.numFeaturesElems = 	mallocGen<uint>(szs->pyr.pyramidLayers);
 	}
 
 public:

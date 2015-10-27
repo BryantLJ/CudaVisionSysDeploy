@@ -43,7 +43,7 @@ void normalizeL2Hys(T0 *vec)
 		sum += vec[i] * vec[i];
 
 	// Compute the normalization term
-	float norm = 1.0f/(sqrt(sum) + L2HYS_EPSILONHYS * HOG_HISTOWIDTH);
+	float norm = 1.0f/(sqrt(sum) + L2HYS_EPSILONHYS * 36);
 
 	// L2 normalize, clip and sum the vector again
 	sum=0;
@@ -57,7 +57,7 @@ void normalizeL2Hys(T0 *vec)
 	norm = 1.0f/(sqrt(sum) + L2HYS_EPSILON);
 
 	// Normalize again
-	for (int i=0; i<36; i++)
+	for (int i = 0; i < 36; i++)
 		vec[i] *=norm;
 }
 

@@ -37,11 +37,10 @@
 #include "../host/classificationH.h"
 #include "../host/pyramidHost.h"
 
+
 enum FeaturesMethod { LBP, HOG, HOGLBP };
 enum ClassifMethod	{ SVM, RF };
 enum ExecType		{ HOST, DEVICE };
-
-
 
 
 class cInit {
@@ -55,7 +54,6 @@ private:
 	ExecType			m_pyramidCompute;
 
 	bool				m_doReescaling;
-	//uint				m_reescalingLevels;
 
 public:
 	cInit(parameters *params)

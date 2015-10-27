@@ -13,7 +13,7 @@
 // Compile function using read only cache, avaliable on 3.5 compute capability or above
 #if __CUDA_ARCH__ >= 350
 
-template<typename T, uint HistoWidth, uint xWinBlocks, uint yWinBlocks>
+template<typename T, int HistoWidth, int xWinBlocks, int yWinBlocks>
 __global__
 void computeROIwarpReadOnly(const T *features, T *outScores, const T *__restrict__ modelW, T modelBias, const uint numWins, const uint xDescs)
 {
@@ -26,7 +26,7 @@ void computeROIwarpReadOnly(const T *features, T *outScores, const T *__restrict
 
 	if (warpId < numWins) {
 		// Compute dot product of a slice of the ROI
-		#pragma unroll  									//todo: evaluate the speedup of unroll
+		#pragma unroll
 		for (int i = 0; i < yWinBlocks; i++) {
 			#pragma unroll
 			for (int j = 0; j < xWinBlocks; j++) {

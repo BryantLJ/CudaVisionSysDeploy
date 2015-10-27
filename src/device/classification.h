@@ -27,7 +27,7 @@ void deviceSVMclassification(detectorData<T, C, P> *data, dataSizes *dsizes, uin
 								 data->svm.weightsM,
 								 data->svm.bias,
 								 dsizes->svm.scoresElems[layer],
-								 dsizes->hog.xBlockHists[layer]); // dsizes->lbp.kHists[layer]
+								 dsizes->features.xBlockFeatures[layer]); //dsizes->lbp.xHists[layer]  dsizes->hog.xBlockHists[layer]
 	cudaErrorCheck(__LINE__, __FILE__);
 
 //	P *outscores = (P*) malloc(dsizes->svm.scoresElems[layer] * sizeof(P));

@@ -89,6 +89,9 @@ private:
 			szs->hog.numblockHist[i] = computeTotalBlockDescriptors(szs->hog.xBlockHists[i], szs->hog.yBlockHists[i]);
 			szs->hog.blockDescElems[i] = szs->hog.numblockHist[i] * HOG_HISTOWIDTH;
 
+			szs->features.xBlockFeatures[i] =  szs->hog.xBlockHists[i];
+			szs->features.yBlockFeatures[i] = szs->hog.yBlockHists[i];
+			szs->features.nBlockFeatures[i] = szs->hog.numblockHist[i];
 			szs->features.numFeaturesElems[i] = szs->hog.blockDescElems[i];
 
 			for (int j = currentIndex+szs->pyr.intervals; j < szs->pyr.pyramidLayers; j += szs->pyr.intervals) {
@@ -105,6 +108,9 @@ private:
 				szs->hog.numblockHist[j] = computeTotalBlockDescriptors(szs->hog.xBlockHists[j], szs->hog.yBlockHists[j]);
 				szs->hog.blockDescElems[j] = szs->hog.numblockHist[j] * HOG_HISTOWIDTH;
 
+				szs->features.xBlockFeatures[j] =  szs->hog.xBlockHists[j];
+				szs->features.yBlockFeatures[j] = szs->hog.yBlockHists[j];
+				szs->features.nBlockFeatures[j] = szs->hog.numblockHist[j];
 				szs->features.numFeaturesElems[j] = szs->hog.blockDescElems[j];
 
 			}
@@ -142,7 +148,10 @@ private:
 		szs->hog.numblockHist = 	mallocGen<uint>(szs->pyr.pyramidLayers);
 		szs->hog.blockDescElems = 	mallocGen<uint>(szs->pyr.pyramidLayers);
 
-		szs->features.numFeaturesElems = mallocGen<uint>(szs->pyr.pyramidLayers);
+		szs->features.xBlockFeatures = 		mallocGen<uint>(szs->pyr.pyramidLayers);
+		szs->features.yBlockFeatures = 		mallocGen<uint>(szs->pyr.pyramidLayers);
+		szs->features.nBlockFeatures = 		mallocGen<uint>(szs->pyr.pyramidLayers);
+		szs->features.numFeaturesElems = 	mallocGen<uint>(szs->pyr.pyramidLayers);
 
 	}
 

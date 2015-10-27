@@ -137,6 +137,9 @@ struct dataSizes {
 	}hog;
 
 	struct FEATURES {
+		uint		*xBlockFeatures;			// Number of block descriptors on X axis
+		uint 		*yBlockFeatures;			// Number of block descriptors on Y axis
+		uint		*nBlockFeatures;			// Total number of block features
 		uint		*numFeaturesElems;			// NUmber of blocks in each pyramid layer
 		uint		featuresVecElems;			// Number of block through all the pyramid layers
 	}features;
