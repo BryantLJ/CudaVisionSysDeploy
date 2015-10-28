@@ -42,10 +42,10 @@ public:
 					// Compute coordinates on the original image
 					xs = j * XCELL;
 					ys = i * YCELL;
-					x=(int)( (xs-marginScalesX+minRoiMargin)*scaleFactor );
-					y=(int)( (ys-marginScalesY+minRoiMargin)*scaleFactor);
-					h=(int)( (XWINDIM - 2*marginScalesX) * scaleFactor);
-					w=(int)( (YWINDIM - 2*marginScalesY) * scaleFactor);
+					x = (int)( (xs-marginScalesX+minRoiMargin)*scaleFactor );
+					y = (int)( (ys-marginScalesY+minRoiMargin)*scaleFactor);
+					h = (int)( (XWINDIM - 2*marginScalesX) * scaleFactor);
+					w = (int)( (YWINDIM - 2*marginScalesY) * scaleFactor);
 
 					// Create the detection roi
 					CRoi* roi = new CRoi(xs, ys, XWINDIM, YWINDIM, lvl, scaleFactor, x, y, w, h);
@@ -59,7 +59,7 @@ public:
 	__forceinline__
 	void clearVector()
 	{
-		for (uint i = 0; i < m_hitRois.size(); i++) {
+		for (int i = 0; i < m_hitRois.size(); i++) {
 			delete m_hitRois[i];
 		}
 		m_hitRois.clear();

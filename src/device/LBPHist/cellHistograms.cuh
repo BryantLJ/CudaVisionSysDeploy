@@ -5,8 +5,8 @@
  *      Author: adas
  */
 
-#ifndef CELLHISTOGRAMS_H_
-#define CELLHISTOGRAMS_H_
+#ifndef CELLHISTOGRAMS_CUH_
+#define CELLHISTOGRAMS_CUH_
 
 template<typename T, typename P, int HistoWidth, int XCell, int YCell>
 __global__
@@ -41,9 +41,9 @@ void cellHistogramsNaive(T* inputMat, P* cellHistos, const int yDescs, const int
 		cellPtr = &(inputMat[(idy * YCell*cols) + (idx * XCell)]); 			// Pointer to the image 8x8 cell
 		descPtr = &(cellHistos[gid * HistoWidth]); 							// Pointer to place where descriptor is stored
 
-		//#pragma unroll
+		#pragma unroll
 		for (int i = 0; i < YCell; i++) {
-			//#pragma unroll
+			#pragma unroll
 			for (int j = 0; j < XCell; j++) {
 				descPtr[cellPtr[i*cols + j]]++;
 			}
@@ -52,4 +52,4 @@ void cellHistogramsNaive(T* inputMat, P* cellHistos, const int yDescs, const int
 }
 
 
-#endif /* CELLHISTOGRAMS_H_ */
+#endif /* CELLHISTOGRAMS_CUH_ */

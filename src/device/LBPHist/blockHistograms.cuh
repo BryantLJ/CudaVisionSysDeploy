@@ -5,13 +5,12 @@
  *      Author: adas
  */
 
-#ifndef BLOCKHISTOGRAMS_H_
-#define BLOCKHISTOGRAMS_H_
+#ifndef BLOCKHISTOGRAMS_CUH_
+#define BLOCKHISTOGRAMS_CUH_
 
 #include "../Operations/simd_functions.h"
-#include "../Operations/warpOps.h"
+#include "../Operations/warpOps.cuh"
 
-//todo: remove histogram sum
 
 template<typename T, typename T1, int HistoWidth>
 __global__
@@ -89,4 +88,4 @@ void mergeHistosSIMDaccum(uint8_t *inCellHistos, uint8_t *outBlockHistos, F *__r
 	}
 }
 
-#endif /* BLOCKHISTOGRAMS_H_ */
+#endif /* BLOCKHISTOGRAMS_CUH_ */

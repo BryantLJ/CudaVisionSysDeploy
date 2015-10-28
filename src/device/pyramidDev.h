@@ -12,7 +12,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-#include "ImageProcessing/resize.h"
+#include "ImageProcessing/resize.cuh"
 #include "../common/detectorData.h"
 #include "../utils/cudaUtils.cuh"
 #include "../utils/utils.h"

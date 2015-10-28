@@ -17,7 +17,7 @@
 
 //#include "cuda_fp16.h"
 
-#include "device/ImageProcessing/colorTransformation.h"
+#include "device/ImageProcessing/colorTransformation.cuh"
 
 /////////////////////////////////////
 // Type definition for the algorithm

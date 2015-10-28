@@ -8,7 +8,7 @@
 #ifndef PREPROCESSING_H_
 #define PREPROCESSING_H_
 
-#include "ImageProcessing/colorTransformation.h"
+#include "ImageProcessing/colorTransformation.cuh"
 
 template<typename T, typename C, typename P>
 __forceinline__

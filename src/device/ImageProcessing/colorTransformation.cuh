@@ -5,8 +5,8 @@
  *      Author: adas
  */
 
-#ifndef COLORTRANSFORMATION_H_
-#define COLORTRANSFORMATION_H_
+#ifndef COLORTRANSFORMATION_CUH_
+#define COLORTRANSFORMATION_CUH_
 
 
 
@@ -42,4 +42,4 @@ void RGB2GrayScale(T *RGBimage, T *grayScaleImage, uint rows, uint cols)
 }
 
 
-#endif /* COLORTRANSFORMATION_H_ */
+#endif /* COLORTRANSFORMATION_CUH_ */

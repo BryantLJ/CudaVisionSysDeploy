@@ -7,14 +7,14 @@
 #include "../utils/cudaUtils.cuh"
 #include "../utils/cudaDataHandler.h"
 
-#include "ImageProcessing/colorTransformation.h"
+#include "ImageProcessing/colorTransformation.cuh"
 
-#include "LBPHist/LBPcompute.h"
-#include "LBPHist/cellHistograms.h"
-#include "LBPHist/blockHistograms.h"
-#include "LBPHist/normHistograms.h"
+#include "LBPHist/LBPcompute.cuh"
+#include "LBPHist/cellHistograms.cuh"
+#include "LBPHist/blockHistograms.cuh"
+#include "LBPHist/normHistograms.cuh"
 
-#include "HOG/gradient.h"
+#include "HOG/gradient.cuh"
 #include "HOG/HOGdescriptor.cuh"
 
 template<typename T, typename C, typename P>

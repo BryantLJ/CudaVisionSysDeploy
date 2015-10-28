@@ -5,8 +5,8 @@
  *      Author: adas
  */
 
-#ifndef WARPOPS_H_
-#define WARPOPS_H_
+#ifndef WARPOPS_CUH_
+#define WARPOPS_CUH_
 
 template<typename T>
 __forceinline__ __device__
@@ -23,5 +23,4 @@ T warpReductionSum(T sliceVal)
 }
 
 
-
-#endif /* WARPOPS_H_ */
+#endif /* WARPOPS_CUH_ */

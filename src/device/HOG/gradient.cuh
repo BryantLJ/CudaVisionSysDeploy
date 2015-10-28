@@ -5,8 +5,8 @@
  *      Author: adas
  */
 
-#ifndef GRADIENT_H_
-#define GRADIENT_H_
+#ifndef GRADIENT_CUH_
+#define GRADIENT_CUH_
 
 #include <math.h>
 #define PI 3.1415926535897932384f
@@ -57,4 +57,4 @@ void imageGradient(T0 *image, T1 *gMag, T2 *gOri, int rows, int cols)
 
 
 
-#endif /* GRADIENT_H_ */
+#endif /* GRADIENT_CUH_ */

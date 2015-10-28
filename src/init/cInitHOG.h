@@ -66,7 +66,7 @@ private:
 	static inline uint computeYblockDescriptors(uint rows)
 		{	return rows / Y_HOGCELL;	}
 
-	static inline uint computeTotalBlockDescriptors(uint xDescs, uint yDescs)
+	static inline uint computeNumBlockDescriptors(uint xDescs, uint yDescs)
 		{	return ((yDescs-1) * xDescs) - 1;	}
 
 	/* Computes the sizes of the data structures for each pyramid layer
@@ -86,7 +86,7 @@ private:
 			//szs->hog.cellDescElems[i] =
 			szs->hog.xBlockHists[i] = computeXblockDescriptors(szs->pyr.imgCols[i]);
 			szs->hog.yBlockHists[i] = computeYblockDescriptors(szs->pyr.imgRows[i]);
-			szs->hog.numblockHist[i] = computeTotalBlockDescriptors(szs->hog.xBlockHists[i], szs->hog.yBlockHists[i]);
+			szs->hog.numblockHist[i] = computeNumBlockDescriptors(szs->hog.xBlockHists[i], szs->hog.yBlockHists[i]);
 			szs->hog.blockDescElems[i] = szs->hog.numblockHist[i] * HOG_HISTOWIDTH;
 
 			szs->features.xBlockFeatures[i] =  szs->hog.xBlockHists[i];
@@ -105,7 +105,7 @@ private:
 				//szs->hog.cellDescElems[j]
 				szs->hog.xBlockHists[j] = computeXblockDescriptors(szs->pyr.imgCols[j]);
 				szs->hog.yBlockHists[j] = computeYblockDescriptors(szs->pyr.imgRows[j]);
-				szs->hog.numblockHist[j] = computeTotalBlockDescriptors(szs->hog.xBlockHists[j], szs->hog.yBlockHists[j]);
+				szs->hog.numblockHist[j] = computeNumBlockDescriptors(szs->hog.xBlockHists[j], szs->hog.yBlockHists[j]);
 				szs->hog.blockDescElems[j] = szs->hog.numblockHist[j] * HOG_HISTOWIDTH;
 
 				szs->features.xBlockFeatures[j] =  szs->hog.xBlockHists[j];

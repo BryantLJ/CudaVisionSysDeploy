@@ -5,8 +5,8 @@
  *      Author: adas
  */
 
-#ifndef LBPCOMPUTE_H_
-#define LBPCOMPUTE_H_
+#ifndef LBPCOMPUTE_CUH_
+#define LBPCOMPUTE_CUH_
 
 //#include "../common/operators.h"
 
@@ -66,4 +66,4 @@ void stencilCompute2D(T *input, T *output, const uint rows,
 }
 
 
-#endif /* LBPCOMPUTE_H_ */
+#endif /* LBPCOMPUTE_CUH_ */

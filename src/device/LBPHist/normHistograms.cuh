@@ -5,8 +5,8 @@
  *      Author: adas
  */
 
-#ifndef NORMHISTOGRAMS_H_
-#define NORMHISTOGRAMS_H_
+#ifndef NORMHISTOGRAMS_CUH_
+#define NORMHISTOGRAMS_CUH_
 
 #include "../../common/operators.h"
 
@@ -52,4 +52,4 @@ void mapNormalization(T* inHistos, F* outHistos/*, Op NormF*/, const int nDescs)
 }
 
 
-#endif /* NORMHISTOGRAMS_H_ */
+#endif /* NORMHISTOGRAMS_CUH_ */

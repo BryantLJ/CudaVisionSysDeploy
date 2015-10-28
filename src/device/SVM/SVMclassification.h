@@ -8,7 +8,7 @@
 #ifndef SVMCLASSIFICATION_H_
 #define SVMCLASSIFICATION_H_
 
-#include "../Operations/warpOps.h"
+#include "../Operations/warpOps.cuh"
 
 // Compile function using read only cache, avaliable on 3.5 compute capability or above
 #if __CUDA_ARCH__ >= 350
