@@ -14,7 +14,7 @@
 
 #include "utils/cudaUtils.cuh"
 #include "utils/cudaDataHandler.h"
-
+#include "utils/nvtxHandler.h"
 //#include "cuda_fp16.h"
 
 #include "device/ImageProcessing/colorTransformation.cuh"
@@ -25,7 +25,6 @@
 typedef uchar 	input_t;
 typedef int 	desc_t;
 typedef float	roifeat_t;
-
 
 int main()
 {
@@ -146,8 +145,8 @@ int main()
 //				printf( "cell feature: %d: %d\n", u, cell[u]);
 //			}
 
-			//devDataHandler.displayDeviceData1D<desc_t>(getOffset<desc_t>(detectData.lbp.blockHistos, dSizes->lbp.blockHistosElems, i),
-			//							   	       dSizes->lbp.blockHistosElems[i]);
+//			devDataHandler.displayDeviceData1D<desc_t>(detectData.lbp.blockHistos,
+//										   	       dSizes->lbp.blockHistosElems[i]);
 
 //			uchar *block = (uchar*)malloc(dSizes->blockHistosElems[i]);
 //			copyDtoH(block, detectData.blockHistos, dSizes->blockHistosElems[i]);
@@ -181,11 +180,16 @@ int main()
 
 			ROIfilter.roisDecision(i, dSizes->pyr.scalesResizeFactor[i], dSizes->pyr.xBorder, dSizes->pyr.yBorder, params->minRoiMargin);
 		}
+		NVTXhandler nms(COLOR_BLUE, "Non maximum suppression");
+		nms.nvtxStartEvent();
+
 		refinement.AccRefinement(ROIfilter.getHitROIs());
 		refinement.drawRois(*(acquisition.getFrame()));
 		ROIfilter.clearVector();
 		refinement.clearVector();
 		acquisition.showFrame();
+
+		nms.nvtxStopEvent();
 
 		// Get a new frame
 		rawImg = acquisition.acquireFrameRGB();

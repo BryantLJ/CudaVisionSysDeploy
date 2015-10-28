@@ -387,4 +387,9 @@ src/visionSys.o : ../src/visionSys.cu \
     ../src/common/RoiCluster.h \
     ../src/utils/cudaUtils.cuh \
     ../src/utils/cudaDataHandler.h \
+    ../src/utils/nvtxHandler.h \
+    /usr/local/cuda-7.5/bin/../targets/x86_64-linux/include/nvToolsExtCuda.h \
+    /usr/local/cuda-7.5/bin/../targets/x86_64-linux/include/cuda.h \
+    /usr/local/cuda-7.5/bin/../targets/x86_64-linux/include/nvToolsExt.h \
+    /usr/local/cuda-7.5/bin/../targets/x86_64-linux/include/nvToolsExtCudaRt.h \
     ../src/device/ImageProcessing/colorTransformation.cuh

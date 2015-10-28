@@ -32,7 +32,7 @@ public:
 		T* h_devPtr = mallocGen<T>(count);
 		// Copy Device data to host memory
 		//copyDtoH(h_devPtr, getOffset<desc_t>(m_detectData->lbp.blockHistos, m_sizes->lbp.blockHistosElems, i), count);
-		copyDtoH(h_devPtr, devPtr, count);
+		copyDtoH<T>(h_devPtr, devPtr, count);
 
 		for (int i = 0; i < count; i++) {
 			cout << "index: " << i << " -- Device: " << devPtr[i] << endl;

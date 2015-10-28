@@ -335,25 +335,27 @@ src/visionSys.o : ../src/visionSys.cu \
     ../src/init/../device/../common/parameters.h \
     ../src/init/../device/../common/detectorData.h \
     ../src/init/../device/../utils/cudaUtils.cuh \
-    ../src/init/../device/ImageProcessing/colorTransformation.h \
-    ../src/init/../device/LBPHist/LBPcompute.h \
-    ../src/init/../device/LBPHist/cellHistograms.h \
-    ../src/init/../device/LBPHist/blockHistograms.h \
+    ../src/init/../device/../utils/cudaDataHandler.h \
+    ../src/init/../device/ImageProcessing/colorTransformation.cuh \
+    ../src/init/../device/LBPHist/LBPcompute.cuh \
+    ../src/init/../device/LBPHist/cellHistograms.cuh \
+    ../src/init/../device/LBPHist/blockHistograms.cuh \
     ../src/init/../device/LBPHist/../Operations/simd_functions.h \
-    ../src/init/../device/LBPHist/../Operations/warpOps.h \
-    ../src/init/../device/LBPHist/normHistograms.h \
+    ../src/init/../device/LBPHist/../Operations/warpOps.cuh \
+    ../src/init/../device/LBPHist/normHistograms.cuh \
     ../src/init/../device/LBPHist/../../common/operators.h \
-    ../src/init/../device/HOG/gradient.h \
+    ../src/init/../device/HOG/gradient.cuh \
     ../src/init/../device/HOG/HOGdescriptor.cuh \
     ../src/init/../device/HOG/addToHistogram.cuh \
+    ../src/init/../device/HOG/normalizeDescriptor.cuh \
     ../src/init/../device/classification.h \
     ../src/init/../device/SVM/SVMclassification.h \
-    ../src/init/../device/SVM/../Operations/warpOps.h \
+    ../src/init/../device/SVM/../Operations/warpOps.cuh \
     ../src/init/../device/pyramidDev.h \
     /usr/local/include/opencv2/core/core.hpp \
     /usr/local/include/opencv2/imgproc/imgproc.hpp \
     /usr/local/include/opencv2/highgui/highgui.hpp \
-    ../src/init/../device/ImageProcessing/resize.h \
+    ../src/init/../device/ImageProcessing/resize.cuh \
     ../src/init/../device/../utils/utils.h \
     ../src/init/../device/preprocessing.h \
     ../src/init/../host/featureExtractionH.h \
@@ -376,4 +378,9 @@ src/visionSys.o : ../src/visionSys.cu \
     ../src/common/RoiCluster.h \
     ../src/utils/cudaUtils.cuh \
     ../src/utils/cudaDataHandler.h \
-    ../src/device/ImageProcessing/colorTransformation.h
+    ../src/utils/nvtxHandler.h \
+    /usr/local/cuda-7.5/bin/../targets/x86_64-linux/include/nvToolsExtCuda.h \
+    /usr/local/cuda-7.5/bin/../targets/x86_64-linux/include/cuda.h \
+    /usr/local/cuda-7.5/bin/../targets/x86_64-linux/include/nvToolsExt.h \
+    /usr/local/cuda-7.5/bin/../targets/x86_64-linux/include/nvToolsExtCudaRt.h \
+    ../src/device/ImageProcessing/colorTransformation.cuh
