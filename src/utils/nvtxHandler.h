@@ -2,13 +2,11 @@
  * nvtxHandler.h
  *
  *  Created on: Oct 28, 2015
- *      Author: adas
+ *      Author: Víctor Campmany - vcampmany@cvc.uab.es
  */
 
 #ifndef NVTXHANDLER_H_
 #define NVTXHANDLER_H_
-
-#include <string>
 
 /* Include library search path (-L) and library (-l) */
 #include <nvToolsExtCuda.h>

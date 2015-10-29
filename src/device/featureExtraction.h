@@ -168,6 +168,10 @@ void deviceHOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, 
 	dim3 gridHOG (ceil((float)dsizes->hog.numblockHist[layer] / blkSizes->hog.blockHOG.x),
 				  1, 1 );
 
+	dim3 gridHOG2(dsizes->hog.numblockHist[layer], 1, 1);
+
+	dim3 blockHOG(16, 16, 1);
+
 
 	gammaCorrection<T, P> <<<gridGamma, blkSizes->hog.blockGamma>>>
 			(getOffset(data->pyr.imgInput, dsizes->pyr.imgPixels, layer),
@@ -187,15 +191,26 @@ void deviceHOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, 
 
 	cudaErrorCheck(__LINE__, __FILE__);
 
-	computeHOGdescriptor<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
+//	computeHOGdescriptor<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
+//			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
+//			 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
+//			 getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
+//			 data->hog.gaussianMask,
+//			 dsizes->hog.xBlockHists[layer],
+//			 dsizes->hog.yBlockHists[layer],
+//			 dsizes->hog.matCols[layer],
+//			 dsizes->hog.numblockHist[layer]);
+	blockHOGdescriptor<P, HOG_HISTOWIDTH, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK> <<<gridHOG2, blockHOG>>>
 			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
 			 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
 			 getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
 			 data->hog.gaussianMask,
+			 data->hog.blockDistances,
 			 dsizes->hog.xBlockHists[layer],
 			 dsizes->hog.yBlockHists[layer],
 			 dsizes->hog.matCols[layer],
 			 dsizes->hog.numblockHist[layer]);
+
 
 	cudaErrorCheck(__LINE__, __FILE__);
 
@@ -205,7 +220,7 @@ void deviceHOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, 
 			   dsizes->hog.blockDescElems[layer] * sizeof(P),
 			   cudaMemcpyDeviceToHost);
 
-	//generateWindows(outHOGdev, dsizes->pyr.imgCols[layer], dsizes->pyr.imgRows[layer], HOG_HISTOWIDTH);
+	generateWindows(outHOGdev, dsizes->pyr.imgCols[layer], dsizes->pyr.imgRows[layer], HOG_HISTOWIDTH);
 
 //	for (int i = 0; i < dsizes->hog.yBlockHists[layer]; i++) {
 //		for (int j = 0; j < dsizes->hog.xBlockHists[layer]; j++) {

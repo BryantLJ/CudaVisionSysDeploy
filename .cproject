@@ -136,7 +136,7 @@
 									<listOptionValue builtIn="false" value="/usr/local/cuda-7.5/targets/x86_64-linux/lib"/>
 									<listOptionValue builtIn="false" value="/usr/local/lib"/>
 								</option>
-								<option id="nvcc.linker.option.cudart.2097598402" name="CUDA Runtime Library:" superClass="nvcc.linker.option.cudart" value="nvcc.linker.option.cudart.static" valueType="enumerated"/>
+								<option id="nvcc.linker.option.cudart.2097598402" name="CUDA Runtime Library:" superClass="nvcc.linker.option.cudart" value="nvcc.linker.option.cudart.shared" valueType="enumerated"/>
 								<inputType id="nvcc.linker.input.1812971128" superClass="nvcc.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>

@@ -1,0 +1,7 @@
+1. La part de HOST es limitant, l'adquisió de frames amb "videocapture" es molt costosa (10ms) aproximadament
+   Depenent dels nivell de piràmide que fem, aquesta part representa diferents percentatges de temps de còmput.
+   Per un únic nivell de piràmid la part de host tarda el mateix que la de device.
+   Per més nivells, per exemple 8, tarda un terç del temps de GPU, com més nivells de piràmide menys important resulta aquesta part.
+
+2. Solució: solapar comput de host i device. Un cop s'ha realitzat el preprocess d'una imatge ja podem començar a copiar la seguent
+   a memòria de device, mentre el device esta fent còmput, Així ja disposarà del seguent frame sense haver d'esperar

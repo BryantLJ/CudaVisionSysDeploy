@@ -79,12 +79,13 @@ int main()
 	beginApp = clock();
 	time_t start;
 	time(&start);
-
+	int count = 0;
 	/////////////////////////
 	// Image processing loop
 	/////////////////////////
-	while (!rawImg->empty())
+	while (!rawImg->empty() && count < 340)
 	{
+		count++;
 		//begin = clock();
 
 		// Copy each frame to device
@@ -182,20 +183,32 @@ int main()
 		}
 		NVTXhandler nms(COLOR_BLUE, "Non maximum suppression");
 		nms.nvtxStartEvent();
-
 		refinement.AccRefinement(ROIfilter.getHitROIs());
 		refinement.drawRois(*(acquisition.getFrame()));
-		ROIfilter.clearVector();
-		refinement.clearVector();
-		acquisition.showFrame();
-
 		nms.nvtxStopEvent();
 
+		NVTXhandler clearVecs(COLOR_YELLOW, "Reset nms Vectors");
+		clearVecs.nvtxStartEvent();
+		ROIfilter.clearVector();
+		refinement.clearVector();
+		clearVecs.nvtxStopEvent();
+
+		NVTXhandler showF(COLOR_RED, "Show frame");
+		showF.nvtxStartEvent();
+		acquisition.showFrame();
+		showF.nvtxStopEvent();
+
+		NVTXhandler frameTime(COLOR_GREEN, "Frame adquisition");
+		frameTime.nvtxStartEvent();
 		// Get a new frame
 		rawImg = acquisition.acquireFrameRGB();
+		frameTime.nvtxStopEvent();
 
+		NVTXhandler resetFeat(COLOR_ORANGE, "Reset device Features");
+		resetFeat.nvtxStartEvent();
 		// Reset features vector
 		detectorF.resetFeatures(&detectData, dSizes);
+		resetFeat.nvtxStopEvent();
 
 //		end = clock();
 //		elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;

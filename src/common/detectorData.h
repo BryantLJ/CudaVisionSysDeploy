@@ -37,6 +37,7 @@ struct detectorData {
 		P				*gOrientation;			// Gradient Orientation matrix
 		P				*HOGdescriptor;			// HOG descriptor of the image
 		P				*gaussianMask;			// Precomputed gaussian mask for HOG block
+		P				*blockDistances;		// Precomputed distances of the HOG block
 
 	}hog;
 
