@@ -128,6 +128,67 @@ private:
 		}
 	}
 
+	template<typename T>
+	static void PrecomputeDistances2(T *dists, T *gaussMask)
+	{
+		// First block
+		for (int i = 0; i < 12; i++) {
+			for (int j = 0; j < 12; j++) {
+				float x = j + 0.5f;
+				float y = i + 0.5f;
+
+				float xdist = (abs(x - 4)) / 8;
+				float ydist = (abs(y - 4)) / 8;
+
+				float num = xdist * ydist * gaussMask[i*16 + j];
+				dists[i*16 + j] = num;
+			}
+		}
+
+		// Second block
+		T *pDists = &(dists[256 + 4]);
+		for(int i = 0; i < 12; i++) {
+			for (int j = 0; j < 12; j++) {
+				float x = j + 0.5f;
+				float y = i + 0.5f;
+
+				float xdist = (abs(x - 8)) / 8;
+				float ydist = (abs(y - 4)) / 8;
+
+				float num = xdist * ydist * gaussMask[i*16 + j + 4];
+				pDists[i*16 + j] = num;
+			}
+		}
+		// Third block
+		pDists = &(dists[256*2 + 4*X_GAUSSMASK]);
+		for (int i = 0; i < 12; i++) {
+			for (int j = 0; j < 12; j++) {
+				float x = j + 0.5f;
+				float y = i + 0.5f;
+
+				float xdist = (abs(x - 4)) / 8;
+				float ydist = (abs(y - 8)) / 8;
+
+				float num = xdist * ydist * gaussMask[(i+4)*16 + j];
+				pDists[i*16 + j] = num;
+			}
+		}
+		// Fourth block
+		pDists = &(dists[256*3 + 4*X_GAUSSMASK + 4]);
+		for (int i = 0; i < 12; i++) {
+			for (int j = 0; j < 12; j++) {
+				float x = j + 0.5f;
+				float y = i + 0.5f;
+
+				float xdist = (abs(x - 8)) / 8;
+				float ydist = (abs(y - 8)) / 8;
+
+				float num = xdist * ydist * gaussMask[(i+4)*16 + j + 4];
+				pDists[i*16 + j] = num;
+			}
+		}
+	}
+
 	static inline uint computeXblockDescriptors(uint cols)
 		{	return cols / X_HOGCELL;	}
 
@@ -263,21 +324,29 @@ public:
 		PrecomputeGaussian(h_gaussMask, sizes->hog.xGaussMask); // todo remove
 		cudaMallocGen(&(dev->hog.gaussianMask), sizes->hog.xGaussMask * sizes->hog.yGaussMask);
 		copyHtoD(dev->hog.gaussianMask, h_gaussMask, sizes->hog.xGaussMask * sizes->hog.yGaussMask);
-		free(h_gaussMask);
 
 		// Create Square Root table
 		P *h_sqrtLUT = mallocGen<P>(SQRT_LUT);
 		PrecomputeSqrtLUT(h_sqrtLUT, SQRT_LUT);
 		cudaMallocGen(&(dev->hog.sqrtLUT), SQRT_LUT);
 		copyHtoD(dev->hog.sqrtLUT, h_sqrtLUT, SQRT_LUT);
-		free(h_sqrtLUT);
 
 		// Create Distances table
 		P *h_distances = mallocGen<P>(X_HOGBLOCK * Y_HOGBLOCK * 4);
 		memset(h_distances, 0 , X_HOGBLOCK * Y_HOGBLOCK * 4 * sizeof(P));
-		PrecomputeDistances(h_distances);
+		PrecomputeDistances2(h_distances, h_gaussMask);
 		cudaMallocGen(&(dev->hog.blockDistances), X_HOGBLOCK * Y_HOGBLOCK * 4);
 		copyHtoD(dev->hog.blockDistances, h_distances, X_HOGBLOCK * Y_HOGBLOCK * 4);
+
+//		for (int i = 0; i < 16; i++) {
+//			for (int j = 0; j < 16; j++) {
+//				cout << h_distances[(256*1) + i*16 + j] << " \t";
+//			}
+//			cout << endl;
+//		}
+
+		free(h_gaussMask);
+		free(h_sqrtLUT);
 		free(h_distances);
 	}
 

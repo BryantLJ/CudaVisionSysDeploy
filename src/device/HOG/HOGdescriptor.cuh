@@ -28,7 +28,7 @@ void blockHOGdescriptor(T *gMagnitude, T *gOrientation, T *HOGdesc, const T *__r
 	T *pDesc = &(HOGdesc[blockId * HistoBins]);
 	T *pMag = &(gMagnitude[(idy*cols*YCellSize) + (idx*XCellSize)]);
 	T *pOri = &(gOrientation[(idy*cols*YCellSize) + (idx*XCellSize)]);
-	const T *pDist = &(distances[y*XBLOCKSize + x*4]);
+	const T *pDist = &(distances[(y*XBLOCKSize*4) + (x*4)]);
 
 	__shared__ T blockHistogram[HistoBins];
 
@@ -85,13 +85,12 @@ void blockHOGdescriptor(T *gMagnitude, T *gOrientation, T *HOGdesc, const T *__r
 			   pDist[3] * pDist[0] * gMag * distBin1);
 
 
+	__syncthreads();
 	// Store Histogram to global memory
 	if(id < HistoBins) {
 		pDesc[id] = blockHistogram[id];
 	}
 }
-
-
 
 
 
@@ -105,8 +104,6 @@ void computeHOGdescriptor(T *gMagnitude, T1 *gOrientation, T3 *HOGdesc, T3 *gaus
 	int idx = id % Xblocks;
 	int idy = id / Xblocks;
 
-	//T 	*pMag 	= &(gMagnitude[(idy*cols*YBLOCKSize) + (idx*XBLOCKSize)]);
-	//T1 	*pOri 	= &(gOrientation[(idy*cols*YBLOCKSize) + (idx*XBLOCKSize)]);
 	T 	*pMag 	= &(gMagnitude[(idy*cols*YCellSize) + (idx*XCellSize)]);
 	T1 	*pOri 	= &(gOrientation[(idy*cols*YCellSize) + (idx*XCellSize)]);
 	T3 	*pDesc 	= &(HOGdesc[id*HISTOWITDH]);
@@ -122,7 +119,42 @@ void computeHOGdescriptor(T *gMagnitude, T1 *gOrientation, T3 *HOGdesc, T3 *gaus
 			}
 		}
 		//normalizeL1Sqrt<T3>(pDesc);
-		//normalizeL2Hys(pDesc);
+		normalizeL2Hys(pDesc);
+	}
+}
+
+template<typename T, typename T1, typename T3, int XCellSize, int YCellSize, int XBLOCKSize, int YBLOCKSize, int HISTOWITDH>
+__global__
+void computeHOGlocal(T *gMagnitude, T1 *gOrientation, T3 *HOGdesc, T3 *gaussMask, int Xblocks, int Yblocks, int cols, int totalNumBlocks)
+{
+	int id = blockIdx.x * blockDim.x + threadIdx.x;
+	int idx = id % Xblocks;
+	int idy = id / Xblocks;
+
+	T 	*pMag 	= &(gMagnitude[(idy*cols*YCellSize) + (idx*XCellSize)]);
+	T1 	*pOri 	= &(gOrientation[(idy*cols*YCellSize) + (idx*XCellSize)]);
+	T3 	*pDesc 	= &(HOGdesc[id*HISTOWITDH]);
+	// Store histogram on local memory
+	T3	localHisto[36];
+	for (int k = 0; k < 36; k++) {
+		localHisto[k] = 0;
+	}
+
+	if (id < totalNumBlocks) {
+		for (int i = 0; i < YBLOCKSize; i++) {
+			for (int j = 0; j < XBLOCKSize; j++) {
+				addToHistogram(	pMag[i*cols + j] * gaussMask[i*XBLOCKSize + j],
+								pOri[i*cols + j],
+								localHisto,
+								j+0.5f,
+								i+0.5f);
+			}
+		}
+		//normalizeL1Sqrt<T3>(pDesc);
+		normalizeL2Hys(localHisto);
+		for (int k = 0; k < 36; k++) {
+			pDesc[k] = localHisto[k];
+		}
 	}
 }
 

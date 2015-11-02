@@ -191,36 +191,36 @@ void deviceHOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, 
 
 	cudaErrorCheck(__LINE__, __FILE__);
 
-//	computeHOGdescriptor<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
-//			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
-//			 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
-//			 getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
-//			 data->hog.gaussianMask,
-//			 dsizes->hog.xBlockHists[layer],
-//			 dsizes->hog.yBlockHists[layer],
-//			 dsizes->hog.matCols[layer],
-//			 dsizes->hog.numblockHist[layer]);
-	blockHOGdescriptor<P, HOG_HISTOWIDTH, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK> <<<gridHOG2, blockHOG>>>
+	computeHOGlocal<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
 			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
 			 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
 			 getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
 			 data->hog.gaussianMask,
-			 data->hog.blockDistances,
 			 dsizes->hog.xBlockHists[layer],
 			 dsizes->hog.yBlockHists[layer],
 			 dsizes->hog.matCols[layer],
 			 dsizes->hog.numblockHist[layer]);
+//	blockHOGdescriptor<P, HOG_HISTOWIDTH, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK> <<<gridHOG2, blockHOG>>>
+//			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
+//			 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
+//			 getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
+//			 data->hog.gaussianMask,
+//			 data->hog.blockDistances,
+//			 dsizes->hog.xBlockHists[layer],
+//			 dsizes->hog.yBlockHists[layer],
+//			 dsizes->hog.matCols[layer],
+//			 dsizes->hog.numblockHist[layer]);
 
 
 	cudaErrorCheck(__LINE__, __FILE__);
 
-	P *outHOGdev = (P*) malloc(dsizes->hog.blockDescElems[layer] * sizeof(P));
-	cudaMemcpy(outHOGdev,
-			   getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
-			   dsizes->hog.blockDescElems[layer] * sizeof(P),
-			   cudaMemcpyDeviceToHost);
-
-	generateWindows(outHOGdev, dsizes->pyr.imgCols[layer], dsizes->pyr.imgRows[layer], HOG_HISTOWIDTH);
+//	P *outHOGdev = (P*) malloc(dsizes->hog.blockDescElems[layer] * sizeof(P));
+//	cudaMemcpy(outHOGdev,
+//			   getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
+//			   dsizes->hog.blockDescElems[layer] * sizeof(P),
+//			   cudaMemcpyDeviceToHost);
+//
+//	generateWindows(outHOGdev, dsizes->pyr.imgCols[layer], dsizes->pyr.imgRows[layer], HOG_HISTOWIDTH);
 
 //	for (int i = 0; i < dsizes->hog.yBlockHists[layer]; i++) {
 //		for (int j = 0; j < dsizes->hog.xBlockHists[layer]; j++) {

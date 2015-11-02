@@ -55,6 +55,7 @@ cudaError_t cudaMallocGen(T** data, int count) {
 
 // Copy data from Host to Device
 template<typename T>
+__host__ __forceinline__
 cudaError_t copyHtoD(T* dest_global, const T* source_host, size_t count) {
 	return cudaSafe( cudaMemcpy(dest_global, source_host, sizeof(T) * count, cudaMemcpyHostToDevice) );
 }
