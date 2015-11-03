@@ -150,7 +150,6 @@ void computeHOGlocal(T *gMagnitude, T1 *gOrientation, T3 *HOGdesc, T3 *gaussMask
 								i+0.5f);
 			}
 		}
-		//normalizeL1Sqrt<T3>(pDesc);
 		normalizeL2Hys(localHisto);
 		for (int k = 0; k < 36; k++) {
 			pDesc[k] = localHisto[k];
