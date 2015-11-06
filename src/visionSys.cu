@@ -94,17 +94,18 @@ int main()
 		// Input image preprocessing
 		detectorF.preprocess(&detectData, dSizes, &blkconfig);
 
-//		cv::Mat im(dSizes->rawRows, dSizes->rawCols, CV_8UC1);
-//		copyDtoH(im.data, detectData.rawImgBW, dSizes->rawRows*dSizes->rawCols);
-//		cv::imshow("BW", im);
-//		cv::waitKey(0);
-
 		// Compute the pyramid
+		NVTXhandler pyramide(COLOR_ORANGE, "Pyramid");
+		pyramide.nvtxStartEvent();
 		detectorF.pyramid(&detectData, dSizes, &blkconfig);
+		pyramide.nvtxStopEvent();
 
 		// Detection algorithm for each pyramid layer
 		for (uint i = 0; i < dSizes->pyr.pyramidLayers; i++) {
+			NVTXhandler features(COLOR_YELLOW, "Feature extraction");
+			features.nvtxStartEvent();
 			detectorF.featureExtraction(&detectData, dSizes, i, &blkconfig);
+			features.nvtxStopEvent();
 
 //			cv::Mat inp, lbp;
 //
@@ -161,7 +162,10 @@ int main()
 //				printf( "NORM feature: %d: %f\n", u, norm[u]);
 //			}
 
+			NVTXhandler classi(COLOR_GRAY, "Classification");
+			classi.nvtxStartEvent();
 			detectorF.classification(&detectData, dSizes, i, &blkconfig);
+			classi.nvtxStopEvent();
 
 			copyDtoH<roifeat_t>(getOffset<roifeat_t>(ROIfilter.getHostScoresVector(), dSizes->svm.scoresElems, i),
 								getOffset<roifeat_t>(detectData.svm.ROIscores, dSizes->svm.scoresElems, i),
@@ -201,7 +205,7 @@ int main()
 		NVTXhandler frameTime(COLOR_GREEN, "Frame adquisition");
 		frameTime.nvtxStartEvent();
 		// Get a new frame
-		rawImg = acquisition.acquireFrameRGB();
+		//rawImg = acquisition.acquireFrameRGB();
 		frameTime.nvtxStopEvent();
 
 		NVTXhandler resetFeat(COLOR_ORANGE, "Reset device Features");

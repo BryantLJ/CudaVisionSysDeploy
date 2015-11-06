@@ -151,7 +151,7 @@
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="com.nvidia.cuda.ide.build.project.ICudaProjectConfiguration">
-				<executable devicelink="true">
+				<executable devicelink="false">
 					<sass major="5" minor="2"/>
 					<ptx major="5" minor="2"/>
 				</executable>
