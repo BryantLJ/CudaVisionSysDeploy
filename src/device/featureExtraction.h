@@ -191,7 +191,7 @@ void deviceHOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, 
 
 	cudaErrorCheck(__LINE__, __FILE__);
 
-	computeHOGdescriptor<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
+	computeHOGlocal<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
 			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
 			 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
 			 getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),

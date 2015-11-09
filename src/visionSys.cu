@@ -85,6 +85,8 @@ int main()
 	/////////////////////////
 	while (!rawImg->empty() && count < 340)
 	{
+		NVTXhandler lat(COLOR_GREEN, "latency");
+		lat.nvtxStartEvent();
 		count++;
 		//begin = clock();
 
@@ -102,11 +104,7 @@ int main()
 
 		// Detection algorithm for each pyramid layer
 		for (uint i = 0; i < dSizes->pyr.pyramidLayers; i++) {
-			NVTXhandler features(COLOR_YELLOW, "Feature extraction");
-			features.nvtxStartEvent();
 			detectorF.featureExtraction(&detectData, dSizes, i, &blkconfig);
-			features.nvtxStopEvent();
-
 //			cv::Mat inp, lbp;
 //
 //			string name = "00000002a_LBP_";
@@ -162,10 +160,7 @@ int main()
 //				printf( "NORM feature: %d: %f\n", u, norm[u]);
 //			}
 
-			NVTXhandler classi(COLOR_GRAY, "Classification");
-			classi.nvtxStartEvent();
 			detectorF.classification(&detectData, dSizes, i, &blkconfig);
-			classi.nvtxStopEvent();
 
 			copyDtoH<roifeat_t>(getOffset<roifeat_t>(ROIfilter.getHostScoresVector(), dSizes->svm.scoresElems, i),
 								getOffset<roifeat_t>(detectData.svm.ROIscores, dSizes->svm.scoresElems, i),
@@ -205,7 +200,7 @@ int main()
 		NVTXhandler frameTime(COLOR_GREEN, "Frame adquisition");
 		frameTime.nvtxStartEvent();
 		// Get a new frame
-		//rawImg = acquisition.acquireFrameRGB();
+		rawImg = acquisition.acquireFrameRGB();
 		frameTime.nvtxStopEvent();
 
 		NVTXhandler resetFeat(COLOR_ORANGE, "Reset device Features");
@@ -222,6 +217,7 @@ int main()
 //		fpsStamp.clear();
 //		cout << "FRAME COMPUTED ---- FPS: " << 1/elapsed_secs << endl;
 //		cout << "height: " << acquisition.getCaptureHeight() << "width: " << acquisition.getCaptureWidth() << endl;
+		lat.nvtxStopEvent();
 	}
 
 	//endApp = clock();
