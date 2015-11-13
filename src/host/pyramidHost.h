@@ -8,6 +8,8 @@
 #ifndef PYRAMIDHOST_H_
 #define PYRAMIDHOST_H_
 
+namespace host {
+
 template<typename T, typename C, typename P>
 void launchHostPyramid(detectorData<T, C, P> *data, dataSizes *dsizes, cudaBlockConfig *blkconf)
 {
@@ -59,5 +61,7 @@ void launchHostPyramid(detectorData<T, C, P> *data, dataSizes *dsizes, cudaBlock
 	}
 }
 
+
+} /* end namespace */
 
 #endif /* PYRAMIDHOST_H_ */

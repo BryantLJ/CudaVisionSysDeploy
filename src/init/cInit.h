@@ -101,17 +101,17 @@ public:
 			switch (m_featExtraction) {
 
 			case LBP:		detectorFuncs.initFeatures = &cInitLBP::initDeviceLBP;
-							detectorFuncs.featureExtraction = &deviceLBPfeatureExtraction;
+							detectorFuncs.featureExtraction = &device::LBPfeatureExtraction;
 							detectorFuncs.resetFeatures = &cInitLBP::zerosCellHistogramArray;
 							break;
 
 			case HOG: 		detectorFuncs.initFeatures = &cInitHOG::initDeviceHOG;
-							detectorFuncs.featureExtraction = &deviceHOGfeatureExtraction;
+							detectorFuncs.featureExtraction = &device::HOGfeatureExtraction;
 							detectorFuncs.resetFeatures = &cInitHOG::zerosHOGfeatures;
 							break;
 
 			case HOGLBP:	detectorFuncs.initFeatures = &cInitHOGLBP::initDeviceHOGLBP;
-							detectorFuncs.featureExtraction = &deviceHOGLBPfeatureExtraction;
+							detectorFuncs.featureExtraction = &device::HOGLBPfeatureExtraction;
 							// add hoglbp reset function
 							break;
 
@@ -123,11 +123,11 @@ public:
 			switch (m_classifType) {
 
 			case SVM:		detectorFuncs.initClassifi = &cInitSVM::initDeviceSVM;
-							detectorFuncs.classification = &deviceSVMclassification;
+							detectorFuncs.classification = &device::SVMclassification;
 							break;
 
 			case RF: 		detectorFuncs.initClassifi = &cInitRF::initDeviceRF;
-							detectorFuncs.classification = &deviceRFclassification;
+							detectorFuncs.classification = &device::RFclassification;
 							break;
 
 			default:		cerr << "No Classification algorithm chosen on DEVICE" << endl;
@@ -140,15 +140,15 @@ public:
 
 			switch (m_featExtraction) {
 			case LBP:		detectorFuncs.initFeatures = &cInitLBP::initHostLBP;
-							detectorFuncs.featureExtraction = &hostLBPFeatureExtraction;
+							detectorFuncs.featureExtraction = &host::LBPFeatureExtraction;
 							break;
 
 			case HOG: 		detectorFuncs.initFeatures = &cInitHOG::initHostHOG;
-							detectorFuncs.featureExtraction = &hostHOGFeatureExtraction;
+							detectorFuncs.featureExtraction = &host::HOGFeatureExtraction;
 							break;
 
 			case HOGLBP:	detectorFuncs.initFeatures = &cInitHOGLBP::initHostHOGLBP;
-							detectorFuncs.featureExtraction = &hostHOGLBPFeatureExtraction;
+							detectorFuncs.featureExtraction = &host::HOGLBPFeatureExtraction;
 							break;
 
 			default:		cerr << "No feature extraction algorithm chosen on HOST" << endl;
@@ -158,11 +158,11 @@ public:
 
 			switch (m_classifType) {
 			case SVM:		detectorFuncs.initClassifi = &cInitSVM::initHostSVM;
-							detectorFuncs.classification = &hostSVMclassification;
+							detectorFuncs.classification = &host::SVMclassification;
 							break;
 
 			case RF: 		detectorFuncs.initClassifi = &cInitRF::initHostRF;
-							detectorFuncs.classification = &hostRFclassification;
+							detectorFuncs.classification = &host::RFclassification;
 							break;
 
 			default:		cerr << "No Classification algorithm chosen on HOST" << endl;
@@ -176,12 +176,12 @@ public:
 			if (m_pyramidCompute == DEVICE) {
 				detectorFuncs.preprocess = &imgPreprocessing;
 				detectorFuncs.initPyramid = &cInitPyramid::initDevicePyramid;
-				detectorFuncs.pyramid = &launchDevicePyramid;
+				detectorFuncs.pyramid = &device::launchPyramid;
 			}
 			else if (m_pyramidCompute == HOST) {
 				// todo: add preprocessing host
 				detectorFuncs.initPyramid = &cInitPyramid::initHostPyramid;
-				detectorFuncs.pyramid = &launchHostPyramid;
+				detectorFuncs.pyramid = &device::launchPyramid;
 			}
 		}
 		else {

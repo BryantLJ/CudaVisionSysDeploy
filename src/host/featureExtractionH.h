@@ -10,24 +10,28 @@
 
 #include "../common/detectorData.h"
 
+namespace host {
+
 template<typename T, typename C, typename P>
-void hostLBPFeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint layer, cudaBlockConfig *blkSizes)
+void LBPFeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint layer, cudaBlockConfig *blkSizes)
 {
 
 }
 
 template<typename T, typename C, typename P>
-void hostHOGFeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint layer, cudaBlockConfig *blkSizes)
+void HOGFeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint layer, cudaBlockConfig *blkSizes)
 {
 
 }
 
 template<typename T, typename C, typename P>
-void hostHOGLBPFeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint layer, cudaBlockConfig *blkSizes)
+void HOGLBPFeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint layer, cudaBlockConfig *blkSizes)
 {
 
 }
 
+
+} /* end namespace */
 
 
 #endif /* FEATUREEXTRACTIONH_H_ */

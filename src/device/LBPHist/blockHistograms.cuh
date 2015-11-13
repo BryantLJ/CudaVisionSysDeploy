@@ -10,31 +10,34 @@
 
 #include "../Operations/simd_functions.h"
 #include "../Operations/warpOps.cuh"
+#include "normHistograms.cuh"
 
 
 template<typename T, typename T1, int HistoWidth>
 __global__
-void mergeHistogramsSum(T *cellHistograms, T *blockHistograms, const int xDescs, const int yDescs)
+void mergeHistogramsNorm(T *cellHistograms, T1 *blockHistograms, const int xDescs, const int yDescs)
 {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	int warpId = idx / WARPSIZE;
 	int warpLane = idx % WARPSIZE;
 	T *pCell = &(cellHistograms[warpId * HistoWidth]);
-	T *pBlock = &(blockHistograms[warpId * HistoWidth]);
+	T1 *pBlock = &(blockHistograms[warpId * HistoWidth]);
+	T1 binSum;
 
 	if (idx < xDescs*yDescs*HistoWidth) {
 
+		#pragma unroll
 		for (int i = 0; i < HistoWidth; i += WARPSIZE) {
-			pBlock[warpLane + i] = pCell[warpLane + i] +
+			// Sum histogram bins
+			binSum = pCell[warpLane + i] +
 					 pCell[warpLane + HistoWidth + i] +
 			         pCell[warpLane + (xDescs*HistoWidth) + i] +
 			         pCell[warpLane + (xDescs*HistoWidth) + HistoWidth + i];
 
+			// Bin normalization
+			pBlock[warpLane + i] = L1sqrtNorm<T1, HISTOSUM>(binSum);
+
 		}
-//		warpReductionSum<T1>(sumHisto);
-//		if (warpLane == 0) {
-//			histogramsSum[warpId] = (float)sumHisto;
-//		}
 	}
 }
 

@@ -15,18 +15,18 @@
 /////////////////////////////////
 #define NORMTERM			59 		// Normalization term - real size of the histogram
 #define N_EPSILON			0.01f
-#define HISTOSUM			256.0f
+#define HISTOSUM			256
 /////////////////////////////////
 
-template<typename T>
+template<typename T, int HistoSum>
 __device__ __forceinline__
-T L1sqrtNorm(T histoBin, T histoSum)
+T L1sqrtNorm(T histoBin)
 {
 	// Compute normalization term
-	T norm = histoSum + (N_EPSILON * NORMTERM);
+	T norm = (float)HistoSum + (N_EPSILON * NORMTERM);
 
 	// Compute normalized value
-	return sqrt( (float)histoBin / norm );
+	return sqrtf( histoBin / norm );
 }
 
 
@@ -47,7 +47,7 @@ void mapNormalization(T* inHistos, F* outHistos/*, Op NormF*/, const int nDescs)
 
 	if (idx < nDescs * HistoWidth) {
 		// Apply normalization
-		outHistos[idx] = L1sqrtNorm<F>(inHistos[idx], HISTOSUM);
+		outHistos[idx] = L1sqrtNorm<F, HISTOSUM>(inHistos[idx]);
 	}
 }
 

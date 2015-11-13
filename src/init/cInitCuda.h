@@ -171,6 +171,12 @@ public:
 		cout << "------------------------------------------" << endl;
 	}
 
+	__forceinline__
+	static void setPreferenceL1cache(cudaFuncCache preference)
+	{
+		cudaDeviceSetCacheConfig(preference);
+	}
+
 };
 
 

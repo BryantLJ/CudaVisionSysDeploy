@@ -17,9 +17,11 @@
 #include "HOG/gradient.cuh"
 #include "HOG/HOGdescriptor.cuh"
 
+namespace device {
+
 template<typename T, typename C, typename P>
 __forceinline__
-void deviceLBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint layer, cudaBlockConfig *blkSizes)
+void LBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint layer, cudaBlockConfig *blkSizes)
 {
 	dim3 gridLBP( 	ceil((float)dsizes->pyr.imgCols[layer] / blkSizes->lbp.blockLBP.x),
 					ceil((float)dsizes->pyr.imgRows[layer] / blkSizes->lbp.blockLBP.y),
@@ -105,11 +107,11 @@ void deviceLBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, 
 //		}
 //	}
 
-	cudaErrorCheck();
+	cudaErrorCheck(__LINE__, __FILE__);
 
-	mergeHistogramsSum<C, P, HISTOWIDTH> <<<gridBlock2, blkSizes->lbp.blockBlock>>>
+	mergeHistogramsNorm<C, P, HISTOWIDTH> <<<gridBlock2, blkSizes->lbp.blockBlock>>>
 							(getOffset(data->lbp.cellHistos, dsizes->lbp.cellHistosElems, layer),
-							getOffset(data->lbp.blockHistos, dsizes->lbp.blockHistosElems, layer),
+							getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
 							dsizes->lbp.xHists[layer],
 							dsizes->lbp.yHists[layer]);
 
@@ -129,22 +131,18 @@ void deviceLBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, 
 //		}
 //	}
 
-	cudaErrorCheck();
+	cudaErrorCheck(__LINE__, __FILE__);
 
-	mapNormalization<C, P, HISTOWIDTH> <<<gridNorm, blkSizes->lbp.blockNorm>>>
-							(getOffset(data->lbp.blockHistos, dsizes->lbp.blockHistosElems, layer),
-							 getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
-							 dsizes->lbp.numBlockHistos[layer]);
+//	mapNormalization<C, P, HISTOWIDTH> <<<gridNorm, blkSizes->lbp.blockNorm>>>
+//							(getOffset(data->lbp.blockHistos, dsizes->lbp.blockHistosElems, layer),
+//							 getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
+//							 dsizes->lbp.numBlockHistos[layer]);
 
 //	if (layer == 0) {
-//		P *sum = (P*)malloc(dsizes->lbp.numBlockHistos[layer]*sizeof(P));
-//		P *norm = (P*)malloc(dsizes->lbp.blockHistosElems[layer]*sizeof(P));
-//		copyDtoH(norm, getOffset(data->lbp.normHistos, dsizes->lbp.normHistosElems, layer), dsizes->lbp.normHistosElems[layer]);
-//		copyDtoH(sum, getOffset(data->lbp.sumHistos, dsizes->lbp.numBlockHistos, layer), dsizes->lbp.numBlockHistos[layer]);
-//		for (int u = 0; u < dsizes->lbp.numBlockHistos[layer]; u++) {
-//			printf( "sum histogram: %d: %f\n", u, sum[u]);
-//		}
-//		for (int u = 0; u < dsizes->lbp.blockHistosElems[layer]; u++) {
+//		P *norm = (P*)malloc(dsizes->features.numFeaturesElems[layer]*sizeof(P));
+//		copyDtoH(norm, getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer), dsizes->features.numFeaturesElems[layer]);
+//
+//		for (int u = 0; u < dsizes->features.numFeaturesElems[layer]; u++) {
 //			printf( "norm feature: %d: %f\n", u, norm[u]);
 //		}
 //	}
@@ -155,7 +153,7 @@ void deviceLBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, 
 
 template<typename T, typename C, typename P>
 __forceinline__
-void deviceHOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint layer, cudaBlockConfig *blkSizes)
+void HOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint layer, cudaBlockConfig *blkSizes)
 {
 	dim3 gridGamma (ceil((float)dsizes->pyr.imgCols[layer] / blkSizes->hog.blockGamma.x),
 					ceil((float)dsizes->pyr.imgRows[layer] / blkSizes->hog.blockGamma.y),
@@ -251,15 +249,13 @@ void deviceHOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, 
 
 template<typename T, typename C, typename P>
 __forceinline__
-void deviceHOGLBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint layer, cudaBlockConfig *blkSizes)
+void HOGLBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint layer, cudaBlockConfig *blkSizes)
 {
 	cout << "HOGLBP FEATURE EXTRACTION ---------------------------------------------" <<	endl;
 }
 
 
 
-
-
-
+} /* end namespace */
 
 #endif /* FEATUREEXTRACTION_H_*/

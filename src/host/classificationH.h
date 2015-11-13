@@ -11,10 +11,11 @@
 #include "../common/parameters.h"
 #include "../common/detectorData.h"
 
+namespace host {
 
 template<typename T, typename C, typename P>
 __forceinline__
-void hostSVMclassification(detectorData<T, C, P> *data, dataSizes *dsizes, uint layer, cudaBlockConfig *blkSizes)
+void SVMclassification(detectorData<T, C, P> *data, dataSizes *dsizes, uint layer, cudaBlockConfig *blkSizes)
 {
 
 }
@@ -25,10 +26,12 @@ void hostSVMclassification(detectorData<T, C, P> *data, dataSizes *dsizes, uint 
 
 template<typename T, typename C, typename P>
 __forceinline__
-void hostRFclassification(detectorData<T, C, P> *data, dataSizes *dsizes, uint layer, cudaBlockConfig *blkSizes)
+void RFclassification(detectorData<T, C, P> *data, dataSizes *dsizes, uint layer, cudaBlockConfig *blkSizes)
 {
 
 }
+
+} /* end namespace */
 
 
 #endif /* CLASSIFICATIONH_H_ */

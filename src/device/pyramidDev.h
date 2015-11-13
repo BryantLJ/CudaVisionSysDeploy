@@ -17,11 +17,11 @@
 #include "../utils/cudaUtils.cuh"
 #include "../utils/utils.h"
 
-
+namespace device {
 
 template<typename T, typename C, typename P>
 __forceinline__
-void launchDevicePyramid(detectorData<T, C, P> *data, dataSizes *dsizes, cudaBlockConfig *blkconf)
+void launchPyramid(detectorData<T, C, P> *data, dataSizes *dsizes, cudaBlockConfig *blkconf)
 {
 	dim3 gridDim;
 
@@ -166,5 +166,8 @@ void launchDevicePyramid(detectorData<T, C, P> *data, dataSizes *dsizes, cudaBlo
 
 	}
 }
+
+
+} /* end namespace */
 
 #endif /* PYRAMIDDEV_H_ */
