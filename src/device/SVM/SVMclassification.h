@@ -81,4 +81,42 @@ void computeROIwarpReadOnly(const T *features, T *outScores, const T *__restrict
 }
 #endif
 
+
+/*	Compute score of each window on the image - dot product of the windows and the model
+ * 	one window assigned per thread
+ * 	@Author: Víctor Campmany / vcampmany@gmail.com
+ * 	@Date: 21/04/2015
+ * 	@params:
+ * 		features: image features vector
+ * 		roiVals: scores vector
+ * 		modelW: vector of the weights of the model
+ * 		modelBias: bias value
+ * 		numWins: number of windows fitting on an image
+ * 		xDescs: number of histograms fitting on a row of the image
+ */
+template<typename T, int HistoWidth, int xWinBlocks, int yWinBlocks>
+__global__
+void computeROI(const T *features, T *roiVals, const T *modelW, T modelBias, const int numWins, const int xDescs)
+{
+
+	int idx = (blockIdx.x * blockDim.x) + threadIdx.x;
+	float scalarP = 0;
+	const float *winPtr = features + (idx * HistoWidth);
+	const float *blockPtr;
+	int widx = 0;
+
+	if (idx < numWins) {
+		for (int i = 0; i < yWinBlocks; i++){
+			for (int j = 0; j < xWinBlocks; j++){
+				blockPtr = &(winPtr[(i*xDescs*HistoWidth) + (j*HistoWidth)]);
+				for (int k = 0; k < HistoWidth; k++){
+					scalarP += blockPtr[k] * modelW[widx];//[(i*xWinBlocks*featureSize) + (j*featureSize) + k];
+					widx++;
+				}
+			}
+		}
+		roiVals[idx] = scalarP + modelBias;		// Store window score
+	}
+}
+
 #endif /* SVMCLASSIFICATION_H_ */

@@ -20,15 +20,27 @@ void deviceSVMclassification(detectorData<T, C, P> *data, dataSizes *dsizes, uin
 {
 	dim3 gridSVM(	ceil((float)(dsizes->svm.scoresElems[layer] * WARPSIZE) / blkSizes->svm.blockSVM.x),
 					1, 1);
+	dim3 gridSVMnaive( ceil((float)dsizes->svm.scoresElems[layer] / blkSizes->svm.blockSVM.x) );
 
-	computeROIwarpReadOnly<P, HISTOWIDTH, XWINBLOCKS, YWINBLOCKS> <<<gridSVM, blkSizes->svm.blockSVM>>>
-								(getOffset<P>(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
-								 getOffset<P>(data->svm.ROIscores, dsizes->svm.scoresElems, layer),
-								 data->svm.weightsM,
-								 data->svm.bias,
-								 dsizes->svm.scoresElems[layer],
-								 dsizes->features.xBlockFeatures[layer]); //dsizes->lbp.xHists[layer]  dsizes->hog.xBlockHists[layer]
+//	computeROIwarpReadOnly<P, HISTOWIDTH, XWINBLOCKS, YWINBLOCKS> <<<gridSVM, blkSizes->svm.blockSVM>>>
+//								(getOffset<P>(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
+//								 getOffset<P>(data->svm.ROIscores, dsizes->svm.scoresElems, layer),
+//								 data->svm.weightsM,
+//								 data->svm.bias,
+//								 dsizes->svm.scoresElems[layer],
+//								 dsizes->features.xBlockFeatures[layer]); //dsizes->lbp.xHists[layer]  dsizes->hog.xBlockHists[layer]
 	cudaErrorCheck(__LINE__, __FILE__);
+
+	// Naive kernel
+	computeROI<P, HISTOWIDTH, XWINBLOCKS, YWINBLOCKS> <<<gridSVMnaive, blkSizes->svm.blockSVM.x>>>
+								(getOffset<P>(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
+			 	 	 	 	 	 getOffset<P>(data->svm.ROIscores, dsizes->svm.scoresElems, layer),
+			 	 	 	 	 	 data->svm.weightsM,
+			 	 	 	 	 	 data->svm.bias,
+			 	 	 	 	 	 dsizes->svm.scoresElems[layer],
+			 	 	 	 	 	 dsizes->features.xBlockFeatures[layer]);
+	cudaErrorCheck(__LINE__, __FILE__);
+
 
 //	P *outscores = (P*) malloc(dsizes->svm.scoresElems[layer] * sizeof(P));
 //	cudaMemcpy(outscores,

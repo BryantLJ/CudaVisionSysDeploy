@@ -200,6 +200,9 @@ int main()
 		NVTXhandler frameTime(COLOR_GREEN, "Frame adquisition");
 		frameTime.nvtxStartEvent();
 		// Get a new frame
+//		char str[256];
+//		sprintf(str, "%d.png", count);
+//		cv::imwrite(str, *rawImg);
 		rawImg = acquisition.acquireFrameRGB();
 		frameTime.nvtxStopEvent();
 

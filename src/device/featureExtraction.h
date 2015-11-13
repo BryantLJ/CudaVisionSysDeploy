@@ -190,7 +190,18 @@ void deviceHOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, 
 			 dsizes->hog.matCols[layer]);
 
 	cudaErrorCheck(__LINE__, __FILE__);
+//	HOGdescriptorPreDistances<P, HOG_HISTOWIDTH, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK> <<<gridHOG2, blockHOG>>>
+//				(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
+//				 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
+//				 getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
+//				 data->hog.gaussianMask,
+//				 data->hog.blockDistances,
+//				 dsizes->hog.xBlockHists[layer],
+//				 dsizes->hog.yBlockHists[layer],
+//				 dsizes->hog.matCols[layer],
+//				 dsizes->hog.numblockHist[layer]);
 
+	// Naive version local histograms
 	computeHOGlocal<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
 			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
 			 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
@@ -200,12 +211,12 @@ void deviceHOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, 
 			 dsizes->hog.yBlockHists[layer],
 			 dsizes->hog.matCols[layer],
 			 dsizes->hog.numblockHist[layer]);
-//	blockHOGdescriptor<P, HOG_HISTOWIDTH, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK> <<<gridHOG2, blockHOG>>>
+	// Naive version
+//	computeHOGdescriptor<P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG.x>>>
 //			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
 //			 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
 //			 getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
 //			 data->hog.gaussianMask,
-//			 data->hog.blockDistances,
 //			 dsizes->hog.xBlockHists[layer],
 //			 dsizes->hog.yBlockHists[layer],
 //			 dsizes->hog.matCols[layer],
