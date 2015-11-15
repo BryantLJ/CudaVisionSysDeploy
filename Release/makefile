@@ -61,7 +61,7 @@ all: CudaVisionSysDeploy
 CudaVisionSysDeploy: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: NVCC Linker'
-	/usr/local/cuda-7.5/bin/nvcc --cudart shared -L/usr/local/cuda-7.5/targets/x86_64-linux/lib -L/usr/local/lib --relocatable-device-code=false -gencode arch=compute_52,code=compute_52 -gencode arch=compute_52,code=sm_52 -link -o  "CudaVisionSysDeploy" $(OBJS) $(USER_OBJS) $(LIBS)
+	/usr/local/cuda-7.5/bin/nvcc --cudart shared -L/usr/local/cuda-7.5/targets/x86_64-linux/lib -L/usr/local/lib --relocatable-device-code=true -gencode arch=compute_52,code=compute_52 -gencode arch=compute_52,code=sm_52 -link -o  "CudaVisionSysDeploy" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

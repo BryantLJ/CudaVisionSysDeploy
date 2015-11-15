@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <inttypes.h>
+#include <cuda_runtime_api.h>
 
 #include "init/cParameters.h"
 #include "init/cInit.h"

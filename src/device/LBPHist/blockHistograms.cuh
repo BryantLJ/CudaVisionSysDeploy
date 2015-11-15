@@ -79,15 +79,7 @@ void mergeHistosSIMDaccum(uint8_t *inCellHistos, uint8_t *outBlockHistos, F *__r
 
 			// Final Histogram merging
 			*((uint*)(outDescPtr+i)) = a = vaddus4(a, b);
-
-			// Accumulation of the histogram values
-//			sum += (float)(a & 0xFF);
-//			sum += (float)((a >> 8) & 0xFF);
-//			sum += (float)((a >> 16) & 0xFF);
-//			sum += (float)((a >> 24) & 0xFF);
 		}
-		// Save histogram accumulation to Global Memory
-		//histoAcc[idx] = sum;
 	}
 }
 

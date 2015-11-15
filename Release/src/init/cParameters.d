@@ -1,4 +1,4 @@
-src/cParameters.o : ../src/init/cParameters.cu \
+src/init/cParameters.o : ../src/init/cParameters.cu \
     /usr/include/stdc-predef.h \
     /usr/local/cuda-7.5/bin/../targets/x86_64-linux/include/cuda_runtime.h \
     /usr/local/cuda-7.5/bin/../targets/x86_64-linux/include/host_config.h \
