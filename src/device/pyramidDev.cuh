@@ -5,12 +5,8 @@
  *      Author: adas
  */
 
-#ifndef PYRAMIDDEV_H_
-#define PYRAMIDDEV_H_
-
-#include <opencv2/core/core.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/highgui/highgui.hpp>
+#ifndef PYRAMIDDEV_CUH_
+#define PYRAMIDDEV_CUH_
 
 #include "ImageProcessing/resize.cuh"
 #include "../common/detectorData.h"
@@ -25,9 +21,9 @@ void launchPyramid(detectorData<T, C, P> *data, dataSizes *dsizes, cudaBlockConf
 {
 	dim3 gridDim;
 
-	for (int i = 0; i < dsizes->pyr.nIntervalScales; i++) {  //todo: ask index to be used
+	for (int i = 0; i < dsizes->pyr.nIntervalScales; i++) {
 		int currentIndex = dsizes->pyr.nScalesUp + i;
-		int currentScale = dsizes->pyr.nScalesToSkipDown + i;
+		//int currentScale = dsizes->pyr.nScalesToSkipDown + i;
 
 		// Compute grid dimensions
 		gridDim.x = ceil( (float) dsizes->pyr.imgCols[i] / blkconf->pyr.blockResize.x);
@@ -170,4 +166,4 @@ void launchPyramid(detectorData<T, C, P> *data, dataSizes *dsizes, cudaBlockConf
 
 } /* end namespace */
 
-#endif /* PYRAMIDDEV_H_ */
+#endif /* PYRAMIDDEV_CUH_ */

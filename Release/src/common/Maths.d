@@ -1,4 +1,4 @@
-src/Maths.o : ../src/common/Maths.cpp \
+src/common/Maths.o : ../src/common/Maths.cpp \
     /usr/include/stdc-predef.h \
     ../src/common/Maths.h \
     /usr/include/math.h \

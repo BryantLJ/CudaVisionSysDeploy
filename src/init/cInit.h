@@ -27,14 +27,14 @@
 #include "../utils/utils.h"
 
 // Device detector include
-#include "../device/featureExtraction.h"
-#include "../device/classification.h"
-#include "../device/pyramidDev.h"
-#include "../device/preprocessing.h"
+#include "../device/featureExtraction.cuh"
+#include "../device/classification.cuh"
+#include "../device/pyramidDev.cuh"
+#include "../device/preprocessing.cuh"
 
 // Host detector include
-#include "../host/featureExtractionH.h"
-#include "../host/classificationH.h"
+#include "../host/featureExtraction.h"
+#include "../host/classification.h"
 #include "../host/pyramidHost.h"
 
 
@@ -174,7 +174,7 @@ public:
 		// Initialize data structures for image resizing
 		if (m_doReescaling) {
 			if (m_pyramidCompute == DEVICE) {
-				detectorFuncs.preprocess = &imgPreprocessing;
+				detectorFuncs.preprocess = &device::imgPreprocessing;
 				detectorFuncs.initPyramid = &cInitPyramid::initDevicePyramid;
 				detectorFuncs.pyramid = &device::launchPyramid;
 			}

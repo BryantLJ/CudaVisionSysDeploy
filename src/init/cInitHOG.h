@@ -141,7 +141,7 @@ private:
 				float ydist = (abs(y - 4)) / 8;
 
 				float num = xdist * ydist * gaussMask[i*16 + j];
-				dists[i*16 + j] = num;
+				dists[i*16 + j] = (1.0f-xdist) * (1.0f-ydist)* gaussMask[i*16 + j];
 			}
 		}
 
@@ -156,7 +156,7 @@ private:
 				float ydist = (abs(y - 4)) / 8;
 
 				float num = xdist * ydist * gaussMask[i*16 + j + 4];
-				pDists[i*16 + j] = num;
+				pDists[i*16 + j] = (1.0f-xdist) * (1.0f-ydist) * gaussMask[i*16 + j + 4];
 			}
 		}
 		// Third block
@@ -170,7 +170,7 @@ private:
 				float ydist = (abs(y - 8)) / 8;
 
 				float num = xdist * ydist * gaussMask[(i+4)*16 + j];
-				pDists[i*16 + j] = num;
+				pDists[i*16 + j] = (1.0f-xdist) * (1.0f-ydist)* gaussMask[(i+4)*16 + j];
 			}
 		}
 		// Fourth block
@@ -184,7 +184,7 @@ private:
 				float ydist = (abs(y - 8)) / 8;
 
 				float num = xdist * ydist * gaussMask[(i+4)*16 + j + 4];
-				pDists[i*16 + j] = num;
+				pDists[i*16 + j] = (1.0f-xdist) * (1.0f-ydist)* gaussMask[(i+4)*16 + j + 4];
 			}
 		}
 	}
@@ -340,7 +340,28 @@ public:
 
 //		for (int i = 0; i < 16; i++) {
 //			for (int j = 0; j < 16; j++) {
+//				cout << h_distances[(256*0) + i*16 + j] << " \t";
+//			}
+//			cout << endl;
+//		}
+//		cout << endl;
+//		for (int i = 0; i < 16; i++) {
+//			for (int j = 0; j < 16; j++) {
 //				cout << h_distances[(256*1) + i*16 + j] << " \t";
+//			}
+//			cout << endl;
+//		}
+//		cout << endl;
+//		for (int i = 0; i < 16; i++) {
+//			for (int j = 0; j < 16; j++) {
+//				cout << h_distances[(256*2) + i*16 + j] << " \t";
+//			}
+//			cout << endl;
+//		}
+//		cout << endl;
+//		for (int i = 0; i < 16; i++) {
+//			for (int j = 0; j < 16; j++) {
+//				cout << h_distances[(256*3) + i*16 + j] << " \t";
 //			}
 //			cout << endl;
 //		}

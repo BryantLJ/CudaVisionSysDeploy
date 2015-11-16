@@ -5,13 +5,13 @@
  *      Author: adas
  */
 
-#ifndef CLASSIFICATION_H_
-#define CLASSIFICATION_H_
+#ifndef CLASSIFICATION_CUH_
+#define CLASSIFICATION_CUH_
 
 #include "../common/parameters.h"
 #include "../common/detectorData.h"
 #include "../utils/cudaUtils.cuh"
-#include "SVM/SVMclassification.h"
+#include "SVM/SVMclassification.cuh"
 
 namespace device {
 
@@ -66,4 +66,4 @@ void RFclassification(detectorData<T, C, P> *data, dataSizes *dsizes, uint layer
 
 } /* end namespcae */
 
-#endif /* CLASSIFICATION_H_ */
+#endif /* CLASSIFICATION_CUH_ */

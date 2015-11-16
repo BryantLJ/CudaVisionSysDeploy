@@ -63,7 +63,7 @@ void mergeHistosSIMDaccum(uint8_t *inCellHistos, uint8_t *outBlockHistos, F *__r
 	uint8_t *inDescPtr = inCellHistos + (idx * HistoWidth);
 	uint8_t *outDescPtr = outBlockHistos + (idx * HistoWidth);
 	uint a, b;
-	float sum = 0;
+	//float sum = 0;
 
 	if (idx < (xDescs*(yDescs-1))-1) {
 

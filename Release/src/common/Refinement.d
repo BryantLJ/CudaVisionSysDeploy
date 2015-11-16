@@ -1,4 +1,4 @@
-src/Refinement.o : ../src/common/Refinement.cpp \
+src/common/Refinement.o : ../src/common/Refinement.cpp \
     /usr/include/stdc-predef.h \
     ../src/common/Refinement.h \
     ../src/common/../init/fileInOut/Utils.h \

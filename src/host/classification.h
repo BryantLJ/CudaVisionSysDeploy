@@ -31,7 +31,8 @@ void RFclassification(detectorData<T, C, P> *data, dataSizes *dsizes, uint layer
 
 }
 
-} /* end namespace */
 
+
+} /* end namespace */
 
 #endif /* CLASSIFICATIONH_H_ */

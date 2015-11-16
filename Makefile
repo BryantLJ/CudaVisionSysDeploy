@@ -1,54 +1,56 @@
-
-BUILDDIR := bin/object/			# Directory to store object files
-CC := nvcc				# Compiler
-ARCH := 52				# Device target architecture
+BUILDDIR :=bin/object/			# Directory to store object files
+CC :=nvcc				# Compiler
+NAMEBIN :=visionSys			# Name of the binary file
+#ARCH :=52				# Device target architecture
 
 # @@@@@@@@@@@@@@@@@@@@@@@@ Compiler flags @@@@@@@@@@@@@@@@@@@@@@@@ 
-FLAGS := -lineinfo -O3 --use_fast_math -std=c++11 -gencode arch=compute_${ARCH},code=compute_${ARCH} -gencode arch=compute_${ARCH},code=sm_${ARCH} --relocatable-device-code=true
+FLAGS := -lineinfo -O3 --use_fast_math -std=c++11 -gencode arch=compute_52,code=compute_52 -gencode arch=compute_52,code=sm_52 --relocatable-device-code=true
 CCFLAGS := -c
 
 # @@@@@@@@@@@@@@@@@@@@@@@@ Library paths @@@@@@@@@@@@@@@@@@@@@@@@ 
-LIBPATH := -L/usr/local/cuda-7.5/targets/x86_64-linux/lib -L/usr/local/lib
+LIBPATH := -L/usr/local/cuda/targets/x86_64-linux/lib -L/usr/local/lib
 
 # @@@@@@@@@@@@@@@@@@@@@@@@ Libraries @@@@@@@@@@@@@@@@@@@@@@@@ 
 LIBS := -lnvToolsExt -lopencv_objdetect -lopencv_imgcodecs -lopencv_videoio -lopencv_calib3d -lopencv_features2d -lopencv_video -lopencv_ml -lopencv_highgui -lopencv_imgproc -lopencv_core -lopencv_flann
 
 # @@@@@@@@@@@@@@@@@@@@@@@@ Inlcude paths @@@@@@@@@@@@@@@@@@@@@@@@ 
-INCL := -I/usr/local/include/opencv -I/usr/local/include/cuda-7.5/targets/x86_64-linux/include
+INCL := -I/usr/local/include/ -I/usr/local/cuda/targets/x86_64-linux/include
 
 # @@@@@@@@@@@@@@@@@@@@@@@@ Object files @@@@@@@@@@@@@@@@@@@@@@@@ 
-OBJS := ${BUILDDIR}Utils.o ${BUILDDIR}IniFileIO.o ${BUILDDIR}cParameters.o ${BUILDDIR}AccumulativeRefinement.o ${BUILDDIR}Maths.o ${BUILDDIR}Refinement.o ${BUILDDIR}RoiCluster.o ${BUILDDIR}visionSys.o
+OBJS := bin/object/Utils.o bin/object/IniFileIO.o bin/object/cParameters.o bin/object/AccumulativeRefinement.o bin/object/Maths.o bin/object/Refinement.o bin/object/RoiCluster.o bin/object/visionSys.o
 
 
 all: ${OBJS}
 	@echo "Building target..."
-	${CC} ${FLAGS} ${LIBPATH} --cudart shared -link -o bin/visionSystem ${OBJS} ${LIBS}
+	${CC} ${FLAGS} ${LIBPATH} --cudart shared -link -o bin/${NAMEBIN} ${OBJS} ${LIBS}
 
-${BUILDDIR}visionSys.o: src/visionSys.cu
+bin/object/visionSys.o: src/visionSys.cu
 	${CC} ${FLAGS} ${CCFLAGS} ${LIBPATH} ${INCL} $? -o $@ ${LIBS}
 
-${BUILDDIR}Utils.o: src/init/fileInOut/Utils.cu
+bin/object/Utils.o: src/init/fileInOut/Utils.cpp
 	${CC} ${FLAGS} ${CCFLAGS} ${LIBPATH} ${INCL} $? -o $@ ${LIBS}
 
-${BUILDDIR}IniFileIO.o: src/init/fileInOut/IniFileIO.cu
+bin/object/IniFileIO.o: src/init/fileInOut/IniFileIO.cpp
 	${CC} ${FLAGS} ${CCFLAGS} ${LIBPATH} ${INCL} $? -o $@ ${LIBS}
 
-${BUILDDIR}cParameters.o: src/init/cParameters.cu
+bin/object/cParameters.o: src/init/cParameters.cu
 	${CC} ${FLAGS} ${CCFLAGS} ${LIBPATH} ${INCL} $? -o $@ ${LIBS}
 
-${BUILDDIR}AccumulativeRefinement.o: src/common/AccumulativeRefinement.cu
+bin/object/AccumulativeRefinement.o: src/common/AccumulativeRefinement.cpp
 	${CC} ${FLAGS} ${CCFLAGS} ${LIBPATH} ${INCL} $? -o $@ ${LIBS}
 
-${BUILDDIR}Maths.o: src/common/Maths.cu
+bin/object/Maths.o: src/common/Maths.cpp
 	${CC} ${FLAGS} ${CCFLAGS} ${LIBPATH} ${INCL} $? -o $@ ${LIBS}
 
-${BUILDDIR}Refinement.o: src/common/Refinement.cu
+bin/object/Refinement.o: src/common/Refinement.cpp
 	${CC} ${FLAGS} ${CCFLAGS} ${LIBPATH} ${INCL} $? -o $@ ${LIBS}
 
-${BUILDDIR}RoiCluster.o: src/common/RoiCluster.cu
+bin/object/RoiCluster.o: src/common/RoiCluster.cpp
 	${CC} ${FLAGS} ${CCFLAGS} ${LIBPATH} ${INCL} $? -o $@ ${LIBS}
 
 clean:
 	@echo "Cleaning up..."
 	rm bin/object/*
-	rm bin/*
+	rm bin/${NAMEBIN}
+
+

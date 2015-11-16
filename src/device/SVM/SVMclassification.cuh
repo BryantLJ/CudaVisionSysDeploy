@@ -5,8 +5,8 @@
  *      Author: adas
  */
 
-#ifndef SVMCLASSIFICATION_H_
-#define SVMCLASSIFICATION_H_
+#ifndef SVMCLASSIFICATION_CUH_
+#define SVMCLASSIFICATION_CUH_
 
 #include "../Operations/warpOps.cuh"
 
@@ -119,4 +119,4 @@ void computeROI(const T *features, T *roiVals, const T *modelW, T modelBias, con
 	}
 }
 
-#endif /* SVMCLASSIFICATION_H_ */
+#endif /* SVMCLASSIFICATION_CUH_ */

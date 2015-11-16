@@ -5,10 +5,12 @@
  *      Author: adas
  */
 
-#ifndef PREPROCESSING_H_
-#define PREPROCESSING_H_
+#ifndef PREPROCESSING_CUH_
+#define PREPROCESSING_CUH_
 
 #include "ImageProcessing/colorTransformation.cuh"
+
+namespace device {
 
 template<typename T, typename C, typename P>
 __forceinline__
@@ -22,4 +24,6 @@ void imgPreprocessing(detectorData<T, C, P> *data, dataSizes *dsizes, cudaBlockC
 }
 
 
-#endif /* PREPROCESSING_H_ */
+} /* end namespace */
+
+#endif /* PREPROCESSING_CUH_ */

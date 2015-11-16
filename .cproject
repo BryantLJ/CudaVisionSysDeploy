@@ -28,8 +28,8 @@
 								<option defaultValue="nvcc.compiler.optimization.level.none" id="nvcc.compiler.optimization.level.1309639456" name="Optimization Level" superClass="nvcc.compiler.optimization.level" valueType="enumerated"/>
 								<option id="nvcc.compiler.pic.1161472474" name="Position Independent Code (-fPIC)" superClass="nvcc.compiler.pic"/>
 								<option id="nvcc.compiler.include.paths.306928007" name="Include paths (-I)" superClass="nvcc.compiler.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="/usr/local/include/opencv"/>
-									<listOptionValue builtIn="false" value="/usr/local/include/cuda-7.5/targets/x86_64-linux/include"/>
+									<listOptionValue builtIn="false" value="/usr/local/include/"/>
+									<listOptionValue builtIn="false" value="/usr/local/cuda-7.5/targets/x86_64-linux/include"/>
 								</option>
 								<option id="nvcc.compiler.cpp11option.651834521" name="Enable C++11 support (-std=c++11)" superClass="nvcc.compiler.cpp11option" value="true" valueType="boolean"/>
 								<option id="nvcc.compiler.option.lineinfo.572090638" name="Generate line-number information for device code (-lineinfo)" superClass="nvcc.compiler.option.lineinfo" value="false" valueType="boolean"/>
@@ -106,8 +106,8 @@
 								<option defaultValue="nvcc.compiler.optimization.level.most" id="nvcc.compiler.optimization.level.831320628" name="Optimization Level" superClass="nvcc.compiler.optimization.level" valueType="enumerated"/>
 								<option id="nvcc.compiler.pic.1228174732" name="Position Independent Code (-fPIC)" superClass="nvcc.compiler.pic"/>
 								<option id="nvcc.compiler.include.paths.1676475604" name="Include paths (-I)" superClass="nvcc.compiler.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="/usr/local/include/opencv"/>
-									<listOptionValue builtIn="false" value="/usr/local/include/cuda-7.5/targets/x86_64-linux/include"/>
+									<listOptionValue builtIn="false" value="/usr/local/include/"/>
+									<listOptionValue builtIn="false" value="/usr/local/cuda-7.5/targets/x86_64-linux/include"/>
 								</option>
 								<option id="nvcc.compiler.cpp11option.1291194049" name="Enable C++11 support (-std=c++11)" superClass="nvcc.compiler.cpp11option" value="true" valueType="boolean"/>
 								<option id="nvcc.compiler.option.lineinfo.1754497257" name="Generate line-number information for device code (-lineinfo)" superClass="nvcc.compiler.option.lineinfo" value="true" valueType="boolean"/>

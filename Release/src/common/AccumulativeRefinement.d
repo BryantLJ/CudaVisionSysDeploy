@@ -1,4 +1,4 @@
-src/AccumulativeRefinement.o : ../src/common/AccumulativeRefinement.cpp \
+src/common/AccumulativeRefinement.o : ../src/common/AccumulativeRefinement.cpp \
     /usr/include/stdc-predef.h \
     ../src/common/AccumulativeRefinement.h \
     ../src/common/Refinement.h \

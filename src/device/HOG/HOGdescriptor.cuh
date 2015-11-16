@@ -93,7 +93,7 @@ __global__
 void blockHOGdescriptor(T *gMagnitude, T *gOrientation, T *HOGdesc, const T *__restrict__ gaussMask, const T *__restrict__ distances,
 					   int Xblocks, int Yblocks, int cols, int totalNumBlocks)
 {
-	int globalId = blockIdx.x * blockDim.x + threadIdx.x;
+	//int globalId = blockIdx.x * blockDim.x + threadIdx.x;
 	int blockId = blockIdx.x;
 	int idx = blockId % Xblocks;
 	int idy = blockId / Xblocks;

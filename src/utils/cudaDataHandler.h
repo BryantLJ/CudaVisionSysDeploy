@@ -73,7 +73,7 @@ public:
 
 
 	template<typename T>
-	T* compareHostDeviceData1D(T* devPtr, T* hostPtr, int count)
+	void compareHostDeviceData1D(T* devPtr, T* hostPtr, int count)
 	{
 		for (int i = 0; i < count; i++) {
 			if (devPtr[i] != hostPtr[i]) {
@@ -85,11 +85,11 @@ public:
 	template<typename T>
 	void compareHostDeviceData2D(T* devPtr, T* hostPtr, int countX, int countY)
 	{
-		bool equal = true;
+		//bool equal = true;
 		for (int i = 0; i < countY; i++) {
 			for (int j = 0; j < countX; j++) {
 				if (devPtr[i*countX + j] != hostPtr[i*countX + j]) {
-					equal = false;
+					//equal = false;
 					cout << "index: (" << i << ", " << j << ") -- Device: " << devPtr[i*countX + j] << " --  Host: " << hostPtr[i*countX + j] << endl;
 				}
 			}
@@ -99,11 +99,11 @@ public:
 	template<typename T>
 	void compareHostDeviceData2dThreshold(T* devPtr, T* hostPtr, int h_countX, int h_countY, int d_countX, int d_countY)
 	{
-		bool equal = true;
+		//bool equal = true;
 		for (int i = 0; i < h_countY; i++) {
 			for (int j = 0; j < h_countX; j++) {
 				if (devPtr[i*d_countX + j] != hostPtr[i*h_countX + j]) {
-					equal = false;
+					//equal = false;
 					cout << "index: (" << i << ", " << j << ") -- Device: " << devPtr[i*d_countX + j] << " --  Host: " << hostPtr[i*h_countX + j] << endl;
 				}
 			}

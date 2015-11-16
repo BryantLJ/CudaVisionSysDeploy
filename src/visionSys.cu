@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <inttypes.h>
-#include <cuda_runtime_api.h>
 
 #include "init/cParameters.h"
 #include "init/cInit.h"
@@ -29,9 +28,7 @@ typedef float	roifeat_t;
 
 int main()
 {
-	//////////////////////////////
 	// Application Initialization
-	//////////////////////////////
 
 	// Read application parameters
 	cParameters paramsHandle;
@@ -75,21 +72,19 @@ int main()
 	init.allocateRawImage<input_t>(&(detectData.rawImg), dSizes->rawSize);  //TODO: add allocation on host
 	init.allocateRawImage<input_t>(&(detectData.rawImgBW), dSizes->rawSizeBW);
 
-	clock_t begin, beginApp, end, endApp;
-	double elapsed_secs, elapsed_secsApp;
-	beginApp = clock();
+	// Start the timer
 	time_t start;
 	time(&start);
+
+	// Start the counter of iterations
 	int count = 0;
-	/////////////////////////
+
 	// Image processing loop
-	/////////////////////////
 	while (!rawImg->empty() && count < 340)
 	{
 		NVTXhandler lat(COLOR_GREEN, "latency");
 		lat.nvtxStartEvent();
 		count++;
-		//begin = clock();
 
 		// Copy each frame to device
 		copyHtoD<input_t>(detectData.rawImg, rawImg->data, dSizes->rawSize);
@@ -224,13 +219,13 @@ int main()
 		lat.nvtxStopEvent();
 	}
 
-	//endApp = clock();
-	time_t endT;
-	time(&endT);
-	double seconds = difftime(endT, start);
-	//printf("elapsed seconds: %f\n", seconds);
-	//elapsed_secsApp = double(endApp - beginApp) / CLOCKS_PER_SEC;
-	//cout << "COMPUTE TIME: " << elapsed_secsApp << " secs | FPS: " << 340 / seconds << endl;
+	// Stop the timer
+	time_t end;
+	time(&end);
+
+	// Get the elapsed time
+	double seconds = difftime(end, start);
+
 	cout << "FPS : " << 340 / seconds << endl;
 	cout << "elapsed secs: " << seconds << endl;
 	cudaErrorCheck();

@@ -13,6 +13,7 @@ RM := rm -rf
 -include src/init/fileInOut/subdir.mk
 -include src/init/subdir.mk
 -include src/common/subdir.mk
+-include bin/object/subdir.mk
 
 OS_SUFFIX := $(subst Linux,linux,$(subst Darwin/x86_64,darwin,$(shell uname -s)/$(shell uname -m)))
 

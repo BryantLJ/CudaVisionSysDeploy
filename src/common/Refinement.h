@@ -194,19 +194,15 @@ inline float CRefinement::GetRoiDistance(const CRoi& w1, const CRoi& w2, const E
 	{
 		case erdm_xys:
 			return GetRoiXYZdistance(w1, w2);
-		break;
 		case erdm_overlappingPascal:
 			return 1.0f-RoiOverlappingPascal(w1.x1(), w1.x2(), w1.y1(), w1.y2(), w2.x1(), w2.x2(), w2.y1(), w2.y2());	
-		break;
 		case erdm_overlappingTUD:
 			return 1.0f-RoiOverlappingTUD(w1.x1(), w1.x2(), w1.y1(), w1.y2(), w2.x1(), w2.x2(), w2.y1(), w2.y2());
-		break;
 		case erdm_overlappingPedro:
 			return 1.0f-RoiOverlappingPedro(w1.x1(), w1.x2(), w1.y1(), w1.y2(), w2.x1(), w2.x2(), w2.y1(), w2.y2());
-		break;
 		default:
-		ErrorQuit(VSys_IncINIParam, "Distance measure not defined");
-		return -1.0f;
+			ErrorQuit(VSys_IncINIParam, "Distance measure not defined");
+			return -1.0f;
 	};
 }
 

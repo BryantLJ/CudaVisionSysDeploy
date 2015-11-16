@@ -1,4 +1,4 @@
-src/IniFileIO.o : ../src/init/fileInOut/IniFileIO.cpp \
+src/init/fileInOut/IniFileIO.o : ../src/init/fileInOut/IniFileIO.cpp \
     /usr/include/stdc-predef.h \
     /usr/include/c++/4.8/cstdio \
     /usr/include/x86_64-linux-gnu/c++/4.8/bits/c++config.h \

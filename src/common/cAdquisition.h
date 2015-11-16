@@ -10,8 +10,6 @@
 
 #include "opencv2/opencv.hpp"
 
-
-
 class cAcquisition {
 private:
 	cv::Mat 				m_frame;

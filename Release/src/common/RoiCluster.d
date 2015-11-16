@@ -1,4 +1,4 @@
-src/RoiCluster.o : ../src/common/RoiCluster.cpp \
+src/common/RoiCluster.o : ../src/common/RoiCluster.cpp \
     /usr/include/stdc-predef.h \
     ../src/common/RoiCluster.h \
     ../src/common/Roi.h \
