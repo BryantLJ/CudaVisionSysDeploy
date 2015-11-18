@@ -34,7 +34,7 @@ void normalizeL1Sqrt(T0 *histogram)
 }
 
 template<typename T0>
-__device__
+__device__ __forceinline__
 void normalizeL2Hys(T0 *vec)
 {
 	// Sum the vector

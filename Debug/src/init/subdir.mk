@@ -17,8 +17,8 @@ OBJS += \
 src/init/%.o: ../src/init/%.cu
 	@echo 'Building file: $<'
 	@echo 'Invoking: NVCC Compiler'
-	/usr/local/cuda-7.5/bin/nvcc -I/usr/local/include/opencv -I/usr/local/include/cuda-7.5/targets/x86_64-linux/include -G -g -O0 -std=c++11 -gencode arch=compute_52,code=sm_52  -odir "src/init" -M -o "$(@:%.o=%.d)" "$<"
-	/usr/local/cuda-7.5/bin/nvcc -I/usr/local/include/opencv -I/usr/local/include/cuda-7.5/targets/x86_64-linux/include -G -g -O0 -std=c++11 --compile --relocatable-device-code=true -gencode arch=compute_52,code=compute_52 -gencode arch=compute_52,code=sm_52  -x cu -o  "$@" "$<"
+	/usr/local/cuda-7.5/bin/nvcc -I/usr/local/include/ -I/usr/local/cuda-7.5/targets/x86_64-linux/include -G -g -lineinfo -pg -O0 -std=c++11 -gencode arch=compute_52,code=sm_52  -odir "src/init" -M -o "$(@:%.o=%.d)" "$<"
+	/usr/local/cuda-7.5/bin/nvcc -I/usr/local/include/ -I/usr/local/cuda-7.5/targets/x86_64-linux/include -G -g -lineinfo -pg -O0 -std=c++11 --compile --relocatable-device-code=true -gencode arch=compute_52,code=compute_52 -gencode arch=compute_52,code=sm_52  -x cu -o  "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

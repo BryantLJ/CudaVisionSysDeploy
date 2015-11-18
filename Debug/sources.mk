@@ -29,4 +29,5 @@ src \
 src/init/fileInOut \
 src/init \
 src/common \
+bin/object \
 

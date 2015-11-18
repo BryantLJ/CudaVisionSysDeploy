@@ -61,75 +61,7 @@ private:
 	}
 
 	template<typename T>
-	static void PrecomputeDistances(T *dists)
-	{
-		for (int i = 0; i < Y_HOGBLOCK; ++i) {
-			for (int j = 0; j < X_HOGBLOCK; ++j) {
-				T *pDists = &(dists[(i * X_HOGBLOCK  * 4) + (j * 4)]);
-				// Compute interpolation index
-				float x = j + 0.5f;
-				float y = i + 0.5f;
-				float xp = x/sizeBinX - 0.5f;  // We substract 0.5 to know if this pixel is in the left or right part of its bin
-				float yp = y/sizeBinY - 0.5f;
-				int ixp = (int)floor(xp); // Most left bin where this pixel should contribute
-				int iyp = (int)floor(yp);	// mas arriba
-				float vx0 = xp-ixp;
-				float vy0 = yp-iyp;
-				float vx1 = 1.0f-vx0;
-				float vy1 = 1.0f-vy0;
-
-				// Corners fo the block / one contribution
-				if (ixp == -1 && iyp == -1 ) {
-					pDists[2] =  vx1;
-					pDists[3] = vy1;
-				}
-				if (ixp == 1 && iyp == -1) {
-					pDists[0] = vx0;
-					pDists[3] = vy1;
-				}
-				if (ixp == -1 && iyp == 1) {
-					pDists[1] = vy0;
-					pDists[2] = vx1;
-				}
-				if (ixp == 1 && iyp == 1) {
-					pDists[0] = vx0;
-					pDists[1] = vy0;
-				}
-
-				// Two contributions
-				if (ixp == 0 && iyp == -1) {
-					pDists[0] = vx0;
-					pDists[2] = vx1;
-					pDists[3] = vy1;
-				}
-				if (ixp == 1 && iyp == 0) {
-					pDists[0] = vx0;
-					pDists[1] = vy0;
-					pDists[3] = vy1;
-				}
-				if (ixp == 0 && iyp == 1) {
-					pDists[0] = vx0;
-					pDists[1] = vy0;
-					pDists[2] = vx1;
-				}
-				if (ixp == -1 && iyp == 0) {
-					pDists[1] = vy0;
-					pDists[2] = vx0;
-					pDists[3] = vy1;
-				}
-				// Four contributions
-				if (ixp == 0 && iyp == 0) {
-					pDists[0] = vx0;
-					pDists[1] = vy0;
-					pDists[2] = vx1;
-					pDists[3] = vy1;
-				}
-			}
-		}
-	}
-
-	template<typename T>
-	static void PrecomputeDistances2(T *dists, T *gaussMask)
+	static void PrecomputeDistances(T *dists, T *gaussMask)
 	{
 		// First block
 		for (int i = 0; i < 12; i++) {
@@ -140,8 +72,7 @@ private:
 				float xdist = (abs(x - 4)) / 8;
 				float ydist = (abs(y - 4)) / 8;
 
-				float num = xdist * ydist * gaussMask[i*16 + j];
-				dists[i*16 + j] = (1.0f-xdist) * (1.0f-ydist)* gaussMask[i*16 + j];
+				dists[i*16 + j] = (1.0f-xdist) * (1.0f-ydist) * gaussMask[i*16 + j];
 			}
 		}
 
@@ -155,7 +86,6 @@ private:
 				float xdist = (abs(x - 8)) / 8;
 				float ydist = (abs(y - 4)) / 8;
 
-				float num = xdist * ydist * gaussMask[i*16 + j + 4];
 				pDists[i*16 + j] = (1.0f-xdist) * (1.0f-ydist) * gaussMask[i*16 + j + 4];
 			}
 		}
@@ -169,8 +99,7 @@ private:
 				float xdist = (abs(x - 4)) / 8;
 				float ydist = (abs(y - 8)) / 8;
 
-				float num = xdist * ydist * gaussMask[(i+4)*16 + j];
-				pDists[i*16 + j] = (1.0f-xdist) * (1.0f-ydist)* gaussMask[(i+4)*16 + j];
+				pDists[i*16 + j] = (1.0f-xdist) * (1.0f-ydist) * gaussMask[(i+4)*16 + j];
 			}
 		}
 		// Fourth block
@@ -183,8 +112,7 @@ private:
 				float xdist = (abs(x - 8)) / 8;
 				float ydist = (abs(y - 8)) / 8;
 
-				float num = xdist * ydist * gaussMask[(i+4)*16 + j + 4];
-				pDists[i*16 + j] = (1.0f-xdist) * (1.0f-ydist)* gaussMask[(i+4)*16 + j + 4];
+				pDists[i*16 + j] = (1.0f-xdist) * (1.0f-ydist) * gaussMask[(i+4)*16 + j + 4];
 			}
 		}
 	}
@@ -334,7 +262,7 @@ public:
 		// Create Distances table
 		P *h_distances = mallocGen<P>(X_HOGBLOCK * Y_HOGBLOCK * 4);
 		memset(h_distances, 0 , X_HOGBLOCK * Y_HOGBLOCK * 4 * sizeof(P));
-		PrecomputeDistances2(h_distances, h_gaussMask);
+		PrecomputeDistances(h_distances, h_gaussMask);
 		cudaMallocGen(&(dev->hog.blockDistances), X_HOGBLOCK * Y_HOGBLOCK * 4);
 		copyHtoD(dev->hog.blockDistances, h_distances, X_HOGBLOCK * Y_HOGBLOCK * 4);
 

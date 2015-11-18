@@ -228,6 +228,7 @@ int main()
 
 	cout << "FPS : " << 340 / seconds << endl;
 	cout << "elapsed secs: " << seconds << endl;
+
 	cudaErrorCheck();
 	return 0;
 }
