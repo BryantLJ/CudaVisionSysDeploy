@@ -8,8 +8,6 @@
 #ifndef CINITPYRAMID_H_
 #define CINITPYRAMID_H_
 
-#include <math.h>
-
 #include "../utils/cudaUtils.cuh"
 #include "../utils/utils.h"
 
