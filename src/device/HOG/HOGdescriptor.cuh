@@ -34,7 +34,7 @@ void HOGdescriptorPreDistances(T *gMagnitude, T *gOrientation, T *HOGdesc, const
 	}
 	__syncthreads();
 
-	// Get magnitude and orientation pixel
+//	// Get magnitude and orientation pixel
 	T gMag = pMag[threadIdx.y*cols + threadIdx.x];
 	T gOri = pOri[threadIdx.y*cols + threadIdx.x];
 
@@ -57,6 +57,7 @@ void HOGdescriptorPreDistances(T *gMagnitude, T *gOrientation, T *HOGdesc, const
 	T weight = distances[idxDist] * gMag;
 	if (threadIdx.x < 12 && threadIdx.y < 12)
 	{
+		//atomicAdd( &(HOGdesc[iop]), vo1 * weight);
 		atomicAdd( &(blockHistogram[iop]), vo1 * weight);
 		atomicAdd( &(blockHistogram[iop1]), vo0 * weight);
 	}
@@ -114,6 +115,42 @@ void computeHOGdescriptor(T *gMagnitude, T *gOrientation, T *HOGdesc, T *gaussMa
 			}
 		}
 		normalizeL2Hys(pDesc);
+	}
+}
+
+template<typename T, typename T1, typename T3, int XCellSize, int YCellSize, int XBLOCKSize, int YBLOCKSize, int HISTOWITDH>
+__global__
+void computeHOGSharedPred(T *gMagnitude, T1 *gOrientation, T3 *HOGdesc, T3 *dists, int Xblocks, int Yblocks, int cols, int totalNumBlocks)
+{
+	int id = blockIdx.x * blockDim.x + threadIdx.x;
+	int idx = id % Xblocks;
+	int idy = id / Xblocks;
+
+	T 	*pMag 	= &(gMagnitude[(idy*cols*YCellSize) + (idx*XCellSize)]);
+	T1 	*pOri 	= &(gOrientation[(idy*cols*YCellSize) + (idx*XCellSize)]);
+	T3 	*pDesc 	= &(HOGdesc[id*HISTOWITDH]);
+	// Store histogram on local memory
+	__shared__ T3	localHisto[36 * 256];
+	T3 *pLocalHisto = &(localHisto[threadIdx.x * 36]);
+	for (int k = 0; k < 36; k++) {
+		pLocalHisto[k] = 0.0f;
+	}
+
+	if (id < totalNumBlocks) {
+		for (int i = 0; i < YBLOCKSize; i++) {
+			for (int j = 0; j < XBLOCKSize; j++) {
+				addToHistogramPred(	pMag[i*cols + j],
+									pOri[i*cols + j],
+									pLocalHisto,
+									dists,
+									j+0.5f,
+									i+0.5f);
+			}
+		}
+		normalizeL2Hys(pLocalHisto);
+		for (int k = 0; k < 36; k++) {
+			pDesc[k] = pLocalHisto[k];
+		}
 	}
 }
 

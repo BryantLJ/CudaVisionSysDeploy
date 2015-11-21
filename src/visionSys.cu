@@ -166,8 +166,12 @@ int main()
 //			std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to fixed
 //			for (int k = 0; k < dSizes->svm.yROIs[i]; k++) {
 //				for (int b = 0; b < dSizes->svm.xROIs[i]; b++) {
-//					cout << "layer: "<< i << ": "<< k*dSizes->svm.xROIs[i] + b << ": "
-//						 << getOffset<roifeat_t>(ROIfilter.getHostScoresVector(), dSizes->svm.scoresElems, i)[k*dSizes->svm.xROIs_d[i] + b] << endl;
+////					cout << "layer: "<< i << ": "<< k*dSizes->svm.xROIs[i] + b << ": "
+////						 << getOffset<roifeat_t>(ROIfilter.getHostScoresVector(), dSizes->svm.scoresElems, i)[k*dSizes->svm.xROIs_d[i] + b] << endl;
+//					cout.precision(6);
+//					cout.setf( std::ios::fixed, std:: ios::floatfield );
+//					cout << b*8+32 <<" "<< k*8+64 <<" 64 128 1 "
+//							<< getOffset<roifeat_t>(ROIfilter.getHostScoresVector(), dSizes->svm.scoresElems, i)[k*dSizes->svm.xROIs_d[i] + b] << endl;
 //				}
 //			}
 //				for (int u = 0; u < dSizes->scoresElems[i] ; u++) {

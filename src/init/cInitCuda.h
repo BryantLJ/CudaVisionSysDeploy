@@ -174,7 +174,7 @@ public:
 	__forceinline__
 	static void setPreferenceL1cache(cudaFuncCache preference)
 	{
-		cudaDeviceSetCacheConfig(preference);
+		//cudaDeviceSetCacheConfig(preference);
 	}
 
 };

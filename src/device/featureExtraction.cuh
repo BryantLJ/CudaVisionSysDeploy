@@ -166,7 +166,7 @@ void HOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint l
 	dim3 gridHOG (ceil((float)dsizes->hog.numblockHist[layer] / blkSizes->hog.blockHOG.x),
 				  1, 1 );
 
-	cout << dsizes->hog.numblockHist[layer] << endl;
+	//cout << dsizes->hog.numblockHist[layer] << endl;
 
 	dim3 gridHOG2(dsizes->hog.numblockHist[layer], 1, 1);
 
@@ -197,21 +197,32 @@ void HOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint l
 //				 dsizes->hog.yBlockHists[layer],
 //				 dsizes->hog.matCols[layer],
 //				 dsizes->hog.numblockHist[layer]);
-	cudaErrorCheck(__LINE__, __FILE__);
+//	cudaErrorCheck(__LINE__, __FILE__);
 
 	// Naive version local histograms
-	computeHOGlocal<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
-			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
-			 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
-			 getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
-			 data->hog.gaussianMask,
-			 dsizes->hog.xBlockHists[layer],
-			 dsizes->hog.yBlockHists[layer],
-			 dsizes->hog.matCols[layer],
-			 dsizes->hog.numblockHist[layer]);
+//	computeHOGlocal<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
+//			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
+//			 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
+//			 getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
+//			 data->hog.gaussianMask,
+//			 dsizes->hog.xBlockHists[layer],
+//			 dsizes->hog.yBlockHists[layer],
+//			 dsizes->hog.matCols[layer],
+//			 dsizes->hog.numblockHist[layer]);
 
 	// Naive local version predists
-	computeHOGlocalPred<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
+//	computeHOGlocalPred<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
+//			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
+//			 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
+//			 getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
+//			 data->hog.blockDistances,
+//			 dsizes->hog.xBlockHists[layer],
+//			 dsizes->hog.yBlockHists[layer],
+//			 dsizes->hog.matCols[layer],
+//			 dsizes->hog.numblockHist[layer]);
+
+	// Naive local version predists
+	computeHOGSharedPred<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
 			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
 			 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
 			 getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
@@ -220,6 +231,7 @@ void HOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint l
 			 dsizes->hog.yBlockHists[layer],
 			 dsizes->hog.matCols[layer],
 			 dsizes->hog.numblockHist[layer]);
+
 	// Naive version
 //	computeHOGdescriptor<P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG.x>>>
 //			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
@@ -234,11 +246,11 @@ void HOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint l
 
 	cudaErrorCheck(__LINE__, __FILE__);
 
-	P *outHOGdev = (P*) malloc(dsizes->hog.blockDescElems[layer] * sizeof(P));
-	cudaMemcpy(outHOGdev,
-			   getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
-			   dsizes->hog.blockDescElems[layer] * sizeof(P),
-			   cudaMemcpyDeviceToHost);
+//	P *outHOGdev = (P*) malloc(dsizes->hog.blockDescElems[layer] * sizeof(P));
+//	cudaMemcpy(outHOGdev,
+//			   getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
+//			   dsizes->hog.blockDescElems[layer] * sizeof(P),
+//			   cudaMemcpyDeviceToHost);
 
 	//generateWindows(outHOGdev, dsizes->pyr.imgCols[layer], dsizes->pyr.imgRows[layer], HOG_HISTOWIDTH);
 //
