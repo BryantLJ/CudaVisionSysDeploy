@@ -58,7 +58,7 @@ private:
 public:
 	cInit(parameters *params)
 	{
-		cout << "SETTING UP ALGORITHMS...." << endl; // todo change
+		cout << "SETTING UP ALGORITHMS...." << endl;
 
 		// Copy data structures
 		m_params = params;
@@ -112,7 +112,7 @@ public:
 
 			case HOGLBP:	detectorFuncs.initFeatures = &cInitHOGLBP::initDeviceHOGLBP;
 							detectorFuncs.featureExtraction = &device::HOGLBPfeatureExtraction;
-							// add hoglbp reset function
+							detectorFuncs.resetFeatures = &cInitHOGLBP::zerosHOGLBPfeatures;
 							break;
 
 			default:		cerr << "No feature extraction algorithm chosen on DEVICE" << endl;
@@ -123,7 +123,10 @@ public:
 			switch (m_classifType) {
 
 			case SVM:		detectorFuncs.initClassifi = &cInitSVM::initDeviceSVM;
-							detectorFuncs.classification = &device::SVMclassification;
+							if (m_featExtraction == HOGLBP)
+								detectorFuncs.classification = &device::SVMclassificationHOGLBP;
+							else
+								detectorFuncs.classification = &device::SVMclassification;
 							break;
 
 			case RF: 		detectorFuncs.initClassifi = &cInitRF::initDeviceRF;

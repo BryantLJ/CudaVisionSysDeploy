@@ -32,90 +32,6 @@
 
 class cInitHOG {
 private:
-	/* Precomputes the gaussian mask applied to the HOG block
-	 *
-	 */
-	template<typename T>
-	static void PrecomputeGaussian(T *gaussMask, int maskSize)
-	{
-		float var2 = (maskSize * 0.5f * NUMSPATIALBINS) / (2 * MASKSIGMA);
-		var2 = var2*var2*2;
-		float center = float(maskSize/2);
-
-		for (int x_ = 0; x_ < maskSize; x_++) {
-			for (int y_ = 0; y_ < maskSize; y_++) {
-				float tx = x_ - center;
-				float ty = y_ - center;
-				tx *= tx/var2;
-				ty *= ty/var2;
-				gaussMask[x_*maskSize + y_] = exp(-(tx+ty));
-			}
-		}
-	}
-
-	template<typename T>
-	static void PrecomputeSqrtLUT(T *sqrtlut, int size)
-	{
-		for (int i = 0; i < size; i++)
-			sqrtlut[i] = sqrtf((float)i);
-	}
-
-	template<typename T>
-	static void PrecomputeDistances(T *dists, T *gaussMask)
-	{
-		// First block
-		for (int i = 0; i < 12; i++) {
-			for (int j = 0; j < 12; j++) {
-				float x = j + 0.5f;
-				float y = i + 0.5f;
-
-				float xdist = (abs(x - 4)) / 8;
-				float ydist = (abs(y - 4)) / 8;
-
-				dists[i*16 + j] = (1.0f-xdist) * (1.0f-ydist) * gaussMask[i*16 + j];
-			}
-		}
-
-		// Second block
-		T *pDists = &(dists[256 + 4]);
-		for(int i = 0; i < 12; i++) {
-			for (int j = 0; j < 12; j++) {
-				float x = j + 0.5f;
-				float y = i + 0.5f;
-
-				float xdist = (abs(x - 8)) / 8;
-				float ydist = (abs(y - 4)) / 8;
-
-				pDists[i*16 + j] = (1.0f-xdist) * (1.0f-ydist) * gaussMask[i*16 + j + 4];
-			}
-		}
-		// Third block
-		pDists = &(dists[256*2 + 4*X_GAUSSMASK]);
-		for (int i = 0; i < 12; i++) {
-			for (int j = 0; j < 12; j++) {
-				float x = j + 0.5f;
-				float y = i + 0.5f;
-
-				float xdist = (abs(x - 4)) / 8;
-				float ydist = (abs(y - 8)) / 8;
-
-				pDists[i*16 + j] = (1.0f-xdist) * (1.0f-ydist) * gaussMask[(i+4)*16 + j];
-			}
-		}
-		// Fourth block
-		pDists = &(dists[256*3 + 4*X_GAUSSMASK + 4]);
-		for (int i = 0; i < 12; i++) {
-			for (int j = 0; j < 12; j++) {
-				float x = j + 0.5f;
-				float y = i + 0.5f;
-
-				float xdist = (abs(x - 8)) / 8;
-				float ydist = (abs(y - 8)) / 8;
-
-				pDists[i*16 + j] = (1.0f-xdist) * (1.0f-ydist) * gaussMask[(i+4)*16 + j + 4];
-			}
-		}
-	}
 
 	static inline uint computeXblockDescriptors(uint cols)
 		{	return cols / X_HOGCELL;	}
@@ -306,11 +222,90 @@ public:
 
 	}
 
+	/* Precomputes the gaussian mask applied to the HOG block
+	 *
+	 */
+	template<typename T>
+	static void PrecomputeGaussian(T *gaussMask, int maskSize)
+	{
+		float var2 = (maskSize * 0.5f * NUMSPATIALBINS) / (2 * MASKSIGMA);
+		var2 = var2*var2*2;
+		float center = float(maskSize/2);
+
+		for (int x_ = 0; x_ < maskSize; x_++) {
+			for (int y_ = 0; y_ < maskSize; y_++) {
+				float tx = x_ - center;
+				float ty = y_ - center;
+				tx *= tx/var2;
+				ty *= ty/var2;
+				gaussMask[x_*maskSize + y_] = exp(-(tx+ty));
+			}
+		}
+	}
+
+	template<typename T>
+	static void PrecomputeSqrtLUT(T *sqrtlut, int size)
+	{
+		for (int i = 0; i < size; i++)
+			sqrtlut[i] = sqrtf((float)i);
+	}
+
+	template<typename T>
+	static void PrecomputeDistances(T *dists, T *gaussMask)
+	{
+		// First block
+		for (int i = 0; i < 12; i++) {
+			for (int j = 0; j < 12; j++) {
+				float x = j + 0.5f;
+				float y = i + 0.5f;
+				float xdist = (abs(x - 4)) / 8;
+				float ydist = (abs(y - 4)) / 8;
+
+				dists[i*16 + j] = (1.0f-xdist) * (1.0f-ydist) * gaussMask[i*16 + j];
+			}
+		}
+		// Second block
+		T *pDists = &(dists[256 + 4]);
+		for(int i = 0; i < 12; i++) {
+			for (int j = 0; j < 12; j++) {
+				float x = j + 0.5f;
+				float y = i + 0.5f;
+				float xdist = (abs(x - 8)) / 8;
+				float ydist = (abs(y - 4)) / 8;
+
+				pDists[i*16 + j] = (1.0f-xdist) * (1.0f-ydist) * gaussMask[i*16 + j + 4];
+			}
+		}
+		// Third block
+		pDists = &(dists[256*2 + 4*X_GAUSSMASK]);
+		for (int i = 0; i < 12; i++) {
+			for (int j = 0; j < 12; j++) {
+				float x = j + 0.5f;
+				float y = i + 0.5f;
+				float xdist = (abs(x - 4)) / 8;
+				float ydist = (abs(y - 8)) / 8;
+
+				pDists[i*16 + j] = (1.0f-xdist) * (1.0f-ydist) * gaussMask[(i+4)*16 + j];
+			}
+		}
+		// Fourth block
+		pDists = &(dists[256*3 + 4*X_GAUSSMASK + 4]);
+		for (int i = 0; i < 12; i++) {
+			for (int j = 0; j < 12; j++) {
+				float x = j + 0.5f;
+				float y = i + 0.5f;
+				float xdist = (abs(x - 8)) / 8;
+				float ydist = (abs(y - 8)) / 8;
+
+				pDists[i*16 + j] = (1.0f-xdist) * (1.0f-ydist) * gaussMask[(i+4)*16 + j + 4];
+			}
+		}
+	}
+
 	template<typename T, typename C, typename P>
 	__forceinline__
 	static void zerosHOGfeatures(detectorData<T, C, P> *dev, dataSizes *sizes)
 	{
-		//cout << "reset hog feaures" << endl;
 		cudaMemset(dev->features.featuresVec, 0, sizes->features.featuresVecElems * sizeof(P));
 		//todo evaluate asyncronous menmset or no memset(use registers)
 	}

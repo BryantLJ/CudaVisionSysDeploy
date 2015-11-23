@@ -10,8 +10,52 @@
 
 #include "../Operations/warpOps.cuh"
 
-// Compile function using read only cache, avaliable on 3.5 compute capability or above
-#if __CUDA_ARCH__ >= 350
+
+template<typename T, int HistoWidth, int xWinBlocks, int yWinBlocks>
+__global__
+void computeROIwarpHOGLBP(const T *HOGfeatures, const T *LBPfeatures, T *outScores, const T *__restrict__ modelW, T modelBias, const uint numWins, const uint xDescs)
+{
+	int idx = blockDim.x * blockIdx.x + threadIdx.x;		// Global thread id
+	int warpId = idx / warpSize;							// Warp id
+	int warpLane = idx % warpSize;							// Warp lane id
+	const T *HOGwinPtr = &(HOGfeatures[warpId * HistoWidth]);
+	const T *LBPwinPtr = &(LBPfeatures[warpId * HistoWidth]);
+	const T *HOGblockPtr, *LBPblockPtr, *modelPtr;
+	T rSlice = 0;
+	int index;
+
+	if (warpId < numWins) {
+		// Compute dot product of a slice of the ROI
+		#pragma unroll
+		for (int i = 0; i < yWinBlocks; i++) {
+			#pragma unroll
+			for (int j = 0; j < xWinBlocks; j++) {
+				index = (i*HistoWidth*xDescs) + (j*HistoWidth);
+				HOGblockPtr = &(HOGwinPtr[index]);
+				LBPblockPtr = &(LBPwinPtr[index]);
+
+				modelPtr = &(modelW[(i*HistoWidth*xWinBlocks) + (j*HistoWidth)]);
+
+				rSlice += ( HOGblockPtr[warpLane] 				* 	__ldg( &(modelPtr[warpLane]) ) )  	+
+						  ( HOGblockPtr[warpLane + warpSize] 	* 	__ldg( &(modelPtr[warpLane + warpSize]) ) );
+
+				rSlice += ( LBPblockPtr[warpLane] 				* 	__ldg( &(modelPtr[warpLane]) ) )  	+
+						  ( LBPblockPtr[warpLane + warpSize] 	* 	__ldg( &(modelPtr[warpLane + warpSize]) ) );
+			}
+		}
+		// Warp reduction of the Slices to get SCORE
+		rSlice = warpReductionSum<T>(rSlice);
+		// Store SCORE
+		if (warpLane == 0) {
+			outScores[warpId] = rSlice + modelBias;
+		}
+	}
+}
+
+
+
+
+#if __CUDA_ARCH__ >= 350 /* Compile function using read only cache, avaliable on 3.5 compute capability or above */
 
 template<typename T, int HistoWidth, int xWinBlocks, int yWinBlocks>
 __global__
@@ -45,8 +89,8 @@ void computeROIwarpReadOnly(const T *features, T *outScores, const T *__restrict
 	}
 }
 
-// Compile function for lower compute capability
-#else /* __CUDA_ARCH__ < 350 */
+
+#else /* __CUDA_ARCH__ < 350  @@@@@@@@@  Compile function for lower compute capability */
 
 template<typename T, uint HistoWidth, uint xWinBlocks, uint yWinBlocks>
 __global__
@@ -82,8 +126,17 @@ void computeROIwarpReadOnly(const T *features, T *outScores, const T *__restrict
 #endif
 
 
+
+
+
+
+
+
+
+
+
 /*	Compute score of each window on the image - dot product of the windows and the model
- * 	one window assigned per thread
+ * 	one window assigned per thread - NAIVE VERSION
  * 	@Author: Víctor Campmany / vcampmany@gmail.com
  * 	@Date: 21/04/2015
  * 	@params:

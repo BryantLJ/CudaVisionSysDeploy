@@ -24,12 +24,12 @@ void SVMclassification(detectorData<T, C, P> *data, dataSizes *dsizes, uint laye
 	dim3 gridSVMnaive( ceil((float)dsizes->svm.scoresElems[layer] / blkSizes->svm.blockSVM.x) );
 
 	computeROIwarpReadOnly<P, HISTOWIDTH, XWINBLOCKS, YWINBLOCKS> <<<gridSVM, blkSizes->svm.blockSVM>>>
-								(getOffset<P>(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
-								 getOffset<P>(data->svm.ROIscores, dsizes->svm.scoresElems, layer),
-								 data->svm.weightsM,
-								 data->svm.bias,
-								 dsizes->svm.scoresElems[layer],
-								 dsizes->features.xBlockFeatures[layer]); //dsizes->lbp.xHists[layer]  dsizes->hog.xBlockHists[layer]
+				(getOffset<P>(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
+				 getOffset<P>(data->svm.ROIscores, dsizes->svm.scoresElems, layer),
+				 data->svm.weightsM,
+				 data->svm.bias,
+				 dsizes->svm.scoresElems[layer],
+				 dsizes->features.xBlockFeatures[layer]);
 	cudaErrorCheck(__LINE__, __FILE__);
 
 	// Naive kernel
@@ -54,6 +54,25 @@ void SVMclassification(detectorData<T, C, P> *data, dataSizes *dsizes, uint laye
 }
 
 
+template<typename T, typename C, typename P>
+__forceinline__
+void SVMclassificationHOGLBP(detectorData<T, C, P> *data, dataSizes *dsizes, uint layer, cudaBlockConfig *blkSizes)
+{
+	dim3 gridSVM( ceil((float)(dsizes->svm.scoresElems[layer] * WARPSIZE) / blkSizes->svm.blockSVM.x),
+				  1, 1);
+
+	computeROIwarpHOGLBP<P, HISTOWIDTH, XWINBLOCKS, YWINBLOCKS> <<<gridSVM, blkSizes->svm.blockSVM>>>
+				(getOffset<P>(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
+				 &(getOffset<P>(data->features.featuresVec, dsizes->features.numFeaturesElems, layer)[dsizes->hog.blockDescElems[layer]]),
+				 getOffset<P>(data->svm.ROIscores, dsizes->svm.scoresElems, layer),
+				 data->svm.weightsM,
+				 data->svm.bias,
+				 dsizes->svm.scoresElems[layer],
+				 dsizes->features.xBlockFeatures[layer]);
+	cudaErrorCheck(__LINE__, __FILE__);
+}
+
+
 
 
 
@@ -64,6 +83,7 @@ void RFclassification(detectorData<T, C, P> *data, dataSizes *dsizes, uint layer
 	cout << "RANDOM FOREST CLASSIFICATION ---------------------------------------------" <<	endl;
 }
 
-} /* end namespcae */
 
+
+} /* end namespcae */
 #endif /* CLASSIFICATION_CUH_ */

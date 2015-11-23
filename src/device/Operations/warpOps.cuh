@@ -9,10 +9,9 @@
 #define WARPOPS_CUH_
 
 template<typename T>
-__forceinline__ __device__
+__device__ __forceinline__
 T warpReductionSum(T sliceVal)
 {
-	//for (int i = warpSize)
 	sliceVal += __shfl_down(sliceVal, 16);
 	sliceVal += __shfl_down(sliceVal, 8);
 	sliceVal += __shfl_down(sliceVal, 4);

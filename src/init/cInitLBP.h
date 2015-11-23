@@ -128,7 +128,7 @@ public:
 		cudaMallocGen<C>(&(dev->lbp.cellHistos), sizes->lbp.cellHistosVecElems);
 		cudaSafe(cudaMemset(dev->lbp.cellHistos, 0, sizes->lbp.cellHistosVecElems * sizeof(C)));
 
-		cudaMallocGen<C>(&(dev->lbp.blockHistos), sizes->lbp.blockHistosVecElems);
+		//cudaMallocGen<C>(&(dev->lbp.blockHistos), sizes->lbp.blockHistosVecElems);
 		cudaMallocGen<P>(&(dev->features.featuresVec), sizes->features.featuresVecElems);
 
 		// Generate LBP mapping table
