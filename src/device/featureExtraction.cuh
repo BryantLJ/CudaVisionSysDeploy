@@ -196,15 +196,15 @@ void HOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint l
 //	cudaErrorCheck(__LINE__, __FILE__);
 
 	// Naive version local histograms
-//	computeHOGlocal<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
-//			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
-//			 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
-//			 getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
-//			 data->hog.gaussianMask,
-//			 dsizes->hog.xBlockHists[layer],
-//			 dsizes->hog.yBlockHists[layer],
-//			 dsizes->hog.matCols[layer],
-//			 dsizes->hog.numblockHist[layer]);
+	computeHOGlocal<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
+			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
+			 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
+			 getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
+			 data->hog.gaussianMask,
+			 dsizes->hog.xBlockHists[layer],
+			 dsizes->hog.yBlockHists[layer],
+			 dsizes->hog.matCols[layer],
+			 dsizes->hog.numblockHist[layer]);
 
 	// Naive local version predists
 //	computeHOGlocalPred<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
@@ -218,15 +218,15 @@ void HOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint l
 //			 dsizes->hog.numblockHist[layer]);
 
 	// Naive local version predists
-	computeHOGSharedPred<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
-			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
-			 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
-			 getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
-			 data->hog.blockDistances,
-			 dsizes->hog.xBlockHists[layer],
-			 dsizes->hog.yBlockHists[layer],
-			 dsizes->hog.matCols[layer],
-			 dsizes->hog.numblockHist[layer]);
+//	computeHOGSharedPred<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
+//			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
+//			 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
+//			 getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
+//			 data->hog.blockDistances,
+//			 dsizes->hog.xBlockHists[layer],
+//			 dsizes->hog.yBlockHists[layer],
+//			 dsizes->hog.matCols[layer],
+//			 dsizes->hog.numblockHist[layer]);
 
 	// Naive version
 //	computeHOGdescriptor<P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG.x>>>
@@ -341,14 +341,6 @@ void HOGLBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uin
 			 dsizes->hog.matCols[layer]);
 	cudaErrorCheck(__LINE__, __FILE__);
 
-	// LBP
-	mergeHistogramsNorm<C, P, HISTOWIDTH> <<<gridBlock2, blkSizes->lbp.blockBlock>>>
-			(getOffset(data->lbp.cellHistos, dsizes->lbp.cellHistosElems, layer),
-			 getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
-			 dsizes->lbp.xHists[layer],
-			 dsizes->lbp.yHists[layer]);
-	cudaErrorCheck(__LINE__, __FILE__);
-
 	// HOG
 	computeHOGSharedPred<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
 			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
@@ -360,6 +352,16 @@ void HOGLBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uin
 			 dsizes->hog.matCols[layer],
 			 dsizes->hog.numblockHist[layer]);
 	cudaErrorCheck(__LINE__, __FILE__);
+
+	// LBP
+	mergeHistogramsNorm<C, P, HISTOWIDTH> <<<gridBlock2, blkSizes->lbp.blockBlock>>>
+			(getOffset(data->lbp.cellHistos, dsizes->lbp.cellHistosElems, layer),
+			 &(getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer)[dsizes->hog.blockDescElems[layer]]),
+			 dsizes->lbp.xHists[layer],
+			 dsizes->lbp.yHists[layer]);
+	cudaErrorCheck(__LINE__, __FILE__);
+
+
 
 }
 
