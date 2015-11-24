@@ -196,26 +196,27 @@ void HOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint l
 //	cudaErrorCheck(__LINE__, __FILE__);
 
 	// Naive version local histograms
-	computeHOGlocal<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
-			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
-			 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
-			 getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
-			 data->hog.gaussianMask,
-			 dsizes->hog.xBlockHists[layer],
-			 dsizes->hog.yBlockHists[layer],
-			 dsizes->hog.matCols[layer],
-			 dsizes->hog.numblockHist[layer]);
-
-	// Naive local version predists
-//	computeHOGlocalPred<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
+//	computeHOGlocal<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
 //			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
 //			 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
 //			 getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
-//			 data->hog.blockDistances,
+//			 data->hog.gaussianMask,
 //			 dsizes->hog.xBlockHists[layer],
 //			 dsizes->hog.yBlockHists[layer],
 //			 dsizes->hog.matCols[layer],
 //			 dsizes->hog.numblockHist[layer]);
+
+	//cudaDeviceSetCacheConfig(cudaFuncCachePreferShared);
+	// Naive local version predists
+	computeHOGlocalPred<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
+			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
+			 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
+			 getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
+			 data->hog.blockDistances,
+			 dsizes->hog.xBlockHists[layer],
+			 dsizes->hog.yBlockHists[layer],
+			 dsizes->hog.matCols[layer],
+			 dsizes->hog.numblockHist[layer]);
 
 	// Naive local version predists
 //	computeHOGSharedPred<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
@@ -248,7 +249,7 @@ void HOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint l
 //			   dsizes->hog.blockDescElems[layer] * sizeof(P),
 //			   cudaMemcpyDeviceToHost);
 
-	//generateWindows(outHOGdev, dsizes->pyr.imgCols[layer], dsizes->pyr.imgRows[layer], HOG_HISTOWIDTH);
+//	generateWindows(outHOGdev, dsizes->pyr.imgCols[layer], dsizes->pyr.imgRows[layer], HOG_HISTOWIDTH);
 //
 //	for (int i = 0; i < dsizes->hog.yBlockHists[layer]-1; i++) {
 //		for (int j = 0; j < dsizes->hog.xBlockHists[layer]-1; j++) {
