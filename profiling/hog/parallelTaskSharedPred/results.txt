@@ -1,0 +1,6 @@
+La versió de shared memory va millor perque els histogrames estan a shared memory. no Sutilitza la local memory pr guardar els histogrames.
+A la versió de local memory els histogrames no caben a la cache L1 de cada SM ni a la cache L2 compartida entre SMs. per tan, tot i ser "local memory"
+els accessos a memoria no es resolien a L1 sinó que ho feien a L2 o global memory.
+
+Amb la versió de shared memory aconseguim que la L2 s'utilitzi millor ja que nomes tindrem les dades de input(que si que hi caben) i no els histogrames.
+Així s'aconseguieix una major ample de banda de la cache L2 i tambe es redueix significativament els accessos a device memory

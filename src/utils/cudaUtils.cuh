@@ -20,19 +20,19 @@
 /////////////////////////
 
 
-void getErrorDescription(cudaError_t err) {
+inline void getErrorDescription(cudaError_t err) {
 	if (err > 0) {
 		std::cout << "error code: " << err << " description: " << cudaGetErrorString(err) << std::endl;
 	}
 }
-void cudaErrorCheck() {
+inline void cudaErrorCheck() {
 	cudaError_t err = cudaGetLastError();
 	if (err > 0) {
 		std::cout << "error code: " << err << " description: " << cudaGetErrorString(err) << std::endl;
 	}
 }
 
-void cudaErrorCheck(int line, string file) {
+inline void cudaErrorCheck(int line, string file) {
 	cudaError_t err = cudaGetLastError();
 	if (err > 0) {
 		std::cout << "error code: " << err << " description: " << cudaGetErrorString(err) << " -- ERROR at line: " << line << " file: "<< file << std::endl;

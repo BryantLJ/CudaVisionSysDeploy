@@ -16,9 +16,9 @@
 //#define sizeOriBin 20
 
 
-template<typename T, typename T1, typename T3>
+template<typename T>
 __device__ __forceinline__
-void addToHistogramPred(T gMag, T1 angle, T3 *pDesc, T3 *distances, float x, float y)
+void addToHistogramPred(T gMag, T angle, T *pDesc, const T *__restrict__ distances, float x, float y)
 {
 	int xi = (int) x;
 	int yi = (int) y;
@@ -121,8 +121,6 @@ void addToHistogram(T weight, T1 angle, T3 *pDesc, float x, float y)
 	float vx1 = 1.0f-vx0;
 	float vy1 = 1.0f-vy0;
 	float vo1 = 1.0f-vo0;
-	//iop = (iop<0) ? iop+m_numOrientationBins : iop;
-	//iop = (iop>=m_numOrientationBins) ? iop-m_numOrientationBins : iop;
 	iop = (iop<0) ? 8 : iop;
 	iop = (iop>=NUMBINS) ? 0 : iop;
 
@@ -132,37 +130,27 @@ void addToHistogram(T weight, T1 angle, T3 *pDesc, float x, float y)
 	vo1 *= weight;
 
 	// Add to the histogram with trilinear interpolation
-	if (ixp >= 0 && iyp >= 0)		// izquierda o arriba
+	if (ixp >= 0 && iyp >= 0)
 	{
 		pDesc[(ixp*2*NUMBINS) + (iyp*NUMBINS) + iop] += vx1 * vy1 * vo1;
 		pDesc[(ixp*2*NUMBINS) + (iyp*NUMBINS) + iop1] += vx1 * vy1 * vo0;
-
-		//pHistogram[(binX*m_auxNOxNSB)+(binY*m_numOrientationBins)+binO] += w;
-		//AddToBin(pHistogram, ixp, iyp, iop , vx1* vy1* vo1);
-		//AddToBin(pHistogram, ixp, iyp, iop1, vx1* vy1* vo0);
 	}
-	if (ixp+1 < NUMSPATIALBINS && iyp >= 0)  // derecha i arriba
+	if (ixp+1 < NUMSPATIALBINS && iyp >= 0)
 	{
 		pDesc[((ixp+1)*2*NUMBINS) + (iyp*NUMBINS) + iop] += vx0 * vy1 * vo1;
 		pDesc[((ixp+1)*2*NUMBINS) + (iyp*NUMBINS) + iop1] += vx0 * vy1 * vo0;
-		//AddToBin(pHistogram, ixp+1, iyp, iop , vx0* vy1* vo1);
-		//AddToBin(pHistogram, ixp+1, iyp, iop1, vx0* vy1* vo0);
 	}
-	if (ixp >= 0 && iyp+1 < NUMSPATIALBINS) 	// izquierda i abajo
+	if (ixp >= 0 && iyp+1 < NUMSPATIALBINS)
 	{
 		pDesc[(ixp*2*NUMBINS) + ((iyp+1)*NUMBINS) + iop] += vx1 * vy0 * vo1;
 		pDesc[(ixp*2*NUMBINS) + ((iyp+1)*NUMBINS) + iop1] += vx1 * vy0 * vo0;
 
-		//AddToBin(pHistogram, ixp, iyp+1, iop , vx1* vy0* vo1);
-		//AddToBin(pHistogram, ixp, iyp+1, iop1, vx1* vy0* vo0);
 	}
-	if (ixp+1 < NUMSPATIALBINS && iyp+1 < NUMSPATIALBINS) 	// derecha i abajo
+	if (ixp+1 < NUMSPATIALBINS && iyp+1 < NUMSPATIALBINS)
 	{
 		pDesc[((ixp+1)*2*NUMBINS) + ((iyp+1)*NUMBINS) + iop] += vx0 * vy0 * vo1;
 		pDesc[((ixp+1)*2*NUMBINS) + ((iyp+1)*NUMBINS) + iop1] += vx0 * vy0 * vo0;
 
-	//AddToBin(pHistogram, ixp+1, iyp+1, iop , vx0* vy0* vo1);
-	//AddToBin(pHistogram, ixp+1, iyp+1, iop1, vx0* vy0* vo0);
 	}
 
 }

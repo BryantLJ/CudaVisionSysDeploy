@@ -141,9 +141,6 @@ int main()
 //				printf( "cell feature: %d: %d\n", u, cell[u]);
 //			}
 
-//			devDataHandler.displayDeviceData1D<desc_t>(detectData.lbp.blockHistos,
-//										   	       dSizes->lbp.blockHistosElems[i]);
-
 //			uchar *block = (uchar*)malloc(dSizes->blockHistosElems[i]);
 //			copyDtoH(block, detectData.blockHistos, dSizes->blockHistosElems[i]);
 //			for (int u = 0; u < dSizes->blockHistosElems[i]; u++) {

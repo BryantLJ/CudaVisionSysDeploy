@@ -65,11 +65,6 @@ void LBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint l
 //	cv::imshow("lbp", lbpout);
 //	cv::waitKey(0);
 
-//	if (layer == 1) {
-//		//cudaSafe(cudaMemset(getOffset(data->cellHistos, dsizes->cellHistosElems, layer),
-//		//					0,  dsizes->cellHistosElems[layer]));
-//
-//	}
 
 	cellHistograms<T, C, HISTOWIDTH, XCELL, YCELL> <<<gridCell2, blkSizes->lbp.blockCells>>>
 							(getOffset(data->lbp.imgDescriptor, dsizes->lbp.imgDescElems, layer),
@@ -162,8 +157,6 @@ void HOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint l
 	dim3 gridHOG (ceil((float)dsizes->hog.numblockHist[layer] / blkSizes->hog.blockHOG.x),
 				  1, 1 );
 
-	//cout << dsizes->hog.numblockHist[layer] << endl;
-
 	dim3 gridHOG2(dsizes->hog.numblockHist[layer], 1, 1);
 
 	dim3 blockHOG(16, 16, 1);
@@ -184,16 +177,16 @@ void HOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint l
 			 dsizes->hog.matCols[layer]);
 	cudaErrorCheck(__LINE__, __FILE__);
 
-//	HOGdescriptorPreDistances<P, HOG_HISTOWIDTH, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK> <<<gridHOG2, blockHOG>>>
-//				(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
-//				 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
-//				 getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
-//				 data->hog.blockDistances,
-//				 dsizes->hog.xBlockHists[layer],
-//				 dsizes->hog.yBlockHists[layer],
-//				 dsizes->hog.matCols[layer],
-//				 dsizes->hog.numblockHist[layer]);
-//	cudaErrorCheck(__LINE__, __FILE__);
+	HOGdescriptorPreDistances<P, HOG_HISTOWIDTH, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK> <<<gridHOG2, blockHOG>>>
+				(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
+				 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
+				 getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
+				 data->hog.blockDistances,
+				 dsizes->hog.xBlockHists[layer],
+				 dsizes->hog.yBlockHists[layer],
+				 dsizes->hog.matCols[layer],
+				 dsizes->hog.numblockHist[layer]);
+	cudaErrorCheck(__LINE__, __FILE__);
 
 	// Naive version local histograms
 //	computeHOGlocal<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
@@ -208,18 +201,7 @@ void HOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint l
 
 	//cudaDeviceSetCacheConfig(cudaFuncCachePreferShared);
 	// Naive local version predists
-	computeHOGlocalPred<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
-			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
-			 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
-			 getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
-			 data->hog.blockDistances,
-			 dsizes->hog.xBlockHists[layer],
-			 dsizes->hog.yBlockHists[layer],
-			 dsizes->hog.matCols[layer],
-			 dsizes->hog.numblockHist[layer]);
-
-	// Naive local version predists
-//	computeHOGSharedPred<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
+//	computeHOGlocalPred<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
 //			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
 //			 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
 //			 getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
@@ -228,6 +210,17 @@ void HOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint l
 //			 dsizes->hog.yBlockHists[layer],
 //			 dsizes->hog.matCols[layer],
 //			 dsizes->hog.numblockHist[layer]);
+
+	// Naive local version predists
+	computeHOGSharedPred<P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
+			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
+			 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
+			 getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
+			 data->hog.blockDistances,
+			 dsizes->hog.xBlockHists[layer],
+			 dsizes->hog.yBlockHists[layer],
+			 dsizes->hog.matCols[layer],
+			 dsizes->hog.numblockHist[layer]);
 
 	// Naive version
 //	computeHOGdescriptor<P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG.x>>>
@@ -343,7 +336,7 @@ void HOGLBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uin
 	cudaErrorCheck(__LINE__, __FILE__);
 
 	// HOG
-	computeHOGSharedPred<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
+	computeHOGSharedPred<P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
 			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
 			 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
 			 getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
