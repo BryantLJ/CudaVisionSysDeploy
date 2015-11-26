@@ -40,7 +40,7 @@ void LBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint l
 	dim3 gridBlock2( ceil((float)(dsizes->lbp.numBlockHistos[layer]*WARPSIZE) / blkSizes->lbp.blockBlock.x),
 					1, 1);
 
-	dim3 gridNorm(	ceil((float)dsizes->features.numFeaturesElems[layer] / blkSizes->lbp.blockNorm.x),
+	dim3 gridNorm(	ceil((float)dsizes->features.numFeaturesElems0[layer] / blkSizes->lbp.blockNorm.x),
 					1, 1);
 
 
@@ -102,9 +102,10 @@ void LBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint l
 
 	mergeHistogramsNorm<C, P, HISTOWIDTH> <<<gridBlock2, blkSizes->lbp.blockBlock>>>
 							(getOffset(data->lbp.cellHistos, dsizes->lbp.cellHistosElems, layer),
-							getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
+							getOffset(data->features.featuresVec0, dsizes->features.numFeaturesElems0, layer),
 							dsizes->lbp.xHists[layer],
-							dsizes->lbp.yHists[layer]);
+							dsizes->lbp.yHists[layer],
+							dsizes->lbp.numBlockHistos[layer]);
 
 
 //	mergeHistosSIMDaccum<P, HISTOWIDTH> <<<gridBlock, blkSizes->blockBlock>>>
@@ -180,7 +181,7 @@ void HOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint l
 	HOGdescriptorPreDistances<P, HOG_HISTOWIDTH, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK> <<<gridHOG2, blockHOG>>>
 				(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
 				 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
-				 getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
+				 getOffset(data->features.featuresVec0, dsizes->features.numFeaturesElems0, layer),
 				 data->hog.blockDistances,
 				 dsizes->hog.xBlockHists[layer],
 				 dsizes->hog.yBlockHists[layer],
@@ -215,7 +216,7 @@ void HOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint l
 	computeHOGSharedPred<P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
 			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
 			 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
-			 getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
+			 getOffset(data->features.featuresVec0, dsizes->features.numFeaturesElems0, layer),
 			 data->hog.blockDistances,
 			 dsizes->hog.xBlockHists[layer],
 			 dsizes->hog.yBlockHists[layer],
@@ -296,17 +297,7 @@ void HOGLBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uin
 	dim3 gridHOG (ceil((float)dsizes->hog.numblockHist[layer] / blkSizes->hog.blockHOG.x),
 				  1, 1 );
 
-
 	// todo: streams for hog and lbp
-
-	// LBP
-	stencilCompute2D<T, CLIPTH> <<<gridLBP, blkSizes->lbp.blockLBP>>>
-			(getOffset(data->pyr.imgInput, dsizes->pyr.imgPixels, layer),
-			 getOffset(data->lbp.imgDescriptor, dsizes->lbp.imgDescElems, layer),
-			 dsizes->pyr.imgRows[layer], dsizes->pyr.imgCols[layer],
-			 data->lbp.LBPUmapTable);
-	cudaErrorCheck(__LINE__, __FILE__);
-
 	// HOG
 	gammaCorrection<T, P> <<<gridGamma, blkSizes->hog.blockGamma>>>
 			(getOffset(data->pyr.imgInput, dsizes->pyr.imgPixels, layer),
@@ -314,16 +305,6 @@ void HOGLBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uin
 			 data->hog.sqrtLUT,
 			 dsizes->hog.matRows[layer],
 			 dsizes->hog.matCols[layer]);
-	cudaErrorCheck(__LINE__, __FILE__);
-
-	// LBP
-	cellHistograms<T, C, HISTOWIDTH, XCELL, YCELL> <<<gridCell2, blkSizes->lbp.blockCells>>>
-			(getOffset(data->lbp.imgDescriptor, dsizes->lbp.imgDescElems, layer),
-			 getOffset(data->lbp.cellHistos, dsizes->lbp.cellHistosElems, layer),
-			 dsizes->lbp.yHists[layer],
-			 dsizes->lbp.xHists[layer],
-			 dsizes->pyr.imgCols[layer],
-			 dsizes->pyr.imgRows[layer]);
 	cudaErrorCheck(__LINE__, __FILE__);
 
 	// HOG
@@ -339,7 +320,7 @@ void HOGLBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uin
 	computeHOGSharedPred<P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
 			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
 			 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
-			 getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
+			 getOffset(data->features.featuresVec0, dsizes->features.numFeaturesElems0, layer),
 			 data->hog.blockDistances,
 			 dsizes->hog.xBlockHists[layer],
 			 dsizes->hog.yBlockHists[layer],
@@ -348,15 +329,29 @@ void HOGLBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uin
 	cudaErrorCheck(__LINE__, __FILE__);
 
 	// LBP
+	stencilCompute2D<T, CLIPTH> <<<gridLBP, blkSizes->lbp.blockLBP>>>
+			(getOffset(data->pyr.imgInput, dsizes->pyr.imgPixels, layer),
+			 getOffset(data->lbp.imgDescriptor, dsizes->lbp.imgDescElems, layer),
+			 dsizes->pyr.imgRows[layer], dsizes->pyr.imgCols[layer],
+			 data->lbp.LBPUmapTable);
+	cudaErrorCheck(__LINE__, __FILE__);
+	// LBP
+	cellHistograms<T, C, HISTOWIDTH, XCELL, YCELL> <<<gridCell2, blkSizes->lbp.blockCells>>>
+			(getOffset(data->lbp.imgDescriptor, dsizes->lbp.imgDescElems, layer),
+			 getOffset(data->lbp.cellHistos, dsizes->lbp.cellHistosElems, layer),
+			 dsizes->lbp.yHists[layer],
+			 dsizes->lbp.xHists[layer],
+			 dsizes->pyr.imgCols[layer],
+			 dsizes->pyr.imgRows[layer]);
+	cudaErrorCheck(__LINE__, __FILE__);
+	// LBP
 	mergeHistogramsNorm<C, P, HISTOWIDTH> <<<gridBlock2, blkSizes->lbp.blockBlock>>>
 			(getOffset(data->lbp.cellHistos, dsizes->lbp.cellHistosElems, layer),
-			 &(getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer)[dsizes->hog.blockDescElems[layer]]),
+			 getOffset(data->features.featuresVec1, dsizes->features.numFeaturesElems1, layer),
 			 dsizes->lbp.xHists[layer],
-			 dsizes->lbp.yHists[layer]);
+			 dsizes->lbp.yHists[layer],
+			 dsizes->lbp.numBlockHistos[layer]);
 	cudaErrorCheck(__LINE__, __FILE__);
-
-
-
 }
 
 

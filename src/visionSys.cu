@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <inttypes.h>
+//#include <inttypes.h>
 
 #include "init/cParameters.h"
 #include "init/cInit.h"
@@ -19,17 +19,16 @@
 
 #include "device/ImageProcessing/colorTransformation.cuh"
 
-/////////////////////////////////////
-// Type definition for the algorithm
-/////////////////////////////////////
-typedef uchar 	input_t;
-typedef int 	desc_t;
-typedef float	roifeat_t;
+//////////////////////////////////////
+// Type definition for the algorithms
+//////////////////////////////////////
+typedef uchar 		input_t;
+typedef int 		desc_t;
+typedef float		roifeat_t;
+//////////////////////////////////////
 
 int main()
 {
-	// Application Initialization
-
 	// Read application parameters
 	cParameters paramsHandle;
 	paramsHandle.readParameters();

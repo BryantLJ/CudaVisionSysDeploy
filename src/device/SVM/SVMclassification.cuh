@@ -23,7 +23,7 @@ void computeROIwarpHOGLBP(const T *HOGfeatures, const T *LBPfeatures, T *outScor
 	const T *LBPwinPtr = &(LBPfeatures[warpId * HistoWidth]);
 
 	const T *HOGblockPtr, *LBPblockPtr;
-	const T *HOGmodelPtr;
+	const T *HOGmodelPtr = modelW;
 	const T *LBPmodelPtr = &(modelW[xWinBlocks*yWinBlocks*HistoWidth]);
 
 	T rSlice = 0;
@@ -39,13 +39,15 @@ void computeROIwarpHOGLBP(const T *HOGfeatures, const T *LBPfeatures, T *outScor
 				HOGblockPtr = &(HOGwinPtr[index]);
 				LBPblockPtr = &(LBPwinPtr[index]);
 
-				HOGmodelPtr = &(modelW[(i*HistoWidth*xWinBlocks) + (j*HistoWidth)]);
-				LBPmodelPtr = &(LBPmodelPtr[(i*HistoWidth*xWinBlocks) + (j*HistoWidth)]);
+				HOGmodelPtr = HOGmodelPtr + HistoWidth;
+				LBPmodelPtr = LBPmodelPtr + HistoWidth;
+//				HOGmodelPtr = &(modelW[2*((i*HistoWidth*xWinBlocks) + (j*HistoWidth))]);
+//				LBPmodelPtr = &(HOGmodelPtr[HistoWidth]);
 
 				// HOG
 				rSlice += ( HOGblockPtr[warpLane] 				* 	__ldg( &(HOGmodelPtr[warpLane]) ) )  	+
 						  ( HOGblockPtr[warpLane + warpSize] 	* 	__ldg( &(HOGmodelPtr[warpLane + warpSize]) ) );
-				// LBP
+//				// LBP
 				rSlice += ( LBPblockPtr[warpLane] 				* 	__ldg( &(LBPmodelPtr[warpLane]) ) )  	+
 						  ( LBPblockPtr[warpLane + warpSize] 	* 	__ldg( &(LBPmodelPtr[warpLane + warpSize]) ) );
 			}

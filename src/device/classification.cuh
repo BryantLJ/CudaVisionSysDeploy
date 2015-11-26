@@ -24,7 +24,7 @@ void SVMclassification(detectorData<T, C, P> *data, dataSizes *dsizes, uint laye
 	dim3 gridSVMnaive( ceil((float)dsizes->svm.scoresElems[layer] / blkSizes->svm.blockSVM.x) );
 
 	computeROIwarpReadOnly<P, HISTOWIDTH, XWINBLOCKS, YWINBLOCKS> <<<gridSVM, blkSizes->svm.blockSVM>>>
-				(getOffset<P>(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
+				(getOffset<P>(data->features.featuresVec0, dsizes->features.numFeaturesElems0, layer),
 				 getOffset<P>(data->svm.ROIscores, dsizes->svm.scoresElems, layer),
 				 data->svm.weightsM,
 				 data->svm.bias,
@@ -62,14 +62,23 @@ void SVMclassificationHOGLBP(detectorData<T, C, P> *data, dataSizes *dsizes, uin
 				  1, 1);
 
 	computeROIwarpHOGLBP<P, HISTOWIDTH, XWINBLOCKS, YWINBLOCKS> <<<gridSVM, blkSizes->svm.blockSVM>>>
-				(getOffset<P>(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
-				 &(getOffset<P>(data->features.featuresVec, dsizes->features.numFeaturesElems, layer)[dsizes->hog.blockDescElems[layer]]),
+				(getOffset<P>(data->features.featuresVec0, dsizes->features.numFeaturesElems0, layer),
+				 getOffset<P>(data->features.featuresVec1, dsizes->features.numFeaturesElems1, layer),
 				 getOffset<P>(data->svm.ROIscores, dsizes->svm.scoresElems, layer),
 				 data->svm.weightsM,
 				 data->svm.bias,
 				 dsizes->svm.scoresElems[layer],
 				 dsizes->features.xBlockFeatures[layer]);
 	cudaErrorCheck(__LINE__, __FILE__);
+
+//	computeROIwarpReadOnly<P, HISTOWIDTH, XWINBLOCKS, YWINBLOCKS> <<<gridSVM, blkSizes->svm.blockSVM>>>
+//				(getOffset<P>(data->features.featuresVec0, dsizes->features.numFeaturesElems0, layer),
+//				 getOffset<P>(data->svm.ROIscores, dsizes->svm.scoresElems, layer),
+//				 data->svm.weightsM,
+//				 data->svm.bias,
+//				 dsizes->svm.scoresElems[layer],
+//				 dsizes->features.xBlockFeatures[layer]);
+//	cudaErrorCheck(__LINE__, __FILE__);
 }
 
 

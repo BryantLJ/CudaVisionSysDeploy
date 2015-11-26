@@ -54,7 +54,7 @@ private:
 			szs->lbp.blockHistosElems[i] = computeBlockHistosElems(szs->lbp.yHists[i], szs->lbp.xHists[i]);
 			szs->lbp.numBlockHistos[i] = computeNumBlockHistos(szs->lbp.xHists[i], szs->lbp.yHists[i]);
 
-			szs->features.numFeaturesElems[i] = szs->lbp.blockHistosElems[i];
+			szs->features.numFeaturesElems0[i] = szs->lbp.blockHistosElems[i];
 			szs->features.xBlockFeatures[i] = szs->lbp.xHists[i];
 			szs->features.yBlockFeatures[i] = szs->lbp.yHists[i];
 			szs->features.nBlockFeatures[i] = szs->lbp.numBlockHistos[i];
@@ -69,7 +69,7 @@ private:
 				szs->lbp.blockHistosElems[j] = computeBlockHistosElems(szs->lbp.yHists[j], szs->lbp.xHists[j]);//szs->pyr.imgCols[j], szs->pyr.imgRows[j]);
 				szs->lbp.numBlockHistos[j] = computeNumBlockHistos(szs->lbp.yHists[j], szs->lbp.xHists[j]);
 
-				szs->features.numFeaturesElems[j] = szs->lbp.blockHistosElems[j];
+				szs->features.numFeaturesElems0[j] = szs->lbp.blockHistosElems[j];
 				szs->features.xBlockFeatures[j] = szs->lbp.xHists[j];
 				szs->features.yBlockFeatures[j] = szs->lbp.yHists[j];
 				szs->features.nBlockFeatures[j] = szs->lbp.numBlockHistos[j];
@@ -82,7 +82,7 @@ private:
 		szs->lbp.imgDescVecElems 	=		sumArray(szs->lbp.imgDescElems, szs->pyr.pyramidLayers);
 		szs->lbp.cellHistosVecElems = 		sumArray(szs->lbp.cellHistosElems, szs->pyr.pyramidLayers);
 		szs->lbp.blockHistosVecElems= 		sumArray(szs->lbp.blockHistosElems, szs->pyr.pyramidLayers);
-		szs->features.featuresVecElems = 	sumArray(szs->features.numFeaturesElems, szs->pyr.pyramidLayers);
+		szs->features.featuresVecElems0 = 	sumArray(szs->features.numFeaturesElems0, szs->pyr.pyramidLayers);
 		//szs->lbp.sumHistosVecElems 	= 	sumArray(szs->lbp.numBlockHistos, szs->pyr.pyramidLayers);
 	}
 
@@ -100,7 +100,7 @@ private:
 		szs->features.xBlockFeatures = 		mallocGen<uint>(szs->pyr.pyramidLayers);
 		szs->features.yBlockFeatures = 		mallocGen<uint>(szs->pyr.pyramidLayers);
 		szs->features.nBlockFeatures = 		mallocGen<uint>(szs->pyr.pyramidLayers);
-		szs->features.numFeaturesElems = 	mallocGen<uint>(szs->pyr.pyramidLayers);
+		szs->features.numFeaturesElems0 = 	mallocGen<uint>(szs->pyr.pyramidLayers);
 	}
 
 public:
@@ -129,7 +129,7 @@ public:
 		cudaSafe(cudaMemset(dev->lbp.cellHistos, 0, sizes->lbp.cellHistosVecElems * sizeof(C)));
 
 		//cudaMallocGen<C>(&(dev->lbp.blockHistos), sizes->lbp.blockHistosVecElems);
-		cudaMallocGen<P>(&(dev->features.featuresVec), sizes->features.featuresVecElems);
+		cudaMallocGen<P>(&(dev->features.featuresVec0), sizes->features.featuresVecElems0);
 
 		// Generate LBP mapping table
 		cMapTable::generateDeviceLut(&(dev->lbp.LBPUmapTable), LBP_LUTSIZE);
@@ -145,7 +145,7 @@ public:
 		memset(host->lbp.cellHistos, 0, sizes->lbp.cellHistosVecElems * sizeof(C));
 
 		host->lbp.blockHistos = mallocGen<C>(sizes->lbp.blockHistosVecElems);
-		host->features.featuresVec = mallocGen<P>(sizes->features.featuresVecElems);
+		host->features.featuresVec0 = mallocGen<P>(sizes->features.featuresVecElems0);
 
 		// Generate LBP mapping table
 		cMapTable::generateHostLUT(&(host->lbp.LBPUmapTable), LBP_LUTSIZE);

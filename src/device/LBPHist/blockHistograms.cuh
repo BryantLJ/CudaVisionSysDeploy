@@ -15,19 +15,21 @@
 
 template<typename T, typename T1, int HistoWidth>
 __global__
-void mergeHistogramsNorm(T *cellHistograms, T1 *blockHistograms, const int xDescs, const int yDescs)
+void mergeHistogramsNorm(const T *cellHistograms, T1 *blockHistograms, const int xDescs, const int yDescs, const int numDescs)
 {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	int warpId = idx / WARPSIZE;
 	int warpLane = idx % WARPSIZE;
-	T *pCell = &(cellHistograms[warpId * HistoWidth]);
+	const T *pCell = &(cellHistograms[warpId * HistoWidth]);
 	T1 *pBlock = &(blockHistograms[warpId * HistoWidth]);
 	T1 binSum;
 
-	if (idx < xDescs*yDescs*HistoWidth) {
+	//if (idx < xDescs*yDescs*HistoWidth) {
+	if (warpId < numDescs) {
 
 		#pragma unroll
-		for (int i = 0; i < HistoWidth; i += WARPSIZE) {
+		for (int i = 0; i < HistoWidth; i += WARPSIZE)
+		{
 			// Sum histogram bins
 			binSum = pCell[warpLane + i] +
 					 pCell[warpLane + HistoWidth + i] +

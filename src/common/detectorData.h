@@ -42,7 +42,8 @@ struct detectorData {
 	}hog;
 
 	struct FEATURES {
-		P				*featuresVec;			// Input features for the classificator
+		P				*featuresVec0;			// Input features for the classification
+		P				*featuresVec1;			// Input features for the classification
 	}features;
 
 	// SVM data structures
@@ -141,8 +142,10 @@ struct dataSizes {
 		uint		*xBlockFeatures;			// Number of block descriptors on X axis
 		uint 		*yBlockFeatures;			// Number of block descriptors on Y axis
 		uint		*nBlockFeatures;			// Total number of block features
-		uint		*numFeaturesElems;			// NUmber of blocks in each pyramid layer
-		uint		featuresVecElems;			// Number of block through all the pyramid layers
+		uint		*numFeaturesElems0;			// Number of blocks of features in each pyramid layer for descriptor 0
+		uint		*numFeaturesElems1;			// Number of blocks of features in each pyramid layer for descriptor 1
+		uint		featuresVecElems0;			// Number of block through all the pyramid layers for descriptor 0
+		uint		featuresVecElems1;			// Number of block through all the pyramid layers for descriptor 1
 	}features;
 
 	struct SVM {

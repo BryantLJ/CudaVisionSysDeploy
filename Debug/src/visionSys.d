@@ -114,10 +114,6 @@ src/visionSys.o : ../src/visionSys.cu \
     /usr/local/cuda-7.5/targets/x86_64-linux/include/surface_indirect_functions.h \
     /usr/local/cuda-7.5/targets/x86_64-linux/include/surface_indirect_functions.hpp \
     /usr/local/cuda-7.5/targets/x86_64-linux/include/device_launch_parameters.h \
-    /usr/include/inttypes.h \
-    /usr/lib/gcc/x86_64-linux-gnu/4.8/include/stdint.h \
-    /usr/include/stdint.h \
-    /usr/include/x86_64-linux-gnu/bits/wchar.h \
     ../src/init/cParameters.h \
     /usr/include/c++/4.8/iostream \
     /usr/include/c++/4.8/ostream \
@@ -127,6 +123,7 @@ src/visionSys.o : ../src/visionSys.cu \
     /usr/include/c++/4.8/bits/memoryfwd.h \
     /usr/include/c++/4.8/bits/postypes.h \
     /usr/include/c++/4.8/cwchar \
+    /usr/include/x86_64-linux-gnu/bits/wchar.h \
     /usr/include/c++/4.8/bits/char_traits.h \
     /usr/include/c++/4.8/bits/stl_algobase.h \
     /usr/include/c++/4.8/bits/functexcept.h \
@@ -140,6 +137,8 @@ src/visionSys.o : ../src/visionSys.cu \
     /usr/include/c++/4.8/debug/debug.h \
     /usr/include/c++/4.8/bits/stl_iterator.h \
     /usr/include/c++/4.8/cstdint \
+    /usr/lib/gcc/x86_64-linux-gnu/4.8/include/stdint.h \
+    /usr/include/stdint.h \
     /usr/include/c++/4.8/bits/localefwd.h \
     /usr/include/x86_64-linux-gnu/c++/4.8/bits/c++locale.h \
     /usr/include/c++/4.8/clocale \
@@ -317,6 +316,7 @@ src/visionSys.o : ../src/visionSys.cu \
     /usr/include/c++/4.8/bits/stl_multimap.h \
     ../src/init/cInit.h \
     ../src/init/../common/detectorData.h \
+    /usr/include/inttypes.h \
     ../src/init/../common/../common/operators.h \
     ../src/init/../common/cAdquisition.h \
     ../src/init/cInitPyramid.h \

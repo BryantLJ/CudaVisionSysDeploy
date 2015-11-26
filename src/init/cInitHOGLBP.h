@@ -55,7 +55,8 @@ private:
 			szs->features.xBlockFeatures[i] = szs->hog.xBlockHists[i];
 			szs->features.yBlockFeatures[i] = szs->hog.yBlockHists[i];
 			//szs->features.nBlockFeatures[i] = szs->hog.numblockHist[i];
-			szs->features.numFeaturesElems[i] = szs->hog.blockDescElems[i] + szs->lbp.blockHistosElems[i];
+			szs->features.numFeaturesElems0[i] = szs->hog.blockDescElems[i];
+			szs->features.numFeaturesElems1[i] = szs->lbp.blockHistosElems[i];
 
 			for (int j = currentIndex+szs->pyr.intervals; j < szs->pyr.pyramidLayers; j += szs->pyr.intervals) {
 				// Init HOG data sizes
@@ -79,7 +80,8 @@ private:
 				szs->features.xBlockFeatures[j] =  szs->hog.xBlockHists[j];
 				szs->features.yBlockFeatures[j] = szs->hog.yBlockHists[j];
 				//szs->features.nBlockFeatures[j] = szs->hog.numblockHist[j];
-				szs->features.numFeaturesElems[j] = szs->hog.blockDescElems[j] + szs->lbp.blockHistosElems[j];
+				szs->features.numFeaturesElems0[j] = szs->hog.blockDescElems[j];
+				szs->features.numFeaturesElems1[j] = szs->lbp.blockHistosElems[j];
 
 			}
 		}
@@ -95,7 +97,8 @@ private:
 		szs->lbp.cellHistosVecElems = 		sumArray(szs->lbp.cellHistosElems, szs->pyr.pyramidLayers);
 		szs->lbp.blockHistosVecElems= 		sumArray(szs->lbp.blockHistosElems, szs->pyr.pyramidLayers);
 
-		szs->features.featuresVecElems = 	sumArray(szs->features.numFeaturesElems, szs->pyr.pyramidLayers);
+		szs->features.featuresVecElems0 = 	sumArray(szs->features.numFeaturesElems0, szs->pyr.pyramidLayers);
+		szs->features.featuresVecElems1 = 	sumArray(szs->features.numFeaturesElems1, szs->pyr.pyramidLayers);
 
 	}
 
@@ -107,8 +110,8 @@ private:
 		szs->hog.matCols = 			mallocGen<uint>(szs->pyr.pyramidLayers);
 		szs->hog.matRows =			mallocGen<uint>(szs->pyr.pyramidLayers);
 		szs->hog.matPixels =		mallocGen<uint>(szs->pyr.pyramidLayers);
-		szs->hog.xCellHists = 		mallocGen<uint>(szs->pyr.pyramidLayers); // todo: not necessary ??
-		szs->hog.yCellHists = 		mallocGen<uint>(szs->pyr.pyramidLayers); // todo: not necessary ??
+		//szs->hog.xCellHists = 		mallocGen<uint>(szs->pyr.pyramidLayers); // todo: not necessary ??
+		//szs->hog.yCellHists = 		mallocGen<uint>(szs->pyr.pyramidLayers); // todo: not necessary ??
 		szs->hog.numCellHists = 	mallocGen<uint>(szs->pyr.pyramidLayers);
 		szs->hog.cellDescElems = 	mallocGen<uint>(szs->pyr.pyramidLayers);
 		szs->hog.xBlockHists = 		mallocGen<uint>(szs->pyr.pyramidLayers);
@@ -126,7 +129,8 @@ private:
 		szs->features.xBlockFeatures = 		mallocGen<uint>(szs->pyr.pyramidLayers);
 		szs->features.yBlockFeatures = 		mallocGen<uint>(szs->pyr.pyramidLayers);
 //		szs->features.nBlockFeatures = 		mallocGen<uint>(szs->pyr.pyramidLayers);
-		szs->features.numFeaturesElems = 	mallocGen<uint>(szs->pyr.pyramidLayers);
+		szs->features.numFeaturesElems0 = 	mallocGen<uint>(szs->pyr.pyramidLayers);
+		szs->features.numFeaturesElems1 = 	mallocGen<uint>(szs->pyr.pyramidLayers);
 
 	}
 
@@ -196,10 +200,15 @@ public:
 		cudaSafe(cudaMemset(dev->lbp.cellHistos, 0, sizes->lbp.cellHistosVecElems * sizeof(C)));
 		cudaMallocGen<C>(&(dev->lbp.blockHistos), sizes->lbp.blockHistosVecElems);
 
-		// Allocate Features data structures
-		cudaMallocGen<P>(&(dev->features.featuresVec), sizes->features.featuresVecElems);
-		cudaSafe(cudaMemset(dev->features.featuresVec, 0, sizes->features.featuresVecElems * sizeof(P)));
+		// Allocate HOG features data structure
+		cudaMallocGen<P>(&(dev->features.featuresVec0), sizes->features.featuresVecElems0);
+		cudaSafe(cudaMemset(dev->features.featuresVec0, 0, sizes->features.featuresVecElems0 * sizeof(P)));
 
+		// Allocate LBP features data structure
+		cudaMallocGen<P>(&(dev->features.featuresVec1), sizes->features.featuresVecElems1);
+		//cudaSafe(cudaMemset(dev->features.featuresVec1, 0, sizes->features.featuresVecElems1 * sizeof(P)));
+
+		// Precompute data for HOG and LBP
 		precomputeHOGtables(dev, sizes);
 		precomputeLBPtables(dev, sizes);
 	}
@@ -214,7 +223,7 @@ public:
 	__forceinline__
 	static void zerosHOGLBPfeatures(detectorData<T, C, P> *dev, dataSizes *sizes)
 	{
-		cudaMemset(dev->features.featuresVec, 0, sizes->features.featuresVecElems * sizeof(P));
+		cudaMemset(dev->features.featuresVec0, 0, sizes->features.featuresVecElems0 * sizeof(P));
 		cudaMemset(dev->lbp.cellHistos, 0, sizes->lbp.cellHistosVecElems * sizeof(C));
 		// todo: async memset
 	}

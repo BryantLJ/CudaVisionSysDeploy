@@ -65,7 +65,7 @@ private:
 			szs->features.xBlockFeatures[i] =  szs->hog.xBlockHists[i];
 			szs->features.yBlockFeatures[i] = szs->hog.yBlockHists[i];
 			szs->features.nBlockFeatures[i] = szs->hog.numblockHist[i];
-			szs->features.numFeaturesElems[i] = szs->hog.blockDescElems[i];
+			szs->features.numFeaturesElems0[i] = szs->hog.blockDescElems[i];
 
 			for (int j = currentIndex+szs->pyr.intervals; j < szs->pyr.pyramidLayers; j += szs->pyr.intervals) {
 
@@ -84,7 +84,7 @@ private:
 				szs->features.xBlockFeatures[j] =  szs->hog.xBlockHists[j];
 				szs->features.yBlockFeatures[j] = szs->hog.yBlockHists[j];
 				szs->features.nBlockFeatures[j] = szs->hog.numblockHist[j];
-				szs->features.numFeaturesElems[j] = szs->hog.blockDescElems[j];
+				szs->features.numFeaturesElems0[j] = szs->hog.blockDescElems[j];
 
 			}
 		}
@@ -98,7 +98,7 @@ private:
 		szs->hog.matPixVecElems = sumArray(szs->hog.matPixels, szs->pyr.pyramidLayers);
 		//szs->hog.cellHistsVecElems = sumArray(szs->hog.cellDescElems, szs->pyr.pyramidLayers)
 		szs->hog.blockHistsVecElems = sumArray(szs->hog.blockDescElems, szs->pyr.pyramidLayers);
-		szs->features.featuresVecElems = 	sumArray(szs->features.numFeaturesElems, szs->pyr.pyramidLayers);
+		szs->features.featuresVecElems0 = 	sumArray(szs->features.numFeaturesElems0, szs->pyr.pyramidLayers);
 
 	}
 
@@ -124,7 +124,7 @@ private:
 		szs->features.xBlockFeatures = 		mallocGen<uint>(szs->pyr.pyramidLayers);
 		szs->features.yBlockFeatures = 		mallocGen<uint>(szs->pyr.pyramidLayers);
 		szs->features.nBlockFeatures = 		mallocGen<uint>(szs->pyr.pyramidLayers);
-		szs->features.numFeaturesElems = 	mallocGen<uint>(szs->pyr.pyramidLayers);
+		szs->features.numFeaturesElems0 = 	mallocGen<uint>(szs->pyr.pyramidLayers);
 
 	}
 
@@ -158,9 +158,9 @@ public:
 		cudaSafe(cudaMemset(dev->hog.gOrientation, 0, sizes->hog.matPixVecElems * sizeof(P)));
 
 		cudaMallocGen(&(dev->hog.HOGdescriptor), sizes->hog.blockHistsVecElems);
-		cudaMallocGen(&(dev->features.featuresVec), sizes->features.featuresVecElems);
+		cudaMallocGen(&(dev->features.featuresVec0), sizes->features.featuresVecElems0);
 		cudaSafe(cudaMemset(dev->hog.HOGdescriptor, 0, sizes->hog.blockHistsVecElems * sizeof(P)));
-		cudaSafe(cudaMemset(dev->features.featuresVec, 0, sizes->features.featuresVecElems * sizeof(P)));
+		cudaSafe(cudaMemset(dev->features.featuresVec0, 0, sizes->features.featuresVecElems0 * sizeof(P)));
 
 
 		// Create gaussian mask
@@ -306,7 +306,7 @@ public:
 	__forceinline__
 	static void zerosHOGfeatures(detectorData<T, C, P> *dev, dataSizes *sizes)
 	{
-		cudaMemset(dev->features.featuresVec, 0, sizes->features.featuresVecElems * sizeof(P));
+		cudaMemset(dev->features.featuresVec0, 0, sizes->features.featuresVecElems0 * sizeof(P));
 		//todo evaluate asyncronous menmset or no memset(use registers)
 	}
 };
