@@ -38,8 +38,8 @@ private:
 			szs->hog.matCols[i] = szs->pyr.imgCols[i];
 			szs->hog.matRows[i] = szs->pyr.imgRows[i];
 			szs->hog.matPixels[i] = szs->hog.matCols[i] * szs->hog.matRows[i];
-			szs->hog.xBlockHists[i] = computeXblockDescriptors(szs->pyr.imgCols[i], X_HOGBLOCK);
-			szs->hog.yBlockHists[i] = computeYblockDescriptors(szs->pyr.imgRows[i], Y_HOGBLOCK);
+			szs->hog.xBlockHists[i] = computeXblockDescriptors(szs->pyr.imgCols[i], XCELL);
+			szs->hog.yBlockHists[i] = computeYblockDescriptors(szs->pyr.imgRows[i], YCELL);
 			szs->hog.numblockHist[i] = computeNumBlockDescriptors(szs->hog.xBlockHists[i], szs->hog.yBlockHists[i]);
 			szs->hog.blockDescElems[i] = szs->hog.numblockHist[i] * HOG_HISTOWIDTH;
 
@@ -63,8 +63,8 @@ private:
 				szs->hog.matCols[j] = szs->pyr.imgCols[j];
 				szs->hog.matRows[j] = szs->pyr.imgRows[j];
 				szs->hog.matPixels[j] = szs->hog.matCols[j] * szs->hog.matRows[j];
-				szs->hog.xBlockHists[j] = computeXblockDescriptors(szs->pyr.imgCols[j], X_HOGBLOCK);
-				szs->hog.yBlockHists[j] = computeYblockDescriptors(szs->pyr.imgRows[j], Y_HOGBLOCK);
+				szs->hog.xBlockHists[j] = computeXblockDescriptors(szs->pyr.imgCols[j], XCELL);
+				szs->hog.yBlockHists[j] = computeYblockDescriptors(szs->pyr.imgRows[j], YCELL);
 				szs->hog.numblockHist[j] = computeNumBlockDescriptors(szs->hog.xBlockHists[j], szs->hog.yBlockHists[j]);
 				szs->hog.blockDescElems[j] = szs->hog.numblockHist[j] * HOG_HISTOWIDTH;
 

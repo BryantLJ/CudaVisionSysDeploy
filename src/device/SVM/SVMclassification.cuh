@@ -39,8 +39,6 @@ void computeROIwarpHOGLBP(const T *HOGfeatures, const T *LBPfeatures, T *outScor
 				HOGblockPtr = &(HOGwinPtr[index]);
 				LBPblockPtr = &(LBPwinPtr[index]);
 
-				HOGmodelPtr = HOGmodelPtr + HistoWidth;
-				LBPmodelPtr = LBPmodelPtr + HistoWidth;
 //				HOGmodelPtr = &(modelW[2*((i*HistoWidth*xWinBlocks) + (j*HistoWidth))]);
 //				LBPmodelPtr = &(HOGmodelPtr[HistoWidth]);
 
@@ -50,6 +48,9 @@ void computeROIwarpHOGLBP(const T *HOGfeatures, const T *LBPfeatures, T *outScor
 //				// LBP
 				rSlice += ( LBPblockPtr[warpLane] 				* 	__ldg( &(LBPmodelPtr[warpLane]) ) )  	+
 						  ( LBPblockPtr[warpLane + warpSize] 	* 	__ldg( &(LBPmodelPtr[warpLane + warpSize]) ) );
+
+				HOGmodelPtr = HOGmodelPtr + HistoWidth;
+				LBPmodelPtr = LBPmodelPtr + HistoWidth;
 			}
 		}
 		// Warp reduction of the Slices to get SCORE

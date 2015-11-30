@@ -130,14 +130,13 @@ void LBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint l
 //							 getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
 //							 dsizes->lbp.numBlockHistos[layer]);
 
-//	if (layer == 0) {
-//		P *norm = (P*)malloc(dsizes->features.numFeaturesElems[layer]*sizeof(P));
-//		copyDtoH(norm, getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer), dsizes->features.numFeaturesElems[layer]);
+//	P *norm = (P*)malloc(dsizes->features.numFeaturesElems0[layer]*sizeof(P));
+//	copyDtoH(norm, getOffset(data->features.featuresVec0, dsizes->features.numFeaturesElems0, layer), dsizes->features.numFeaturesElems0[layer]);
 //
-//		for (int u = 0; u < dsizes->features.numFeaturesElems[layer]; u++) {
-//			printf( "norm feature: %d: %f\n", u, norm[u]);
-//		}
+//	for (int u = 0; u < dsizes->features.numFeaturesElems0[layer]; u++) {
+//		cout << u << ": "<< norm[u] << endl;
 //	}
+
 
 
 }
@@ -239,7 +238,7 @@ void HOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint l
 
 //	P *outHOGdev = (P*) malloc(dsizes->hog.blockDescElems[layer] * sizeof(P));
 //	cudaMemcpy(outHOGdev,
-//			   getOffset(data->features.featuresVec, dsizes->features.numFeaturesElems, layer),
+//			   getOffset(data->features.featuresVec0, dsizes->features.numFeaturesElems0, layer),
 //			   dsizes->hog.blockDescElems[layer] * sizeof(P),
 //			   cudaMemcpyDeviceToHost);
 
@@ -258,13 +257,14 @@ void HOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint l
 //		}
 //	}
 
-//	for (int i = 0; i < dsizes->hog.numblockHist[layer]*64; i++) {
+//	for (int i = 0; i < dsizes->hog.blockDescElems[layer]; i++) {
 //		//if (abs(HOGdescriptor[i] -  outHOGdev[i]) > 0.0000001f)
-//		{
-//			//std::cout << i << ": " << "host: " << HOGdescriptor[i] << " device: " << outHOGdev[i] << std::endl;
-//			std::cout << i << ": " << outHOGdev[i] << std::endl;
-//		}
+//		std::cout << i << ": " << outHOGdev[i] << std::endl;
 //	}
+//	cout << "desc vector " << dsizes->hog.blockDescElems[layer]<< endl;
+//	cout << "blocks " << dsizes->hog.numblockHist[layer]<< endl;
+//	cout << "xblocks " << dsizes->hog.xBlockHists[layer]<< endl;
+//	cout << "yblocks " << dsizes->hog.yBlockHists[layer]<< endl;
 
 }
 
@@ -353,23 +353,30 @@ void HOGLBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uin
 			 dsizes->lbp.numBlockHistos[layer]);
 	cudaErrorCheck(__LINE__, __FILE__);
 
-//	// HOG vector
+	// HOG vector
 //	P *outHOGdev = (P*) malloc(dsizes->hog.blockDescElems[layer] * sizeof(P));
 //	cudaMemcpy(outHOGdev,
 //			   getOffset(data->features.featuresVec0, dsizes->features.numFeaturesElems0, layer),
 //			   dsizes->hog.blockDescElems[layer] * sizeof(P),
 //			   cudaMemcpyDeviceToHost);
-//	// LBP vector
+
+	// LBP vector
 //	P *outLBPdev = (P*) malloc(dsizes->lbp.blockHistosElems[layer] * sizeof(P));
 //	cudaMemcpy(outLBPdev,
 //			   getOffset(data->features.featuresVec1, dsizes->features.numFeaturesElems1, layer),
 //			   dsizes->lbp.blockHistosElems[layer] * sizeof(P),
 //			   cudaMemcpyDeviceToHost);
 //
+
 //	cout << "HOG DESCRIPTOR"<< endl;
-//	for (int i = 0; i < dsizes->hog.numblockHist[layer]*64; i++) {
+//	for (int i = 0; i < dsizes->hog.blockDescElems[layer]; i++) {
 //		std::cout << i << ": " << outHOGdev[i] << std::endl;
 //	}
+//	cout << "desc vector " << dsizes->hog.blockDescElems[layer]<< endl;
+//	cout << "blocks " << dsizes->hog.numblockHist[layer]<< endl;
+//	cout << "xblocks " << dsizes->hog.xBlockHists[layer]<< endl;
+//	cout << "yblocks " << dsizes->hog.yBlockHists[layer]<< endl;
+
 //	cout << "LBP DESCRIPTOR"<< endl;
 //	for (int i = 0; i < dsizes->lbp.numBlockHistos[layer]*64; i++) {
 //		std::cout << i << ": " << outLBPdev[i] << std::endl;
