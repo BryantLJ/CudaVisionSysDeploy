@@ -352,6 +352,32 @@ void HOGLBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uin
 			 dsizes->lbp.yHists[layer],
 			 dsizes->lbp.numBlockHistos[layer]);
 	cudaErrorCheck(__LINE__, __FILE__);
+
+//	// HOG vector
+//	P *outHOGdev = (P*) malloc(dsizes->hog.blockDescElems[layer] * sizeof(P));
+//	cudaMemcpy(outHOGdev,
+//			   getOffset(data->features.featuresVec0, dsizes->features.numFeaturesElems0, layer),
+//			   dsizes->hog.blockDescElems[layer] * sizeof(P),
+//			   cudaMemcpyDeviceToHost);
+//	// LBP vector
+//	P *outLBPdev = (P*) malloc(dsizes->lbp.blockHistosElems[layer] * sizeof(P));
+//	cudaMemcpy(outLBPdev,
+//			   getOffset(data->features.featuresVec1, dsizes->features.numFeaturesElems1, layer),
+//			   dsizes->lbp.blockHistosElems[layer] * sizeof(P),
+//			   cudaMemcpyDeviceToHost);
+//
+//	cout << "HOG DESCRIPTOR"<< endl;
+//	for (int i = 0; i < dsizes->hog.numblockHist[layer]*64; i++) {
+//		std::cout << i << ": " << outHOGdev[i] << std::endl;
+//	}
+//	cout << "LBP DESCRIPTOR"<< endl;
+//	for (int i = 0; i < dsizes->lbp.numBlockHistos[layer]*64; i++) {
+//		std::cout << i << ": " << outLBPdev[i] << std::endl;
+//	}
+//
+//	free(outHOGdev);
+//	free(outLBPdev);
+
 }
 
 

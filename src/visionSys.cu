@@ -140,18 +140,6 @@ int main()
 //				printf( "cell feature: %d: %d\n", u, cell[u]);
 //			}
 
-//			uchar *block = (uchar*)malloc(dSizes->blockHistosElems[i]);
-//			copyDtoH(block, detectData.blockHistos, dSizes->blockHistosElems[i]);
-//			for (int u = 0; u < dSizes->blockHistosElems[i]; u++) {
-//				printf( "BLOCK feature: %d: %d\n", u, block[u]);
-//			}
-
-//			float *norm = (float*) malloc(dSizes->lbp.normHistosElems[i] * sizeof(float));
-//			copyDtoH<float>(norm, getOffset(detectData.lbp.normHistos, dSizes->lbp.normHistosElems, i), dSizes->lbp.normHistosElems[i]);
-//			for (int u = 0; u < dSizes->lbp.normHistosElems[i]; u++) {
-//				printf( "NORM feature: %d: %f\n", u, norm[u]);
-//			}
-
 			detectorF.classification(&detectData, dSizes, i, &blkconfig);
 
 			copyDtoH<roifeat_t>(getOffset<roifeat_t>(ROIfilter.getHostScoresVector(), dSizes->svm.scoresElems, i),
@@ -160,16 +148,16 @@ int main()
 
 //			std::cout.precision(6);
 //			std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to fixed
-			for (int k = 0; k < dSizes->svm.yROIs[i]; k++) {
-				for (int b = 0; b < dSizes->svm.xROIs[i]; b++) {
-//					cout << "layer: "<< i << ": "<< k*dSizes->svm.xROIs[i] + b << ": "
-//						 << getOffset<roifeat_t>(ROIfilter.getHostScoresVector(), dSizes->svm.scoresElems, i)[k*dSizes->svm.xROIs_d[i] + b] << endl;
-					cout.precision(6);
-					cout.setf( std::ios::fixed, std:: ios::floatfield );
-					cout << b*8+32 <<" "<< k*8+64 <<" 64 128 1 "
-							<< getOffset<roifeat_t>(ROIfilter.getHostScoresVector(), dSizes->svm.scoresElems, i)[k*dSizes->svm.xROIs_d[i] + b] << endl;
-				}
-			}
+//			for (int k = 0; k < dSizes->svm.yROIs[i]; k++) {
+//				for (int b = 0; b < dSizes->svm.xROIs[i]; b++) {
+////					cout << "layer: "<< i << ": "<< k*dSizes->svm.xROIs[i] + b << ": "
+////						 << getOffset<roifeat_t>(ROIfilter.getHostScoresVector(), dSizes->svm.scoresElems, i)[k*dSizes->svm.xROIs_d[i] + b] << endl;
+//					cout.precision(6);
+//					cout.setf( std::ios::fixed, std:: ios::floatfield );
+//					cout << b*8+32 <<" "<< k*8+64 <<" 64 128 1 "
+//							<< getOffset<roifeat_t>(ROIfilter.getHostScoresVector(), dSizes->svm.scoresElems, i)[k*dSizes->svm.xROIs_d[i] + b] << endl;
+//				}
+//			}
 //				for (int u = 0; u < dSizes->scoresElems[i] ; u++) {
 //					printf( " ite: %d -"SCORE: %d: %f\n", i, u, roisHost[u]);
 //				}

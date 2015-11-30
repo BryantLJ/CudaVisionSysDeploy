@@ -42,15 +42,23 @@ void SVMclassification(detectorData<T, C, P> *data, dataSizes *dsizes, uint laye
 //			 	 	 	 	 	 dsizes->features.xBlockFeatures[layer]);
 //	cudaErrorCheck(__LINE__, __FILE__);
 
+	// Scores vector
+	P *outScores = (P*) malloc(dsizes->svm.scoresElems[layer] * sizeof(P));
+	cudaMemcpy(outScores,
+			   getOffset<P>(data->svm.ROIscores, dsizes->svm.scoresElems, layer),
+			   dsizes->svm.scoresElems[layer] * sizeof(P),
+			   cudaMemcpyDeviceToHost);
 
-//	P *outscores = (P*) malloc(dsizes->svm.scoresElems[layer] * sizeof(P));
-//	cudaMemcpy(outscores,
-//			   getOffset<P>(data->svm.ROIscores, dsizes->svm.scoresElems, layer),
-//			   dsizes->svm.scoresElems[layer] * sizeof(P),
-//			   cudaMemcpyDeviceToHost);
-//	for (int i = 0; i < dsizes->svm.scoresElems[layer]; ++i) {
-//		cout << "score: " << i << ": " << outscores[i] << endl;
-//	}
+	std::cout.precision(6);
+	std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to fixed
+	for (int k = 0; k < dsizes->svm.yROIs[layer]; k++) {
+		for (int b = 0; b < dsizes->svm.xROIs[layer]; b++) {
+			cout.precision(6);
+			cout.setf( std::ios::fixed, std:: ios::floatfield );
+			cout << b*8+32 <<" "<< k*8+64 <<" 64 128 1 "
+					<< outScores[k*dsizes->svm.xROIs_d[layer] + b] << endl;
+		}
+	}
 }
 
 
@@ -61,9 +69,18 @@ void SVMclassificationHOGLBP(detectorData<T, C, P> *data, dataSizes *dsizes, uin
 	dim3 gridSVM( ceil((float)(dsizes->svm.scoresElems[layer] * WARPSIZE) / blkSizes->svm.blockSVM.x),
 				  1, 1);
 
-	computeROIwarpHOGLBP<P, HISTOWIDTH, XWINBLOCKS, YWINBLOCKS> <<<gridSVM, blkSizes->svm.blockSVM>>>
+//	computeROIwarpHOGLBP<P, HISTOWIDTH, XWINBLOCKS, YWINBLOCKS> <<<gridSVM, blkSizes->svm.blockSVM>>>
+//				(getOffset<P>(data->features.featuresVec0, dsizes->features.numFeaturesElems0, layer),
+//				 getOffset<P>(data->features.featuresVec1, dsizes->features.numFeaturesElems1, layer),
+//				 getOffset<P>(data->svm.ROIscores, dsizes->svm.scoresElems, layer),
+//				 data->svm.weightsM,
+//				 data->svm.bias,
+//				 dsizes->svm.scoresElems[layer],
+//				 dsizes->features.xBlockFeatures[layer]);
+	cudaErrorCheck(__LINE__, __FILE__);
+
+	computeROIwarpReadOnly<P, HISTOWIDTH, XWINBLOCKS, YWINBLOCKS> <<<gridSVM, blkSizes->svm.blockSVM>>>
 				(getOffset<P>(data->features.featuresVec0, dsizes->features.numFeaturesElems0, layer),
-				 getOffset<P>(data->features.featuresVec1, dsizes->features.numFeaturesElems1, layer),
 				 getOffset<P>(data->svm.ROIscores, dsizes->svm.scoresElems, layer),
 				 data->svm.weightsM,
 				 data->svm.bias,
@@ -71,14 +88,23 @@ void SVMclassificationHOGLBP(detectorData<T, C, P> *data, dataSizes *dsizes, uin
 				 dsizes->features.xBlockFeatures[layer]);
 	cudaErrorCheck(__LINE__, __FILE__);
 
-//	computeROIwarpReadOnly<P, HISTOWIDTH, XWINBLOCKS, YWINBLOCKS> <<<gridSVM, blkSizes->svm.blockSVM>>>
-//				(getOffset<P>(data->features.featuresVec0, dsizes->features.numFeaturesElems0, layer),
-//				 getOffset<P>(data->svm.ROIscores, dsizes->svm.scoresElems, layer),
-//				 data->svm.weightsM,
-//				 data->svm.bias,
-//				 dsizes->svm.scoresElems[layer],
-//				 dsizes->features.xBlockFeatures[layer]);
-//	cudaErrorCheck(__LINE__, __FILE__);
+	// Scores vector
+	P *outScores = (P*) malloc(dsizes->svm.scoresElems[layer] * sizeof(P));
+	cudaMemcpy(outScores,
+			   getOffset<P>(data->svm.ROIscores, dsizes->svm.scoresElems, layer),
+			   dsizes->svm.scoresElems[layer] * sizeof(P),
+			   cudaMemcpyDeviceToHost);
+
+	std::cout.precision(6);
+	std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to fixed
+	for (int k = 0; k < dsizes->svm.yROIs[layer]; k++) {
+		for (int b = 0; b < dsizes->svm.xROIs[layer]; b++) {
+			cout.precision(6);
+			cout.setf( std::ios::fixed, std:: ios::floatfield );
+			cout << b*8+32 <<" "<< k*8+64 <<" 64 128 1 "
+					<< outScores[k*dsizes->svm.xROIs_d[layer] + b] << endl;
+		}
+	}
 }
 
 
