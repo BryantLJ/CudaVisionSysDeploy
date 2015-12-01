@@ -17,8 +17,8 @@
 ////////////////////////////////////////////////
 #define XWINDIM				64
 #define YWINDIM				128
-#define XWINBLOCKS			((XWINDIM/XCELL) - 1) // 7
-#define YWINBLOCKS			((YWINDIM/YCELL) - 1) // 15
+#define XWINBLOCKS			7	// (64/8) - 1)
+#define YWINBLOCKS			15 	// (128/8) - 1)
 #define FILE_OFFSET_LINES	3
 ////////////////////////////////////////////////
 
@@ -29,12 +29,12 @@ private:
 	static inline uint computeXrois_device(uint cols)
 		{ return cols / XCELL; }
 	static inline uint computeYrois_device(uint rows)
-		{ return ((rows/XCELL)-1) - (YWINBLOCKS-1); }
+		{ return ((rows/YCELL) - 1) - (YWINBLOCKS-1); }
 
 	static inline uint computeXrois(uint cols)
-		{ return (cols/XCELL-1) - (XWINBLOCKS-1); }
+		{ return ((cols/XCELL) - 1) - (XWINBLOCKS-1); }
 	static inline uint computeYrois(uint rows)
-		{ return (rows/YCELL-1) - (YWINBLOCKS-1); }
+		{ return ((rows/YCELL) - 1) - (YWINBLOCKS-1); }
 
 	static inline uint computeTotalrois_device(uint xrois, uint yrois)
 		{ return (xrois * yrois) - (XWINBLOCKS - 1); }

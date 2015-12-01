@@ -97,9 +97,8 @@ private:
 	{
 		szs->hog.matPixVecElems = sumArray(szs->hog.matPixels, szs->pyr.pyramidLayers);
 		//szs->hog.cellHistsVecElems = sumArray(szs->hog.cellDescElems, szs->pyr.pyramidLayers)
-		szs->hog.blockHistsVecElems = sumArray(szs->hog.blockDescElems, szs->pyr.pyramidLayers);
+		//szs->hog.blockHistsVecElems = sumArray(szs->hog.blockDescElems, szs->pyr.pyramidLayers);
 		szs->features.featuresVecElems0 = 	sumArray(szs->features.numFeaturesElems0, szs->pyr.pyramidLayers);
-
 	}
 
 	/*	Allocates memory to store the size of the data structures for each pyramid layer
@@ -157,9 +156,9 @@ public:
 		cudaMallocGen(&(dev->hog.gOrientation), sizes->hog.matPixVecElems);
 		cudaSafe(cudaMemset(dev->hog.gOrientation, 0, sizes->hog.matPixVecElems * sizeof(P)));
 
-		cudaMallocGen(&(dev->hog.HOGdescriptor), sizes->hog.blockHistsVecElems);
+		//cudaMallocGen(&(dev->hog.HOGdescriptor), sizes->features.featuresVecElems0);//sizes->hog.blockHistsVecElems);
 		cudaMallocGen(&(dev->features.featuresVec0), sizes->features.featuresVecElems0);
-		cudaSafe(cudaMemset(dev->hog.HOGdescriptor, 0, sizes->hog.blockHistsVecElems * sizeof(P)));
+		//cudaSafe(cudaMemset(dev->hog.HOGdescriptor, 0, sizes->hog.blockHistsVecElems * sizeof(P)));
 		cudaSafe(cudaMemset(dev->features.featuresVec0, 0, sizes->features.featuresVecElems0 * sizeof(P)));
 
 

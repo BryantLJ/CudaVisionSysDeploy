@@ -20,12 +20,15 @@ void mergeHistogramsNorm(const T *cellHistograms, T1 *blockHistograms, const int
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	int warpId = idx / WARPSIZE;
 	int warpLane = idx % WARPSIZE;
+	//int warpLane = threadIdx.x % warpSize;
 	const T *pCell = &(cellHistograms[warpId * HistoWidth]);
 	T1 *pBlock = &(blockHistograms[warpId * HistoWidth]);
 	T1 binSum;
+//	if (warpLane > 31) {
+//		printf("ilegal warp lane: %d", warpLane);
+//	}
 
-	//if (idx < xDescs*yDescs*HistoWidth) {
-	if (warpId < numDescs) {
+	if (warpId < numDescs){
 
 		#pragma unroll
 		for (int i = 0; i < HistoWidth; i += WARPSIZE)

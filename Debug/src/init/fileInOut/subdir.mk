@@ -20,8 +20,8 @@ CPP_DEPS += \
 src/init/fileInOut/%.o: ../src/init/fileInOut/%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: NVCC Compiler'
-	/usr/local/cuda-7.5/bin/nvcc -I/usr/local/include/ -I/usr/local/cuda-7.5/targets/x86_64-linux/include -G -g -lineinfo -pg -O0 -std=c++11 -gencode arch=compute_52,code=sm_52  -odir "src/init/fileInOut" -M -o "$(@:%.o=%.d)" "$<"
-	/usr/local/cuda-7.5/bin/nvcc -I/usr/local/include/ -I/usr/local/cuda-7.5/targets/x86_64-linux/include -G -g -lineinfo -pg -O0 -std=c++11 --compile  -x c++ -o  "$@" "$<"
+	/usr/local/cuda-7.5/bin/nvcc -I/usr/local/include/ -I/usr/local/cuda-7.5/targets/x86_64-linux/include -G -g -lineinfo -pg -O0 --use_fast_math -std=c++11 -gencode arch=compute_52,code=sm_52  -odir "src/init/fileInOut" -M -o "$(@:%.o=%.d)" "$<"
+	/usr/local/cuda-7.5/bin/nvcc -I/usr/local/include/ -I/usr/local/cuda-7.5/targets/x86_64-linux/include -G -g -lineinfo -pg -O0 --use_fast_math -std=c++11 --compile  -x c++ -o  "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

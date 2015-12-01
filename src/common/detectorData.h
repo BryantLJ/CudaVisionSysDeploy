@@ -35,7 +35,7 @@ struct detectorData {
 		P				*sqrtLUT;				// Look up table with precomputed sqrt() 0 to 255
 		P				*gMagnitude;			// Gradient Magnitude matrix
 		P				*gOrientation;			// Gradient Orientation matrix
-		P				*HOGdescriptor;			// HOG descriptor of the image
+		//P				*HOGdescriptor;			// HOG descriptor of the image
 		P				*gaussianMask;			// Precomputed gaussian mask for HOG block
 		P				*blockDistances;		// Precomputed distances of the HOG block
 

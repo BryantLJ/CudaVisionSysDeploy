@@ -51,8 +51,8 @@ private:
 			szs->lbp.xHists[i] = computeXdescriptors(szs->pyr.imgCols[i]);
 			szs->lbp.yHists[i] = computeYdescriptors(szs->pyr.imgRows[i]);
 			szs->lbp.cellHistosElems[i] =  computeCellHistosElems(szs->lbp.yHists[i], szs->lbp.xHists[i]);
-			szs->lbp.blockHistosElems[i] = computeBlockHistosElems(szs->lbp.yHists[i], szs->lbp.xHists[i]);
 			szs->lbp.numBlockHistos[i] = computeNumBlockHistos(szs->lbp.xHists[i], szs->lbp.yHists[i]);
+			szs->lbp.blockHistosElems[i] = szs->lbp.numBlockHistos[i] * HISTOWIDTH;
 
 			szs->features.numFeaturesElems0[i] = szs->lbp.blockHistosElems[i];
 			szs->features.xBlockFeatures[i] = szs->lbp.xHists[i];
@@ -64,10 +64,9 @@ private:
 
 				szs->lbp.xHists[j] = computeXdescriptors(szs->pyr.imgCols[j]);
 				szs->lbp.yHists[j] = computeYdescriptors(szs->pyr.imgRows[j]);
-
-				szs->lbp.cellHistosElems[j] = computeCellHistosElems(szs->lbp.yHists[j], szs->lbp.xHists[j]);//szs->pyr.imgCols[j], szs->pyr.imgRows[j]);
-				szs->lbp.blockHistosElems[j] = computeBlockHistosElems(szs->lbp.yHists[j], szs->lbp.xHists[j]);//szs->pyr.imgCols[j], szs->pyr.imgRows[j]);
+				szs->lbp.cellHistosElems[j] = computeCellHistosElems(szs->lbp.yHists[j], szs->lbp.xHists[j]);
 				szs->lbp.numBlockHistos[j] = computeNumBlockHistos(szs->lbp.yHists[j], szs->lbp.xHists[j]);
+				szs->lbp.blockHistosElems[j] = szs->lbp.numBlockHistos[j] * HISTOWIDTH;
 
 				szs->features.numFeaturesElems0[j] = szs->lbp.blockHistosElems[j];
 				szs->features.xBlockFeatures[j] = szs->lbp.xHists[j];

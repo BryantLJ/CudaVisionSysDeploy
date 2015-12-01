@@ -38,7 +38,7 @@ void LBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint l
 					1, 1);
 
 	dim3 gridBlock2( ceil((float)(dsizes->lbp.numBlockHistos[layer]*WARPSIZE) / blkSizes->lbp.blockBlock.x),
-					1, 1);
+					 1, 1);
 
 	dim3 gridNorm(	ceil((float)dsizes->features.numFeaturesElems0[layer] / blkSizes->lbp.blockNorm.x),
 					1, 1);

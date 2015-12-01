@@ -48,8 +48,8 @@ private:
 			szs->lbp.xHists[i] = computeXblockDescriptors(szs->pyr.imgCols[i], XCELL);
 			szs->lbp.yHists[i] = computeYblockDescriptors(szs->pyr.imgRows[i], YCELL);
 			szs->lbp.cellHistosElems[i] =  LBPcomputeCellHistosElems(szs->lbp.yHists[i], szs->lbp.xHists[i]);
-			szs->lbp.blockHistosElems[i] = LBPcomputeBlockHistosElems(szs->lbp.yHists[i], szs->lbp.xHists[i]);
 			szs->lbp.numBlockHistos[i] = computeNumBlockDescriptors(szs->lbp.xHists[i], szs->lbp.yHists[i]);
+			szs->lbp.blockHistosElems[i] = szs->lbp.numBlockHistos[i] * HISTOWIDTH;
 
 			// Init features data sizes
 			szs->features.xBlockFeatures[i] = szs->hog.xBlockHists[i];
@@ -73,8 +73,8 @@ private:
 				szs->lbp.xHists[j] = computeXblockDescriptors(szs->pyr.imgCols[j], XCELL);
 				szs->lbp.yHists[j] = computeYblockDescriptors(szs->pyr.imgRows[j], YCELL);
 				szs->lbp.cellHistosElems[j] = LBPcomputeCellHistosElems(szs->lbp.yHists[j], szs->lbp.xHists[j]);
-				szs->lbp.blockHistosElems[j] = LBPcomputeBlockHistosElems(szs->lbp.yHists[j], szs->lbp.xHists[j]);
 				szs->lbp.numBlockHistos[j] = computeNumBlockDescriptors(szs->lbp.yHists[j], szs->lbp.xHists[j]);
+				szs->lbp.blockHistosElems[j] = szs->lbp.numBlockHistos[j] * HISTOWIDTH;
 
 				// Init features data sizes
 				szs->features.xBlockFeatures[j] =  szs->hog.xBlockHists[j];
@@ -95,6 +95,7 @@ private:
 
 		szs->lbp.imgDescVecElems 	=		sumArray(szs->lbp.imgDescElems, szs->pyr.pyramidLayers);
 		szs->lbp.cellHistosVecElems = 		sumArray(szs->lbp.cellHistosElems, szs->pyr.pyramidLayers);
+		//todo: remove
 		szs->lbp.blockHistosVecElems= 		sumArray(szs->lbp.blockHistosElems, szs->pyr.pyramidLayers);
 
 		szs->features.featuresVecElems0 = 	sumArray(szs->features.numFeaturesElems0, szs->pyr.pyramidLayers);
@@ -191,19 +192,17 @@ public:
 		cudaSafe(cudaMemset(dev->hog.gMagnitude, 0, sizes->hog.matPixVecElems * sizeof(P)));
 		cudaMallocGen(&(dev->hog.gOrientation), sizes->hog.matPixVecElems);
 		cudaSafe(cudaMemset(dev->hog.gOrientation, 0, sizes->hog.matPixVecElems * sizeof(P)));
-		cudaMallocGen(&(dev->hog.HOGdescriptor), sizes->hog.blockHistsVecElems);
-		cudaSafe(cudaMemset(dev->hog.HOGdescriptor, 0, sizes->hog.blockHistsVecElems * sizeof(P)));
+		//cudaMallocGen(&(dev->hog.HOGdescriptor), sizes->hog.blockHistsVecElems);
+		//cudaSafe(cudaMemset(dev->hog.HOGdescriptor, 0, sizes->hog.blockHistsVecElems * sizeof(P)));
+		// Allocate HOG features data structure
+		cudaMallocGen<P>(&(dev->features.featuresVec0), sizes->features.featuresVecElems0);
+		cudaSafe(cudaMemset(dev->features.featuresVec0, 0, sizes->features.featuresVecElems0 * sizeof(P)));
 
 		// Allocate LBP data structures
 		cudaMallocGen<T>(&(dev->lbp.imgDescriptor), sizes->lbp.imgDescVecElems);
 		cudaMallocGen<C>(&(dev->lbp.cellHistos), sizes->lbp.cellHistosVecElems);
 		cudaSafe(cudaMemset(dev->lbp.cellHistos, 0, sizes->lbp.cellHistosVecElems * sizeof(C)));
 		cudaMallocGen<C>(&(dev->lbp.blockHistos), sizes->lbp.blockHistosVecElems);
-
-		// Allocate HOG features data structure
-		cudaMallocGen<P>(&(dev->features.featuresVec0), sizes->features.featuresVecElems0);
-		cudaSafe(cudaMemset(dev->features.featuresVec0, 0, sizes->features.featuresVecElems0 * sizeof(P)));
-
 		// Allocate LBP features data structure
 		cudaMallocGen<P>(&(dev->features.featuresVec1), sizes->features.featuresVecElems1);
 		//cudaSafe(cudaMemset(dev->features.featuresVec1, 0, sizes->features.featuresVecElems1 * sizeof(P)));

@@ -21,7 +21,7 @@ void SVMclassification(detectorData<T, C, P> *data, dataSizes *dsizes, uint laye
 {
 	dim3 gridSVM(	ceil((float)(dsizes->svm.scoresElems[layer] * WARPSIZE) / blkSizes->svm.blockSVM.x),
 					1, 1);
-	dim3 gridSVMnaive( ceil((float)dsizes->svm.scoresElems[layer] / blkSizes->svm.blockSVM.x) );
+	//dim3 gridSVMnaive( ceil((float)dsizes->svm.scoresElems[layer] / blkSizes->svm.blockSVM.x) );
 
 	computeROIwarpReadOnly<P, HISTOWIDTH, XWINBLOCKS, YWINBLOCKS> <<<gridSVM, blkSizes->svm.blockSVM>>>
 				(getOffset<P>(data->features.featuresVec0, dsizes->features.numFeaturesElems0, layer),
@@ -89,22 +89,22 @@ void SVMclassificationHOGLBP(detectorData<T, C, P> *data, dataSizes *dsizes, uin
 //	cudaErrorCheck(__LINE__, __FILE__);
 
 	// Scores vector
-	P *outScores = (P*) malloc(dsizes->svm.scoresElems[layer] * sizeof(P));
-	cudaMemcpy(outScores,
-			   getOffset<P>(data->svm.ROIscores, dsizes->svm.scoresElems, layer),
-			   dsizes->svm.scoresElems[layer] * sizeof(P),
-			   cudaMemcpyDeviceToHost);
-
-	std::cout.precision(6);
-	std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to fixed
-	for (int k = 0; k < dsizes->svm.yROIs[layer]; k++) {
-		for (int b = 0; b < dsizes->svm.xROIs[layer]; b++) {
-			cout.precision(6);
-			cout.setf( std::ios::fixed, std:: ios::floatfield );
-			cout << b*8+32 <<" "<< k*8+64 <<" 64 128 1 "
-					<< outScores[k*dsizes->svm.xROIs_d[layer] + b] << endl;
-		}
-	}
+//	P *outScores = (P*) malloc(dsizes->svm.scoresElems[layer] * sizeof(P));
+//	cudaMemcpy(outScores,
+//			   getOffset<P>(data->svm.ROIscores, dsizes->svm.scoresElems, layer),
+//			   dsizes->svm.scoresElems[layer] * sizeof(P),
+//			   cudaMemcpyDeviceToHost);
+//
+//	std::cout.precision(6);
+//	std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to fixed
+//	for (int k = 0; k < dsizes->svm.yROIs[layer]; k++) {
+//		for (int b = 0; b < dsizes->svm.xROIs[layer]; b++) {
+//			cout.precision(6);
+//			cout.setf( std::ios::fixed, std:: ios::floatfield );
+//			cout << b*8+32 <<" "<< k*8+64 <<" 64 128 1 "
+//					<< outScores[k*dsizes->svm.xROIs_d[layer] + b] << endl;
+//		}
+//	}
 }
 
 

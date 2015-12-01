@@ -94,7 +94,9 @@ int main()
 		// Compute the pyramid
 		NVTXhandler pyramide(COLOR_ORANGE, "Pyramid");
 		pyramide.nvtxStartEvent();
+
 		detectorF.pyramid(&detectData, dSizes, &blkconfig);
+
 		pyramide.nvtxStopEvent();
 
 		// Detection algorithm for each pyramid layer
@@ -146,41 +148,35 @@ int main()
 								getOffset<roifeat_t>(detectData.svm.ROIscores, dSizes->svm.scoresElems, i),
 								dSizes->svm.scoresElems[i]);
 
-//			std::cout.precision(6);
-//			std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to fixed
-//			for (int k = 0; k < dSizes->svm.yROIs[i]; k++) {
-//				for (int b = 0; b < dSizes->svm.xROIs[i]; b++) {
-////					cout << "layer: "<< i << ": "<< k*dSizes->svm.xROIs[i] + b << ": "
-////						 << getOffset<roifeat_t>(ROIfilter.getHostScoresVector(), dSizes->svm.scoresElems, i)[k*dSizes->svm.xROIs_d[i] + b] << endl;
-//					cout.precision(6);
-//					cout.setf( std::ios::fixed, std:: ios::floatfield );
-//					cout << b*8+32 <<" "<< k*8+64 <<" 64 128 1 "
-//							<< getOffset<roifeat_t>(ROIfilter.getHostScoresVector(), dSizes->svm.scoresElems, i)[k*dSizes->svm.xROIs_d[i] + b] << endl;
-//				}
-//			}
-//				for (int u = 0; u < dSizes->scoresElems[i] ; u++) {
-//					printf( " ite: %d -"SCORE: %d: %f\n", i, u, roisHost[u]);
-//				}
-
 			ROIfilter.roisDecision(i, dSizes->pyr.scalesResizeFactor[i], dSizes->pyr.xBorder, dSizes->pyr.yBorder, params->minRoiMargin);
 		}
+		// Non-Max supression refinement
 		NVTXhandler nms(COLOR_BLUE, "Non maximum suppression");
 		nms.nvtxStartEvent();
+
 		refinement.AccRefinement(ROIfilter.getHitROIs());
 		refinement.drawRois(*(acquisition.getFrame()));
+
 		nms.nvtxStopEvent();
 
+		// Clear vector for the next iteration
 		NVTXhandler clearVecs(COLOR_YELLOW, "Reset nms Vectors");
 		clearVecs.nvtxStartEvent();
+
 		ROIfilter.clearVector();
 		refinement.clearVector();
+
 		clearVecs.nvtxStopEvent();
 
+		// Show the frame
 		NVTXhandler showF(COLOR_RED, "Show frame");
 		showF.nvtxStartEvent();
+
 		acquisition.showFrame();
+
 		showF.nvtxStopEvent();
 
+		//Acquisition of the new frame
 		NVTXhandler frameTime(COLOR_GREEN, "Frame adquisition");
 		frameTime.nvtxStartEvent();
 		// Get a new frame
@@ -188,22 +184,16 @@ int main()
 //		sprintf(str, "%d.png", count);
 //		cv::imwrite(str, *rawImg);
 		rawImg = acquisition.acquireFrameRGB();
+
 		frameTime.nvtxStopEvent();
+
 
 		NVTXhandler resetFeat(COLOR_ORANGE, "Reset device Features");
 		resetFeat.nvtxStartEvent();
-		// Reset features vector
+		// Reset device data structures
 		detectorF.resetFeatures(&detectData, dSizes);
 		resetFeat.nvtxStopEvent();
 
-//		end = clock();
-//		elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-//		stringstream fpsStamp;
-//		fpsStamp << elapsed_secs;
-//		cv::putText(*rawImg, fpsStamp.str(), cv::Point(16, 32), CV_FONT_HERSHEY_SIMPLEX, 1.0f, cv::Scalar(0,255,0), 2, 8, false);
-//		fpsStamp.clear();
-//		cout << "FRAME COMPUTED ---- FPS: " << 1/elapsed_secs << endl;
-//		cout << "height: " << acquisition.getCaptureHeight() << "width: " << acquisition.getCaptureWidth() << endl;
 		lat.nvtxStopEvent();
 	}
 

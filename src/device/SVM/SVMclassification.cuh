@@ -11,6 +11,12 @@
 #include "../Operations/warpOps.cuh"
 
 
+/*	  //////////////////////////////////////////////////////////////////////////////////////////
+ *   //	Compile function using read only cache, avaliable on 3.5 compute capability or above //
+ */ //////////////////////////////////////////////////////////////////////////////////////////
+#if __CUDA_ARCH__ >= 350
+
+
 template<typename T, int HistoWidth, int xWinBlocks, int yWinBlocks>
 __global__
 void computeROIwarpHOGLBP(const T *HOGfeatures, const T *LBPfeatures, T *outScores, const T *__restrict__ modelW, T modelBias, const uint numWins, const uint xDescs)
@@ -39,13 +45,10 @@ void computeROIwarpHOGLBP(const T *HOGfeatures, const T *LBPfeatures, T *outScor
 				HOGblockPtr = &(HOGwinPtr[index]);
 				LBPblockPtr = &(LBPwinPtr[index]);
 
-//				HOGmodelPtr = &(modelW[2*((i*HistoWidth*xWinBlocks) + (j*HistoWidth))]);
-//				LBPmodelPtr = &(HOGmodelPtr[HistoWidth]);
-
 				// HOG
 				rSlice += ( HOGblockPtr[warpLane] 				* 	__ldg( &(HOGmodelPtr[warpLane]) ) )  	+
 						  ( HOGblockPtr[warpLane + warpSize] 	* 	__ldg( &(HOGmodelPtr[warpLane + warpSize]) ) );
-//				// LBP
+				// LBP
 				rSlice += ( LBPblockPtr[warpLane] 				* 	__ldg( &(LBPmodelPtr[warpLane]) ) )  	+
 						  ( LBPblockPtr[warpLane + warpSize] 	* 	__ldg( &(LBPmodelPtr[warpLane + warpSize]) ) );
 
@@ -61,11 +64,6 @@ void computeROIwarpHOGLBP(const T *HOGfeatures, const T *LBPfeatures, T *outScor
 		}
 	}
 }
-
-
-
-
-#if __CUDA_ARCH__ >= 350 /* Compile function using read only cache, avaliable on 3.5 compute capability or above */
 
 template<typename T, int HistoWidth, int xWinBlocks, int yWinBlocks>
 __global__
@@ -100,7 +98,63 @@ void computeROIwarpReadOnly(const T *features, T *outScores, const T *__restrict
 }
 
 
-#else /* __CUDA_ARCH__ < 350  @@@@@@@@@  Compile function for lower compute capability */
+
+/*	  //////////////////////////////////////////////////////////////////////////////////////////
+ *   //	 __CUDA_ARCH__ < 350  @@@@@@@@@  Compile function for lower compute capability       //
+ */ //////////////////////////////////////////////////////////////////////////////////////////
+#else
+
+
+
+template<typename T, int HistoWidth, int xWinBlocks, int yWinBlocks>
+__global__
+void computeROIwarpHOGLBP(const T *HOGfeatures, const T *LBPfeatures, T *outScores, const T *__restrict__ modelW, T modelBias, const uint numWins, const uint xDescs)
+{
+	int idx = blockDim.x * blockIdx.x + threadIdx.x;		// Global thread id
+	int warpId = idx / warpSize;							// Warp id
+	int warpLane = idx % warpSize;							// Warp lane id
+
+	const T *HOGwinPtr = &(HOGfeatures[warpId * HistoWidth]);
+	const T *LBPwinPtr = &(LBPfeatures[warpId * HistoWidth]);
+
+	const T *HOGblockPtr, *LBPblockPtr;
+	const T *HOGmodelPtr = modelW;
+	const T *LBPmodelPtr = &(modelW[xWinBlocks*yWinBlocks*HistoWidth]);
+
+	T rSlice = 0;
+	int index;
+
+	if (warpId < numWins) {
+		// Compute dot product of a slice of the ROI
+		#pragma unroll
+		for (int i = 0; i < yWinBlocks; i++) {
+			#pragma unroll
+			for (int j = 0; j < xWinBlocks; j++) {
+				index = (i*HistoWidth*xDescs) + (j*HistoWidth);
+				HOGblockPtr = &(HOGwinPtr[index]);
+				LBPblockPtr = &(LBPwinPtr[index]);
+
+				// HOG
+				rSlice += ( HOGblockPtr[warpLane] 				* 	HOGmodelPtr[warpLane]) )  	+
+						  ( HOGblockPtr[warpLane + warpSize] 	* 	HOGmodelPtr[warpLane + warpSize]) );
+				// LBP
+				rSlice += ( LBPblockPtr[warpLane] 				* 	LBPmodelPtr[warpLane]) )  	+
+						  ( LBPblockPtr[warpLane + warpSize] 	* 	LBPmodelPtr[warpLane + warpSize]) );
+
+				HOGmodelPtr = HOGmodelPtr + HistoWidth;
+				LBPmodelPtr = LBPmodelPtr + HistoWidth;
+			}
+		}
+		// Warp reduction of the Slices to get SCORE
+		rSlice = warpReductionSum<T>(rSlice);
+		// Store SCORE
+		if (warpLane == 0) {
+			outScores[warpId] = rSlice + modelBias;
+		}
+	}
+}
+
+
 
 template<typename T, uint HistoWidth, uint xWinBlocks, uint yWinBlocks>
 __global__
@@ -133,14 +187,8 @@ void computeROIwarpReadOnly(const T *features, T *outScores, const T *__restrict
 		}
 	}
 }
+
 #endif
-
-
-
-
-
-
-
 
 
 
