@@ -19,8 +19,16 @@
 
 namespace device {
 
+/* Local Binary Patterns feature extraction
+ * @Author: Víctor Campmany / vcampmany@gmail.com
+ * @Date: 02/09/2015
+ * @params:
+ * 		data: structure containnig the application data
+ * 		dsizes: sizes of the application data structures
+ * 		layer: layer of the pyramid
+ * 		blkSizes: CUDA CTA dimensions
+ */
 template<typename T, typename C, typename P>
-__forceinline__
 void LBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint layer, cudaBlockConfig *blkSizes)
 {
 	dim3 gridLBP( 	ceil((float)dsizes->pyr.imgCols[layer] / blkSizes->lbp.blockLBP.x),
@@ -50,14 +58,6 @@ void LBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint l
 							dsizes->pyr.imgRows[layer], dsizes->pyr.imgCols[layer],
 							data->lbp.LBPUmapTable);
 
-//	if (layer == 1) {
-//		uchar* lbp = (uchar*)malloc(dsizes->imgRows[layer] * dsizes->imgCols[layer]);
-//		copyDtoH(lbp, getOffset(data->imgDescriptor, dsizes->imgDescElems, layer), dsizes->imgRows[layer] * dsizes->imgCols[layer]);
-//		for (int y = 0; y < dsizes->imgRows[layer] * dsizes->imgCols[layer]; y++) {
-//			printf("lbp value: %d\n", lbp[y]);
-//		}
-//	}
-
 	cudaErrorCheck(__LINE__, __FILE__);
 
 //	cv::Mat lbpout(dsizes->imgRows[layer], dsizes->imgCols[layer], CV_8UC1);
@@ -80,23 +80,13 @@ void LBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint l
 //								dsizes->lbp.xHists[layer],
 //								dsizes->pyr.imgCols[layer]);
 
-//	if (layer == 0) {
 //		C *cell = (C*)malloc(dsizes->lbp.cellHistosElems[layer]*sizeof(C));
 //		copyDtoH(cell, getOffset(data->lbp.cellHistos, dsizes->lbp.cellHistosElems, layer), dsizes->lbp.cellHistosElems[layer]);
 //		for (int u = 0; u < dsizes->lbp.cellHistosElems[layer]; u++) {
 //			if (cell[u] != 0)
 //				printf( "cell feature: %d: %d\n", u, cell[u]);
 //		}
-//	}
 
-
-//	if (layer == 0) {
-//		C *cell = (C*)malloc(dsizes->lbp.cellHistosElems[layer]*sizeof(C));
-//		copyDtoH(cell, getOffset(data->lbp.cellHistos, dsizes->lbp.cellHistosElems, layer), dsizes->lbp.cellHistosElems[layer]);
-//		for (int u = 0; u < dsizes->lbp.cellHistosElems[layer]; u++) {
-//			printf( "cell feature: %d: %d\n", u, cell[u]);
-//		}
-//	}
 
 	cudaErrorCheck(__LINE__, __FILE__);
 
@@ -136,14 +126,18 @@ void LBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint l
 //	for (int u = 0; u < dsizes->features.numFeaturesElems0[layer]; u++) {
 //		cout << u << ": "<< norm[u] << endl;
 //	}
-
-
-
 }
 
-
+/* Histogram of Oriented Gradients feature extraction
+ * @Author: Víctor Campmany / vcampmany@gmail.com
+ * @Date: 10/10/2015
+ * @params:
+ * 		data: structure containnig the application data
+ * 		dsizes: sizes of the application data structures
+ * 		layer: layer of the pyramid
+ * 		blkSizes: CUDA CTA dimensions
+ */
 template<typename T, typename C, typename P>
-__forceinline__
 void HOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint layer, cudaBlockConfig *blkSizes)
 {
 	dim3 gridGamma (ceil((float)dsizes->pyr.imgCols[layer] / blkSizes->hog.blockGamma.x),
@@ -177,16 +171,16 @@ void HOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint l
 			 dsizes->hog.matCols[layer]);
 	cudaErrorCheck(__LINE__, __FILE__);
 
-	HOGdescriptorPreDistances<P, HOG_HISTOWIDTH, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK> <<<gridHOG2, blockHOG>>>
-				(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
-				 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
-				 getOffset(data->features.featuresVec0, dsizes->features.numFeaturesElems0, layer),
-				 data->hog.blockDistances,
-				 dsizes->hog.xBlockHists[layer],
-				 dsizes->hog.yBlockHists[layer],
-				 dsizes->hog.matCols[layer],
-				 dsizes->hog.numblockHist[layer]);
-	cudaErrorCheck(__LINE__, __FILE__);
+//	HOGdescriptorPreDistances<P, HOG_HISTOWIDTH, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK> <<<gridHOG2, blockHOG>>>
+//				(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
+//				 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
+//				 getOffset(data->features.featuresVec0, dsizes->features.numFeaturesElems0, layer),
+//				 data->hog.blockDistances,
+//				 dsizes->hog.xBlockHists[layer],
+//				 dsizes->hog.yBlockHists[layer],
+//				 dsizes->hog.matCols[layer],
+//				 dsizes->hog.numblockHist[layer]);
+//	cudaErrorCheck(__LINE__, __FILE__);
 
 	// Naive version local histograms
 //	computeHOGlocal<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
@@ -261,16 +255,19 @@ void HOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint l
 //		//if (abs(HOGdescriptor[i] -  outHOGdev[i]) > 0.0000001f)
 //		std::cout << i << ": " << outHOGdev[i] << std::endl;
 //	}
-//	cout << "desc vector " << dsizes->hog.blockDescElems[layer]<< endl;
-//	cout << "blocks " << dsizes->hog.numblockHist[layer]<< endl;
-//	cout << "xblocks " << dsizes->hog.xBlockHists[layer]<< endl;
-//	cout << "yblocks " << dsizes->hog.yBlockHists[layer]<< endl;
-
 }
 
 
+/* Histogram of Oriented Gradients + Local Binary Patterns feature extraction
+ * @Author: Víctor Campmany / vcampmany@gmail.com
+ * @Date: 01/12/2015
+ * @params:
+ * 		data: structure containnig the application data
+ * 		dsizes: sizes of the application data structures
+ * 		layer: layer of the pyramid
+ * 		blkSizes: CUDA CTA dimensions
+ */
 template<typename T, typename C, typename P>
-__forceinline__
 void HOGLBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint layer, cudaBlockConfig *blkSizes)
 {
 	// LBP block sizes
@@ -372,10 +369,6 @@ void HOGLBPfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uin
 //	for (int i = 0; i < dsizes->hog.blockDescElems[layer]; i++) {
 //		std::cout << i << ": " << outHOGdev[i] << std::endl;
 //	}
-//	cout << "desc vector " << dsizes->hog.blockDescElems[layer]<< endl;
-//	cout << "blocks " << dsizes->hog.numblockHist[layer]<< endl;
-//	cout << "xblocks " << dsizes->hog.xBlockHists[layer]<< endl;
-//	cout << "yblocks " << dsizes->hog.yBlockHists[layer]<< endl;
 
 //	cout << "LBP DESCRIPTOR"<< endl;
 //	for (int i = 0; i < dsizes->lbp.numBlockHistos[layer]*64; i++) {

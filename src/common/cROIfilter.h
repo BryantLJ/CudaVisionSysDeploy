@@ -29,8 +29,7 @@ public:
 		m_auxROIvec = mallocGen<F>(sizes->svm.ROIscoresVecElems);
 	}
 
-	__forceinline__
-	void roisDecision(int lvl, float scaleFactor,const int marginScalesX, const int marginScalesY ,const int minRoiMargin)
+	inline void roisDecision(int lvl, float scaleFactor,const int marginScalesX, const int marginScalesY ,const int minRoiMargin)
 	{
 		int x, y, h, w, xs, ys;
 
@@ -56,8 +55,7 @@ public:
 		}
 	}
 
-	__forceinline__
-	void clearVector()
+	inline void clearVector()
 	{
 		for (int i = 0; i < m_hitRois.size(); i++) {
 			delete m_hitRois[i];
@@ -65,11 +63,9 @@ public:
 		m_hitRois.clear();
 	}
 
-	__forceinline__
-	F* getHostScoresVector() 	{ 	return m_auxROIvec; 	}
+	inline F* getHostScoresVector() 	{ 	return m_auxROIvec; 	}
 
-	__forceinline__
-	vector<CRoi*> *getHitROIs()  { 	return &m_hitRois;		}
+	inline vector<CRoi*> *getHitROIs()  { 	return &m_hitRois;		}
 };
 
 

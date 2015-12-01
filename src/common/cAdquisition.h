@@ -55,42 +55,34 @@ public:
 		return &m_frame;
 	}
 
-	__forceinline__
-	cv::Mat* acquireFrameRGB()
+	inline cv::Mat* acquireFrameRGB()
 	{
 		m_cap->read(m_frame);
 		//cv::cvtColor(m_frame, m_BWframe, CV_BGR2GRAY);
 		return &m_frame;
 	}
 
-	__forceinline__
-	cv::Mat* acquireFrameGrayScale()
+	inline cv::Mat* acquireFrameGrayScale()
 	{
 		m_cap->read(m_frame);
 		return &m_frame;
 	}
 
-	__forceinline__
-	void showFrame()
+	inline void showFrame()
 	{
 		cv::imshow(m_windowName, m_frame);
 		cv::waitKey(1);
 	}
 
-	__forceinline__
-	cv::Mat *getFrame() 	{	return &m_frame;	}
+	inline cv::Mat *getFrame() 	{	return &m_frame;	}
 
-	__forceinline__
-	int getCaptureWidth() 	{	return m_capWidth;	}
+	inline int getCaptureWidth() 	{	return m_capWidth;	}
 
-	__forceinline__
-	int getCaptureHeight()	{	return m_capHeight;	}
+	inline int getCaptureHeight()	{	return m_capHeight;	}
 
-	__forceinline__
-	cv::Mat *getBWframe()	{	return &m_BWframe;	}
+	inline cv::Mat *getBWframe()	{	return &m_BWframe;	}
 
-	__forceinline__
-	double getFPS()			{	return m_cap->get(CV_CAP_PROP_FPS); 	}
+	inline double getFPS()			{	return m_cap->get(CV_CAP_PROP_FPS); 	}
 
 	void RGB2gray()
 	{

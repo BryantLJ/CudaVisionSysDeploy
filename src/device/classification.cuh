@@ -15,8 +15,16 @@
 
 namespace device {
 
+/* Support Vector Machine classification for HOG or LBP features
+ * @Author: Víctor Campmany / vcampmany@gmail.com
+ * @Date: 13/09/2015
+ * @params:
+ * 		data: structure containnig the application data
+ * 		dsizes: sizes of the application data structures
+ * 		layer: layer of the pyramid
+ * 		blkSizes: CUDA CTA dimensions
+ */
 template<typename T, typename C, typename P>
-__forceinline__
 void SVMclassification(detectorData<T, C, P> *data, dataSizes *dsizes, uint layer, cudaBlockConfig *blkSizes)
 {
 	dim3 gridSVM(	ceil((float)(dsizes->svm.scoresElems[layer] * WARPSIZE) / blkSizes->svm.blockSVM.x),
@@ -61,9 +69,16 @@ void SVMclassification(detectorData<T, C, P> *data, dataSizes *dsizes, uint laye
 //	}
 }
 
-
+/* Support Vector Machine classification for HOG+LBP features
+ * @Author: Víctor Campmany / vcampmany@gmail.com
+ * @Date: 25/10/2015
+ * @params:
+ * 		data: structure containnig the application data
+ * 		dsizes: sizes of the application data structures
+ * 		layer: layer of the pyramid
+ * 		blkSizes: CUDA CTA dimensions
+ */
 template<typename T, typename C, typename P>
-__forceinline__
 void SVMclassificationHOGLBP(detectorData<T, C, P> *data, dataSizes *dsizes, uint layer, cudaBlockConfig *blkSizes)
 {
 	dim3 gridSVM( ceil((float)(dsizes->svm.scoresElems[layer] * WARPSIZE) / blkSizes->svm.blockSVM.x),
@@ -112,7 +127,6 @@ void SVMclassificationHOGLBP(detectorData<T, C, P> *data, dataSizes *dsizes, uin
 
 
 template<typename T, typename C, typename P>
-__forceinline__
 void RFclassification(detectorData<T, C, P> *data, dataSizes *dsizes, uint layer, cudaBlockConfig *blkSizes)
 {
 	cout << "RANDOM FOREST CLASSIFICATION ---------------------------------------------" <<	endl;

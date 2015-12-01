@@ -1,13 +1,25 @@
 /*
  * cellHistograms.h
- *
- *  Created on: Jul 28, 2015
- *      Author: adas
+ * @Description: Functions to compute the histogram features of an LBP image
+ * @Created on: Jul 28, 2015
+ * @Author: Víctor Campmany / vcampmany@gmail.com
  */
 
 #ifndef CELLHISTOGRAMS_CUH_
 #define CELLHISTOGRAMS_CUH_
 
+
+/*	Compute 8x8 cells histogram / each thread is mapped to a pixel
+ *	@Author: Víctor Campmany / vcampmany@gmail.com
+ *	@Date: 12/10/2015
+ *	@params:
+ *		@inputMat: pointer to the LBP image
+ *		@cellHistos: pointer to array where histograms are stored
+ *		@yDescs: number of descriptors on Y dimension
+ *		@xDescs: number of descriptors on X dimension
+ *		@cols: number of columns of the image
+ *		@rows: number of rows of the image
+ */
 template<typename T, typename P, int HistoWidth, int XCell, int YCell>
 __global__
 void cellHistograms(T* inputMat, P* cellHistos, const uint yDescs, const uint xDescs, const int cols, const int rows)
@@ -24,9 +36,16 @@ void cellHistograms(T* inputMat, P* cellHistos, const uint yDescs, const uint xD
 	}
 }
 
-
-
-
+/*	Compute 8x8 cells histogram / each thread compute a 8x8 cell histogram
+ *	@Author: Víctor Campmany / vcampmany@gmail.com
+ *	@Date: 03/02/2015
+ *	@params:
+ *		@inputMat: pointer to the LBP image
+ *		@cellHistos: pointer to array where histograms are stored
+ *		@yDescs: number of descriptors on Y dimension
+ *		@xDescs: number of descriptors on X dimension
+ *		@cols: number of columns of the image
+ */
 template<typename T, typename P, int HistoWidth, int XCell, int YCell>
 __global__
 void cellHistogramsNaive(T* inputMat, P* cellHistos, const int yDescs, const int xDescs, const int cols)

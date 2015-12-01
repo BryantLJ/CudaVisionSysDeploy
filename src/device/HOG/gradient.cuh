@@ -1,10 +1,9 @@
 /*
- * gradient.h
- *
- *  Created on: Oct 22, 2015
- *      Author: adas
+ * gradient.cuh
+ * @Description: function to compute the gradient of an image
+ * @Created on: Oct 22, 2015
+ * @Author: Víctor Campmany / vcampmany@gmail.com
  */
-
 #ifndef GRADIENT_CUH_
 #define GRADIENT_CUH_
 
@@ -36,7 +35,16 @@ float FastAtan2gpu(float y, float x)
 	return (y < 0) ? - angle : angle;
 }
 
-
+/*	Computes the gradient of an image - stencil pattern
+ * 	@Author: Víctor Campmany / vcampmany@gmail.com
+ * 	@Date: 22/10/2015
+ * 	@params:
+ * 		image: input grayscale(1 channel) image
+ * 		gMag: Magnitude matrix
+ * 		gOri: Orientation matrix
+ * 		rows: number of rows of the image
+ * 		cols: number of columns of the image
+ */
 template<typename T0, typename T1, typename T2>
 __global__
 void imageGradient(T0 *image, T1 *gMag, T2 *gOri, int rows, int cols)

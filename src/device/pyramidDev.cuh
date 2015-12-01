@@ -15,8 +15,16 @@
 
 namespace device {
 
+/* Support Vector Machine classification for HOG or LBP features
+ * @Author: Víctor Campmany / vcampmany@gmail.com
+ * @Date: 13/09/2015
+ * @params:
+ * 		data: structure containnig the application data
+ * 		dsizes: sizes of the application data structures
+ * 		layer: layer of the pyramid
+ * 		blkSizes: CUDA CTA dimensions
+ */
 template<typename T, typename C, typename P>
-__forceinline__
 void launchPyramid(detectorData<T, C, P> *data, dataSizes *dsizes, cudaBlockConfig *blkconf)
 {
 	dim3 gridDim;

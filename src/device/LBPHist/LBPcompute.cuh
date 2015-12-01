@@ -1,16 +1,18 @@
 /*
- * LBPcompute.h
- *
- *  Created on: Jul 28, 2015
- *      Author: adas
+ * LBPcompute.cuh
+ * @Description: functions to compute the Local Binary patterns map on an image
+ * @Created on: Jul 28, 2015
+ * @Author: Víctor Campmany / vcampmany@gmail.com
  */
 
 #ifndef LBPCOMPUTE_CUH_
 #define LBPCOMPUTE_CUH_
 
-//#include "../common/operators.h"
-
-
+/* Local Binary Pattern operator
+ * @params:
+ * 		pCenter: Center value of the neighborhood
+ * 		clipTh: threshold to relax condition
+ */
 template<typename T>
 __device__ __forceinline__
 T lbpU(T *pCenter, uint cols, uint clipTh)
@@ -45,10 +47,20 @@ T lbpU(T *pCenter, uint cols, uint clipTh)
 	return value;
 }
 
-template<typename T/*, typename Op*/, int clipTh>
+/* Compute the Uniform LBP image
+ * Stencil pattern
+ * @author: Víctor Campmany / vcampmany@gmail.com
+ * @Date: 02/12/2014
+ * @params
+ * 		input: pointer to the input data
+ * 		output: pointer to the output data
+ * 		rows: rows of the image
+ * 		cols: columns of the image
+ * 		mapTable: Look up table to perform uniform LBP
+ */
+template<typename T, int clipTh>
 __global__
-void stencilCompute2D(T *input, T *output, const uint rows,
-				  const uint cols, const uint8_t *__restrict__ mapTable)//, Op lbp) TODO: use operator or device functions
+void stencilCompute2D(T *input, T *output, const uint rows, const uint cols, const uint8_t *__restrict__ mapTable)
 {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	int idy = blockIdx.y * blockDim.y + threadIdx.y;

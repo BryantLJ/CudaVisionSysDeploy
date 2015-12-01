@@ -302,8 +302,7 @@ public:
 	}
 
 	template<typename T, typename C, typename P>
-	__forceinline__
-	static void zerosHOGfeatures(detectorData<T, C, P> *dev, dataSizes *sizes)
+	inline static void zerosHOGfeatures(detectorData<T, C, P> *dev, dataSizes *sizes)
 	{
 		cudaMemset(dev->features.featuresVec0, 0, sizes->features.featuresVecElems0 * sizeof(P));
 		//todo evaluate asyncronous menmset or no memset(use registers)

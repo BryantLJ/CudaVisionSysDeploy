@@ -1,16 +1,23 @@
 /*
- * colorTransformation.h
- *
- *  Created on: Sep 3, 2015
- *      Author: adas
+ * colorTransformation.cuh
+ * @Description: Image operations on the GPU
+ * @Created on: Sep 3, 2015
+ * @Author: Víctor Campmany / vcampmany@gmail.com
  */
-
 #ifndef COLORTRANSFORMATION_CUH_
 #define COLORTRANSFORMATION_CUH_
 
 
-
-
+/*	Compute the sqrt gamma correction of an image
+ * 	@Author: Víctor Campmany / vcampmany@gmail.com
+ * 	@Date: 7/10/2015
+ * 	@params:
+ * 		image: Input grayscale(1 channel) image
+ * 		imageOut: gamma corrected image
+ * 		sqrtLUT: Look up table with the sqrt values precomputed
+ * 		rows: number of rows of the image
+ * 		cols: number of cols of the image
+ */
 template<typename T, typename T1>
 __global__
 void gammaCorrection(T *image, T1 *imageOut, const T1 *__restrict__ sqrtLUT, int rows, int cols)
@@ -24,7 +31,15 @@ void gammaCorrection(T *image, T1 *imageOut, const T1 *__restrict__ sqrtLUT, int
 	}
 }
 
-
+/*	RGB image conversion to grayscale
+ * 	@Author: Víctor Campmany / vcampmany@gmail.com
+ * 	@Date: 23/07/2015
+ * 	@params:
+ * 		RGBimage: Input RGB image
+ * 		grayScaleImage: output grayscale image
+ * 		rows: number of rows of the image
+ * 		cols: number of cols of the image
+ */
 template<typename T>
 __global__
 void RGB2GrayScale(T *RGBimage, T *grayScaleImage, uint rows, uint cols)

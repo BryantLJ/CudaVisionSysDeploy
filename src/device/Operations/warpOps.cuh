@@ -1,13 +1,19 @@
 /*
- * warpOps.h
- *
- *  Created on: Jul 28, 2015
- *      Author: adas
+ * warpOps.cuh
+ * @Description: warp operations
+ * @Created on: Jul 28, 2015
+ * @Author: Víctor Campmany / vcampmany@gmail.com
  */
 
 #ifndef WARPOPS_CUH_
 #define WARPOPS_CUH_
 
+/* Performs a warp reduction adding
+ * @Author: Víctor Campmany / vcampmany@gmail.com
+ * @Date: 28/06/2015
+ * @params:
+ * 		sliceVal: value to be reduced
+ */
 template<typename T>
 __device__ __forceinline__
 T warpReductionSum(T sliceVal)

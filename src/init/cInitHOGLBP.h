@@ -219,8 +219,7 @@ public:
 	}
 
 	template<typename T, typename C, typename P>
-	__forceinline__
-	static void zerosHOGLBPfeatures(detectorData<T, C, P> *dev, dataSizes *sizes)
+	inline static void zerosHOGLBPfeatures(detectorData<T, C, P> *dev, dataSizes *sizes)
 	{
 		cudaMemset(dev->features.featuresVec0, 0, sizes->features.featuresVecElems0 * sizeof(P));
 		cudaMemset(dev->lbp.cellHistos, 0, sizes->lbp.cellHistosVecElems * sizeof(C));

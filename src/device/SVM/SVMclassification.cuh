@@ -1,8 +1,9 @@
 /*
- * SVMclassification.h
- *
- *  Created on: Jul 28, 2015
- *      Author: adas
+ * SVMclassification.cuh
+ * @Description: Functions to do the foreground segmentation and the SVM evaluation
+ *     	 		 following a Sliding Window technique
+ * @Created on: Jul 28, 2015
+ * @Author: Víctor Campmany / vcampmany@gmail.com
  */
 
 #ifndef SVMCLASSIFICATION_CUH_
@@ -16,10 +17,23 @@
  */ //////////////////////////////////////////////////////////////////////////////////////////
 #if __CUDA_ARCH__ >= 350
 
-
+/*	Compute scores of each window - dot product of the window and the model for HOG+LBP features
+ * 	One warp one - one window correspondency / model on read only memory
+ * 	@Author: Víctor Campmany / vcampmany@gmail.com
+ * 	@Date: 30/11/2015
+ * 	@params:
+ * 		HOGfeatures: HOG features vector
+ * 		LBPfeatures: LBP features vector
+ * 		outScores: scores vector
+ * 		modelW: vector of the weights of the model - READ ONLY MEMORY(3.5 and above)
+ * 		modelBias: bias value
+ * 		numWins: number of windows fitting on an image
+ * 		xDescs: number of histograms fitting on a row of the image
+ */
 template<typename T, int HistoWidth, int xWinBlocks, int yWinBlocks>
 __global__
-void computeROIwarpHOGLBP(const T *HOGfeatures, const T *LBPfeatures, T *outScores, const T *__restrict__ modelW, T modelBias, const uint numWins, const uint xDescs)
+void computeROIwarpHOGLBP(const T *HOGfeatures, const T *LBPfeatures, T *outScores, const T *__restrict__ modelW, const T modelBias,
+		   	              const int numWins, const int xDescs)
 {
 	int idx = blockDim.x * blockIdx.x + threadIdx.x;		// Global thread id
 	int warpId = idx / warpSize;							// Warp id
@@ -65,9 +79,22 @@ void computeROIwarpHOGLBP(const T *HOGfeatures, const T *LBPfeatures, T *outScor
 	}
 }
 
+
+/*	Compute scores of each window - dot product of the window and the model
+ * 	One warp one - one window correspondency / model on read only memory
+ * 	@Author: Víctor Campmany / vcampmany@gmail.com
+ * 	@Date: 22/06/2015
+ * 	@params:
+ * 		features: image features vector
+ * 		outScores: scores vector
+ * 		modelW: vector of the weights of the model - READ ONLY MEMORY(3.5 and above)
+ * 		modelBias: bias value
+ * 		numWins: number of windows fitting on an image
+ * 		xDescs: number of histograms fitting on a row of the image
+ */
 template<typename T, int HistoWidth, int xWinBlocks, int yWinBlocks>
 __global__
-void computeROIwarpReadOnly(const T *features, T *outScores, const T *__restrict__ modelW, T modelBias, const uint numWins, const uint xDescs)
+void computeROIwarpReadOnly(const T *features, T *outScores, const T *__restrict__ modelW, const T modelBias, const int numWins, const int xDescs)
 {
 	int idx = blockDim.x * blockIdx.x + threadIdx.x;		// Global thread id
 	int warpId = idx / warpSize;							// Warp id
@@ -98,17 +125,28 @@ void computeROIwarpReadOnly(const T *features, T *outScores, const T *__restrict
 }
 
 
-
-/*	  //////////////////////////////////////////////////////////////////////////////////////////
- *   //	 __CUDA_ARCH__ < 350  @@@@@@@@@  Compile function for lower compute capability       //
- */ //////////////////////////////////////////////////////////////////////////////////////////
-#else
+#else/*	   //////////////////////////////////////////////////////////////////////////////////////////
+ 	  *   //	 __CUDA_ARCH__ < 350  @@@@@@@@@  Compile function for lower compute capability    //
+ 	  */ //////////////////////////////////////////////////////////////////////////////////////////
 
 
-
+/*	Compute scores of each window - dot product of the window and the model for HOG+LBP features
+ * 	One warp one - one window correspondency / model on read only memory
+ * 	@Author: Víctor Campmany / vcampmany@gmail.com
+ * 	@Date: 30/11/2015
+ * 	@params:
+ * 		HOGfeatures: HOG features vector
+ * 		LBPfeatures: LBP features vector
+ * 		outScores: scores vector
+ * 		modelW: vector of the weights of the model - READ ONLY MEMORY(3.5 and above)
+ * 		modelBias: bias value
+ * 		numWins: number of windows fitting on an image
+ * 		xDescs: number of histograms fitting on a row of the image
+ */
 template<typename T, int HistoWidth, int xWinBlocks, int yWinBlocks>
 __global__
-void computeROIwarpHOGLBP(const T *HOGfeatures, const T *LBPfeatures, T *outScores, const T *__restrict__ modelW, T modelBias, const uint numWins, const uint xDescs)
+void computeROIwarpHOGLBP(const T *HOGfeatures, const T *LBPfeatures, T *outScores, const T *__restrict__ modelW, const T modelBias,
+						  const int numWins, const int xDescs)
 {
 	int idx = blockDim.x * blockIdx.x + threadIdx.x;		// Global thread id
 	int warpId = idx / warpSize;							// Warp id
@@ -135,11 +173,11 @@ void computeROIwarpHOGLBP(const T *HOGfeatures, const T *LBPfeatures, T *outScor
 				LBPblockPtr = &(LBPwinPtr[index]);
 
 				// HOG
-				rSlice += ( HOGblockPtr[warpLane] 				* 	HOGmodelPtr[warpLane]) )  	+
-						  ( HOGblockPtr[warpLane + warpSize] 	* 	HOGmodelPtr[warpLane + warpSize]) );
+				rSlice += ( HOGblockPtr[warpLane] 				* 	HOGmodelPtr[warpLane])  	+
+						  ( HOGblockPtr[warpLane + warpSize] 	* 	HOGmodelPtr[warpLane + warpSize]);
 				// LBP
-				rSlice += ( LBPblockPtr[warpLane] 				* 	LBPmodelPtr[warpLane]) )  	+
-						  ( LBPblockPtr[warpLane + warpSize] 	* 	LBPmodelPtr[warpLane + warpSize]) );
+				rSlice += ( LBPblockPtr[warpLane] 				* 	LBPmodelPtr[warpLane])   	+
+						  ( LBPblockPtr[warpLane + warpSize] 	* 	LBPmodelPtr[warpLane + warpSize]);
 
 				HOGmodelPtr = HOGmodelPtr + HistoWidth;
 				LBPmodelPtr = LBPmodelPtr + HistoWidth;
@@ -154,11 +192,21 @@ void computeROIwarpHOGLBP(const T *HOGfeatures, const T *LBPfeatures, T *outScor
 	}
 }
 
-
-
-template<typename T, uint HistoWidth, uint xWinBlocks, uint yWinBlocks>
+/*	Compute scores of each window - dot product of the window and the model
+ * 	One warp one - one window correspondency / model on read only memory
+ * 	@Author: Víctor Campmany / vcampmany@gmail.com
+ * 	@Date: 22/06/2015
+ * 	@params:
+ * 		features: image features vector
+ * 		outScores: scores vector
+ * 		modelW: vector of the weights of the model - READ ONLY MEMORY(3.5 and above)
+ * 		modelBias: bias value
+ * 		numWins: number of windows fitting on an image
+ * 		xDescs: number of histograms fitting on a row of the image
+ */
+template<typename T, int HistoWidth, int xWinBlocks, int yWinBlocks>
 __global__
-void computeROIwarpReadOnly(const T *features, T *outScores, const T *__restrict__ modelW, T modelBias, const uint numWins, const uint xDescs)
+void computeROIwarpReadOnly(const T *features, T *outScores, const T *__restrict__ modelW, const T modelBias, const int numWins, const int xDescs)
 {
 	int idx = blockDim.x * blockIdx.x + threadIdx.x;		// Global thread id
 	int warpId = idx / warpSize;							// Warp id
@@ -187,11 +235,7 @@ void computeROIwarpReadOnly(const T *features, T *outScores, const T *__restrict
 		}
 	}
 }
-
 #endif
-
-
-
 
 /*	Compute score of each window on the image - dot product of the windows and the model
  * 	one window assigned per thread - NAIVE VERSION

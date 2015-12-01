@@ -151,8 +151,7 @@ public:
 	}
 
 	template<typename T, typename C, typename P>
-	__forceinline__
-	static void zerosCellHistogramArray(detectorData<T, C, P> *dev, dataSizes *sizes)
+	inline static void zerosCellHistogramArray(detectorData<T, C, P> *dev, dataSizes *sizes)
 	{
 		cudaMemset(dev->lbp.cellHistos, 0, sizes->lbp.cellHistosVecElems * sizeof(C));
 		//todo evaluate asyncronous menmset or no memset(use registers)
