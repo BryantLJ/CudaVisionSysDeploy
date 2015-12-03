@@ -25,9 +25,10 @@ void SVMclassification(detectorData<T, C, P> *data, dataSizes *dsizes, uint laye
 
 
 template<typename T, typename C, typename P>
-__forceinline__
 void RFclassification(detectorData<T, C, P> *data, dataSizes *dsizes, uint layer, cudaBlockConfig *blkSizes)
 {
+	cout << "CPU RANDOM FOREST......................" << endl;
+
 
 }
 

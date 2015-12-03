@@ -130,6 +130,8 @@ template<typename T, typename C, typename P>
 void RFclassification(detectorData<T, C, P> *data, dataSizes *dsizes, uint layer, cudaBlockConfig *blkSizes)
 {
 	cout << "RANDOM FOREST CLASSIFICATION ---------------------------------------------" <<	endl;
+
+
 }
 
 

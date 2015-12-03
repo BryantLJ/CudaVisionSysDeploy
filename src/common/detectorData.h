@@ -135,7 +135,6 @@ struct dataSizes {
 
 		uint		xGaussMask;					// X dimension of gaussian mask
 		uint		yGaussMask;					// Y dimension of gaussian mask
-
 	}hog;
 
 	struct FEATURES {
@@ -160,7 +159,15 @@ struct dataSizes {
 	}svm;
 
 	struct RF {
+		uint 		*xROIs_d;
+		uint 		*yROIs_d;
+		uint 		*xROIs;
+		uint		*yROIs;
+		uint		*scoresElems;
+		uint		ROIscoresVecElems;
 
+		uint		nTrees;
+		uint		*nNodes;					// Number of nodes for each tree
 	}rf;
 
 
