@@ -1,5 +1,4 @@
 #include <stdio.h>
-//#include <inttypes.h>
 
 #include "init/cParameters.h"
 #include "init/cInit.h"
