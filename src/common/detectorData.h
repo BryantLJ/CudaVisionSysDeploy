@@ -166,8 +166,12 @@ struct dataSizes {
 		uint		*scoresElems;
 		uint		ROIscoresVecElems;
 
-		uint		nTrees;
+		uint		nTrees;						// Number of trees for each sample
 		uint		*nNodes;					// Number of nodes for each tree
+		uint		*samplesXcord;				// X coordinate in blocks of the subsample
+		uint		*sampleYcord;				// Y coordinate in blocks of the subsample
+		uint		*samplesXdim;				// Size in blocks in the X axis of a subsample
+		uint		*samplesYdim;				// Size in blocks in the Y axis of a subsample
 	}rf;
 
 

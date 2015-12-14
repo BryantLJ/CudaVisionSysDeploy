@@ -1,0 +1,7 @@
+Mon Dec 14 14:58:30 2015
+
+ ERROR -9: Inconsistetent INI parameter: Expected a boolean value
+
+File: parameters.ini
+Section: FEATURE EXTRACTION
+Var: useHOG. At ../src/init/fileInOut/IniFileIO.cpp, ReadSection, line 713.

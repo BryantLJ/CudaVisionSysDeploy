@@ -16,7 +16,7 @@ void computeROIscore(T *features, T *scores, dataSizes *szs)
 	for (int i = 0; i < szs->rf.nTrees; i++) {
 		for (int j = 0; j < szs->rf.nNodes[i]; j++) {
 			// cooretig pointers funcio
-			applyNodeSVM(features)
+			applyNodeSVM(features, szs);
 
 		}
 	}

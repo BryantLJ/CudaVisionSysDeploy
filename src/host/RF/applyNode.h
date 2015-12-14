@@ -9,9 +9,11 @@
 #define APPLYNODE_H_
 
 template<typename T, int Xblocks, int Yblocks>
-void applyNodeSVM(T *features, int pathByte)
+void applyNodeSVM(const T *features, dataSizes *sizes, int pathByte)
 {
+	for (int i = 0; i < sizes->rf.samplesYdim; ++i) {
 
+	}
 }
 
 

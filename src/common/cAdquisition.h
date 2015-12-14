@@ -14,6 +14,8 @@ class cAcquisition {
 private:
 	cv::Mat 				m_frame;
 	cv::Mat					m_BWframe;
+	cv::Mat					*m_pointFrame;
+	vector<cv::Mat>			m_readImages;
 	cv::VideoCapture 		*m_cap;
 	int						m_capWidth;
 	int						m_capHeight;
@@ -55,6 +57,25 @@ public:
 		return &m_frame;
 	}
 
+	void readAllimages()
+	{
+		cout << m_capHeight << " "  << m_capWidth << endl;
+		cv::Mat img(m_capHeight, m_capWidth, CV_8UC3);
+		bool first = true;
+		int i = 0;
+
+		while (!img.empty() || first) {
+			m_cap->read(img);
+			m_readImages.push_back(img);
+
+//			cv::imshow("frame", m_readImages[i]);
+//			cv::waitKey(0);
+			first = false;
+			i++;
+		}
+
+	}
+
 	inline cv::Mat* acquireFrameRGB()
 	{
 		m_cap->read(m_frame);
@@ -74,7 +95,13 @@ public:
 		cv::waitKey(1);
 	}
 
-	inline cv::Mat *getFrame() 	{	return &m_frame;	}
+	inline vector<cv::Mat>* getDiskImages()	{ return &m_readImages; }
+
+	inline void setCurrentFrame(int index)		{ m_frame = m_readImages[index]; }
+
+	inline cv::Mat *getCurrentFrame() 	{	return &m_frame;	}
+
+	inline cv::Mat *getIndexFrame(int index) { return &(m_readImages.at(index)); }
 
 	inline int getCaptureWidth() 	{	return m_capWidth;	}
 
@@ -84,14 +111,6 @@ public:
 
 	inline double getFPS()			{	return m_cap->get(CV_CAP_PROP_FPS); 	}
 
-	void RGB2gray()
-	{
-		for (int i = 0; i < m_frame.rows; i++) {
-			for (int j = 0; j < m_frame.cols; j++) {
-
-			}
-		}
-	}
 };
 
 

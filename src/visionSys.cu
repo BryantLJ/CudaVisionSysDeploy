@@ -35,6 +35,7 @@ int main()
 
 	// Initialize Acquisition handler and read image
 	cAcquisition acquisition(params);
+	//acquisition.readAllimages();
 	cv::Mat *rawImg = acquisition.acquireFrameRGB();
 
 	// Initialize dataSizes structure
@@ -79,6 +80,7 @@ int main()
 
 	// Image processing loop
 	while (!rawImg->empty() && count < 340)
+	//for (int ite = 0; ite < 1 /*acquisition.getDiskImages()->size()-1*/; ite++)
 	{
 		NVTXhandler lat(COLOR_GREEN, "latency");
 		lat.nvtxStartEvent();
@@ -86,6 +88,8 @@ int main()
 
 		// Copy each frame to device
 		copyHtoD<input_t>(detectData.rawImg, rawImg->data, dSizes->rawSize);
+		//acquisition.setCurrentFrame(0);
+		//copyHtoD<input_t>(detectData.rawImg, acquisition.getCurrentFrame()->data, dSizes->rawSize);
 
 		// Input image preprocessing
 		detectorF.preprocess(&detectData, dSizes, &blkconfig);
@@ -154,7 +158,7 @@ int main()
 		nms.nvtxStartEvent();
 
 		refinement.AccRefinement(ROIfilter.getHitROIs());
-		refinement.drawRois(*(acquisition.getFrame()));
+		refinement.drawRois(*(acquisition.getCurrentFrame()));
 
 		nms.nvtxStopEvent();
 
@@ -182,7 +186,8 @@ int main()
 //		char str[256];
 //		sprintf(str, "%d.png", count);
 //		cv::imwrite(str, *rawImg);
-		rawImg = acquisition.acquireFrameRGB();
+
+		//rawImg = acquisition.acquireFrameRGB();
 
 		frameTime.nvtxStopEvent();
 
@@ -200,6 +205,7 @@ int main()
 	time_t end;
 	time(&end);
 
+	cudaDeviceReset();
 	// Get the elapsed time
 	double seconds = difftime(end, start);
 
