@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <sys/time.h>
 
 #include "init/cParameters.h"
 #include "init/cInit.h"
@@ -75,11 +76,15 @@ int main()
 	time_t start;
 	time(&start);
 
+	timeval startVal, endVal;
+	gettimeofday(&startVal, 0);
+
 	// Start the counter of iterations
 	int count = 0;
+	const int iterations = 5000;
 
 	// Image processing loop
-	while (!rawImg->empty() && count < 340)
+	while (!rawImg->empty() && count < iterations)
 	//for (int ite = 0; ite < 1 /*acquisition.getDiskImages()->size()-1*/; ite++)
 	{
 		NVTXhandler lat(COLOR_GREEN, "latency");
@@ -175,7 +180,7 @@ int main()
 		NVTXhandler showF(COLOR_RED, "Show frame");
 		showF.nvtxStartEvent();
 
-		acquisition.showFrame();
+		//acquisition.showFrame();
 
 		showF.nvtxStopEvent();
 
@@ -205,11 +210,13 @@ int main()
 	time_t end;
 	time(&end);
 
-	cudaDeviceReset();
+	gettimeofday(&endVal, 0);
+
+	//printf("elapsed time: %lu \n", (endVal.tv_usec - startVal.tv_usec));
+
 	// Get the elapsed time
 	double seconds = difftime(end, start);
-
-	cout << "FPS : " << 340 / seconds << endl;
+	cout << "FPS : " << iterations / seconds << endl;
 	cout << "elapsed secs: " << seconds << endl;
 
 	cudaErrorCheck();
