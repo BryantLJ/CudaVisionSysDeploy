@@ -1,29 +1,33 @@
 BUILDDIR :=bin/object/			# Directory to store object files
-CC :=nvcc				# Compiler
+CC :=/usr/local/cuda/bin/nvcc				# Compiler
 NAMEBIN :=visionSys			# Name of the binary file
 #ARCH :=52				# Device target architecture
 
 # @@@@@@@@@@@@@@@@@@@@@@@@ Compiler flags @@@@@@@@@@@@@@@@@@@@@@@@ 
-FLAGS := -lineinfo -O3 --use_fast_math -std=c++11 -gencode arch=compute_32,code=compute_32 -gencode arch=compute_32,code=sm_32 --relocatable-device-code=true
+FLAGS := -lineinfo -O3 --use_fast_math -std=c++11 -gencode arch=compute_52,code=compute_52 -gencode arch=compute_52,code=sm_52 --relocatable-device-code=true
 CCFLAGS := -c
 
 # @@@@@@@@@@@@@@@@@@@@@@@@ Library paths @@@@@@@@@@@@@@@@@@@@@@@@ 
 # x86_64 libraries
 #LIBPATH := -L/usr/local/cuda/targets/x86_64-linux/lib -L/usr/local/lib
-# arm libraries
-LIBPATH := -L/usr/local/cuda/targets/armv7-linux-gnueabihf/lib -L/usr/lib
+# Jetson TX1 arm libraries
+#LIBPATH := -L/usr/local/cuda/targets/armv7-linux-gnueabihf/lib -L/usr/lib
+# DrivePX arm libraries
+LIBPATH := -L/usr/local/cuda/targets/aarch64-linux/lib -L/usr/lib
 
 # @@@@@@@@@@@@@@@@@@@@@@@@ Libraries @@@@@@@@@@@@@@@@@@@@@@@@ 
 # opencv 3.0 libs
-LIBS := -lnvToolsExt -lopencv_objdetect -lopencv_imgcodecs -lopencv_videoio -lopencv_calib3d -lopencv_features2d -lopencv_video -lopencv_ml -lopencv_highgui -lopencv_imgproc -lopencv_core -lopencv_flann
+#LIBS := -lnvToolsExt -lopencv_objdetect -lopencv_imgcodecs -lopencv_videoio -lopencv_calib3d -lopencv_features2d -lopencv_video -lopencv_ml -lopencv_highgui -lopencv_imgproc -lopencv_core -lopencv_flann
 # opencv 2.4 libs
-LIBS := -lnvToolsExt -lopencv_objdetect -lopencv_legacy -lopencv_contrib -lopencv_calib3d -lopencv_features2d -lopencv_video -lopencv_ml -lopencv_highgui -lopencv_imgproc -lopencv_core -lopencv_flann
+LIBS := -lnvToolsExt -lopencv_objdetect -lopencv_legacy -lopencv_contrib -lopencv_calib3d -lopencv_features2d -lopencv_video -lopencv_ml -lopencv_highgui -lopencv_imgproc -lopencv_core -lopencv_flann -lm
 
 # @@@@@@@@@@@@@@@@@@@@@@@@ Inlcude paths @@@@@@@@@@@@@@@@@@@@@@@@ 
 # x86_64 includes
 #INCL := -I/usr/local/include/ -I/usr/local/cuda/targets/x86_64-linux/include
-# arm includes
-INCL := -I/usr/include/ -I/usr/local/cuda/targets/armv7-linux-gnueabihf/include
+# Jetson TX1 arm includes
+#INCL := -I/usr/include/ -I/usr/local/cuda/targets/armv7-linux-gnueabihf/include
+# DrivePx arm includes
+INCL := -I/usr/include/ -I/usr/local/cuda/targets/aarch64-linux/include
 
 # @@@@@@@@@@@@@@@@@@@@@@@@ Object files @@@@@@@@@@@@@@@@@@@@@@@@ 
 OBJS := bin/object/Utils.o bin/object/IniFileIO.o bin/object/cParameters.o bin/object/AccumulativeRefinement.o bin/object/Maths.o bin/object/Refinement.o bin/object/RoiCluster.o bin/object/visionSys.o

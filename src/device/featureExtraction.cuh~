@@ -215,7 +215,7 @@ void HOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint l
 			 dsizes->hog.yBlockHists[layer],
 			 dsizes->hog.matCols[layer],
 			 dsizes->hog.numblockHist[layer]);
-
+*/
 	// Naive version
 /*	computeHOGdescriptor<P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG.x>>>
 			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),

@@ -31,7 +31,7 @@ void SVMclassification(detectorData<T, C, P> *data, dataSizes *dsizes, uint laye
 					1, 1);
 	dim3 gridSVMnaive( ceil((float)dsizes->svm.scoresElems[layer] / blkSizes->svm.blockSVM.x) );
 
-	computeROIwarpReadOnly<P, HISTOWIDTH, XWINBLOCKS, YWINBLOCKS> <<<gridSVM, blkSizes->svm.blockSVM>>>
+/*	computeROIwarpReadOnly<P, HISTOWIDTH, XWINBLOCKS, YWINBLOCKS> <<<gridSVM, blkSizes->svm.blockSVM>>>
 				(getOffset<P>(data->features.featuresVec0, dsizes->features.numFeaturesElems0, layer),
 				 getOffset<P>(data->svm.ROIscores, dsizes->svm.scoresElems, layer),
 				 data->svm.weightsM,
@@ -39,7 +39,7 @@ void SVMclassification(detectorData<T, C, P> *data, dataSizes *dsizes, uint laye
 				 dsizes->svm.scoresElems[layer],
 				 dsizes->features.xBlockFeatures[layer]);
 	cudaErrorCheck(__LINE__, __FILE__);
-
+*/
 	// Naive kernel
 /*	computeROI<P, HISTOWIDTH, XWINBLOCKS, YWINBLOCKS> <<<gridSVMnaive, blkSizes->svm.blockSVM.x>>>
 								(getOffset<P>(data->features.featuresVec0, dsizes->features.numFeaturesElems0, layer),
