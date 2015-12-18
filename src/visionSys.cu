@@ -81,7 +81,7 @@ int main()
 
 	// Start the counter of iterations
 	int count = 0;
-	const int iterations = 5000;
+	const int iterations = 340;
 
 	// Image processing loop
 	while (!rawImg->empty() && count < iterations)
@@ -192,7 +192,7 @@ int main()
 //		sprintf(str, "%d.png", count);
 //		cv::imwrite(str, *rawImg);
 
-		//rawImg = acquisition.acquireFrameRGB();
+		rawImg = acquisition.acquireFrameRGB();
 
 		frameTime.nvtxStopEvent();
 
