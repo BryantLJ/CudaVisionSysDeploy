@@ -205,7 +205,6 @@ int main()
 
 		lat.nvtxStopEvent();
 
-		printf("itercion\n");
 	}
 
 	// Stop the timer

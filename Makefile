@@ -4,7 +4,7 @@ NAMEBIN :=visionSys			# Name of the binary file
 #ARCH :=52				# Device target architecture
 
 # @@@@@@@@@@@@@@@@@@@@@@@@ Compiler flags @@@@@@@@@@@@@@@@@@@@@@@@ 
-FLAGS := -lineinfo -O3 --use_fast_math -std=c++11 -gencode arch=compute_52,code=compute_52 -gencode arch=compute_52,code=sm_52 --relocatable-device-code=true
+FLAGS := -lineinfo -O3 --use_fast_math -std=c++11 -gencode arch=compute_53,code=compute_53 -gencode arch=compute_53,code=sm_53 --relocatable-device-code=true
 CCFLAGS := -c
 
 # @@@@@@@@@@@@@@@@@@@@@@@@ Library paths @@@@@@@@@@@@@@@@@@@@@@@@ 
