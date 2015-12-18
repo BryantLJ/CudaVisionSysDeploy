@@ -195,16 +195,16 @@ void HOGfeatureExtraction(detectorData<T, C, P> *data, dataSizes *dsizes, uint l
 
 	//cudaDeviceSetCacheConfig(cudaFuncCachePreferShared);
 	// Naive local version predists
-/*	computeHOGlocalPred<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
-			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
-			 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
-			 getOffset(data->features.featuresVec0, dsizes->features.numFeaturesElems0, layer),
-			 data->hog.blockDistances,
-			 dsizes->hog.xBlockHists[layer],
-			 dsizes->hog.yBlockHists[layer],
-			 dsizes->hog.matCols[layer],
-			 dsizes->hog.numblockHist[layer]);
-*/
+//	computeHOGlocalPred<P, P, P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG, 45 * 1024>>>
+//			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
+//			 getOffset(data->hog.gOrientation, dsizes->hog.matPixels, layer),
+//			 getOffset(data->features.featuresVec0, dsizes->features.numFeaturesElems0, layer),
+//			 data->hog.blockDistances,
+//			 dsizes->hog.xBlockHists[layer],
+//			 dsizes->hog.yBlockHists[layer],
+//			 dsizes->hog.matCols[layer],
+//			 dsizes->hog.numblockHist[layer]);
+
 	// Naive local Shared Mem version predists
 	computeHOGSharedPred<P, X_HOGCELL, Y_HOGCELL, X_HOGBLOCK, Y_HOGBLOCK, HOG_HISTOWIDTH> <<<gridHOG, blkSizes->hog.blockHOG>>>
 			(getOffset(data->hog.gMagnitude, dsizes->hog.matPixels, layer),
