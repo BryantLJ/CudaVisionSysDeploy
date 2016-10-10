@@ -1,8 +1,0 @@
-- Cada thread asignat a un histograma.
-- Per un input petit(320x240), la occupancy és molt baixa(11%) es creen molt pocs threads i la gpu esta inactiva.
-  per imatges més grans la occupancy és casi del 100%
-- A maxwell les intruccions SIMD s'emulen
-- El access a memória no és coalesced, per tamanys petits això queda etenuat perque les dades caben a cache L2
-  però al tractar amb imatges més grans les dades no caben a cache L2, i s'ha d'anar a buscar a global memory.
-  No és un kernel escalable
-- Kernel limitat per memory bandwidth

@@ -1,4 +1,0 @@
-- Cada thread esta mapejat amb un pixel i afegeix al histograma corresponent
-- Tot hi no utilitzar les instruccions SIMD s'executen més intruccions, per que es creen més threads,
-  per tant més instruccions totals(calcul index control de fluxe...)
-

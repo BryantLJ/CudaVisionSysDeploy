@@ -1,7 +1,0 @@
-- Each thread is mapped to an image pixel and then added to the correspondig histogram
-- More paralelism than naive version / even with small images(320x240) high occupancy
-- The kernel is still limit by memory bandwidth, but better cache utilization for all image sizes.
-- Per la versió optimitzada i per tots els tamanys de imatge la cache L2 s'utiltiza casi al 100% mentre que a 
-  la naive només s'utilitzava correctament quan la imatge cabia a L2, sino havia d'anar a buscar les dades 
-  a global memory. Per la versió optimitzada tenim coalsesced memory access i molt bona utilització de la cache.
-- 
