@@ -1,2 +1,4 @@
 # Parameters file
-*.ini
+Debug/
+Release/
+.project
