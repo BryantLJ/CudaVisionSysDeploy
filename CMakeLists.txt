@@ -1,0 +1,25 @@
+cmake_minimum_required(VERSION 2.4)
+project(visionSys)
+#find_package( OpenCV REQUIRED )
+#find_package( CUDA REQUIRED )
+include_directories(/usr/include/ /usr/local/cuda/targets/aarch64-linux/include)
+link_directories(/usr/local/cuda/targets/x86_64-linux/lib /usr/local/lib)
+
+set(
+    CUDA_NVCC_FLAGS
+    ${CUDA_NVCC_FLAGS};
+    -O3 -lineinfo
+    -gencode=arch=compute_30,code=sm_30
+    -gencode=arch=compute_35,code=sm_35
+    -gencode=arch=compute_50,code=sm_50
+    -gencode=arch=compute_52,code=sm_52
+    -gencode=arch=compute_52,code=compute_52
+    --use_fast_math -std=c++11
+    )
+
+add_executable(
+    visionSys
+    src/visionSys.cu src/init/fileInOut/Utils.cpp src/init/fileInOut/IniFileIO.cpp src/init/cParameters.cu 
+    src/common/AccumulativeRefinement.cpp src/common/Maths.cpp src/common/Refinement.cpp src/common/RoiCluster.cpp)
+
+target_link_libraries( visionSys nvToolsExt opencv_objdetect opencv_legacy opencv_contrib opencv_calib3d opencv_features2d opencv_video opencv_ml opencv_highgui opencv_imgproc opencv_core opencv_flann m )
