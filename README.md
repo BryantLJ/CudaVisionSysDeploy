@@ -15,6 +15,7 @@ make all
 ```
 ./bin/visionSys
 ```
+Edit the parameters.ini file in order to modify the parameters as desired
 
 ### Requirements
 * OpenCV >= 2.4
