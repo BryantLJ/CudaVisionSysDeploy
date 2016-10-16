@@ -7,6 +7,7 @@ Computer Vision Center and Computer Architecture Department, Universitat Autonom
 ### How to compile it
 You will need to modify the Makefile in order to add your local library setting, instructions on the Makefile.
 ```
+mkdir bin 
 cd into_repository_path
 make all
 ```
