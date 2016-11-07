@@ -5,7 +5,7 @@ Software developed by Víctor Campmany (vcampmany@cvc.uab.es)
 Computer Vision Center and Computer Architecture Department, Universitat Autonoma de Barcelona
 
 ### How to compile it
-You will need to modify the Makefile in order to add your local library setting, instructions on the Makefile.
+Add your own library paths to the Makefile (instruction in the Makefile)
 ```
 cd into_repository_path
 make all
